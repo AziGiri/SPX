@@ -192,6 +192,7 @@
   /* ===== TOAST ===== */
   .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:11px 20px;border-radius:var(--radius-pill);font-size:13px;font-weight:600;opacity:0;transition:opacity .25s ease,transform .25s ease;z-index:40;pointer-events:none;max-width:90%;text-align:center;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  #fabImportPhoto{ display:none !important; }
 </style>
 </head>
 <body>
@@ -520,7 +521,7 @@
    *  (yang sudah ditambah file Rpc.gs, lihat gas-addon/Rpc.gs), diakhiri
    *  "/exec".
    * ===================================================================== */
-  var GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbypNGg5bjV8giYoZT9C1iZlyX-G_urpG2BnK-wVBRs7OcceGNRHxUZlyj4bhl5f7ItI/exec';
+  var GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyQBzEdtjyKyR7C1mbTIqo1hStSexVLt8NebX6c4f82R5PowOgOXkC6E-4nrMSyDr9MYQ/exec';
 
   function callGas(fnName, args) {
     return fetch(GAS_ENDPOINT, {
