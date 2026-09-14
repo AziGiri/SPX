@@ -3,6 +3,11 @@
   "appName": "Pengiriman Paket",
   "webDir": "www",
   "server": {
-    "androidScheme": "https"
+    "url": "https://script.google.com/macros/s/AKfycbxqXDm9HNnDkRjxaxXNJxGa866puhby_cHL2_dxHoC5FHPhXXTS0HNn9tK_SRJmSzpYoA/exec",
+    "androidScheme": "https",
+    "allowNavigation": [
+      "*.googleusercontent.com",
+      "*.google.com"
+    ]
   }
 }
