@@ -1532,16 +1532,16 @@
       history.go(-1);
     }
   });
+// ---------- CAPACITOR: TANGANI TOMBOL BACK LEWAT PLUGIN NATIVE ----------
+function isNativeApp(){
+  return !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+}
 
-  // ---------- CAPACITOR: TANGANI TOMBOL BACK LEWAT PLUGIN NATIVE ----------
-if (window.Capacitor) {
-  import('@capacitor/app').then(function (mod) {
-    var App = mod.App;
-    App.addListener('backButton', function () {
-      if (closeOpenModalIfAny()) return;
-      if (clearActiveSearchIfAny()) return;
-      showExitConfirm();
-    });
+if (isNativeApp() && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+  window.Capacitor.Plugins.App.addListener('backButton', function () {
+    if (closeOpenModalIfAny()) return;
+    if (clearActiveSearchIfAny()) return;
+    showExitConfirm();
   });
 } else {
   // Fallback untuk versi Web App biasa (browser, bukan APK)
@@ -1578,7 +1578,11 @@ function showExitConfirm(){
   document.body.appendChild(div);
   document.getElementById('exitCancelBtn').onclick = function(){ div.remove(); };
   document.getElementById('exitOkBtn').onclick = function(){
-    import('@capacitor/app').then(function(mod){ mod.App.exitApp(); });
+    if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+      window.Capacitor.Plugins.App.exitApp();
+    } else {
+      div.remove();
+    }
   };
 }
   
