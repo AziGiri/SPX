@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<base target="_top">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="color-scheme" content="light">
+<title>Pengiriman Paket</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1E2A44;
+    --ink:#1C2333;
+    --muted:#6B7280;
+    --paper:#F1F3F5;
+    --surface:#FFFFFF;
+    --amber:#C77B23;
+    --amber-soft:#FBEBD8;
+    --green:#2F8F5B;
+    --green-soft:#E3F3EA;
+    --rose:#B23A32;
+    --rose-soft:#FBEAE8;
+    --line:#E2E5E9;
+    --radius-card:14px;
+    --radius-pill:999px;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;
+    font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,p{margin:0;}
+  button{-webkit-tap-highlight-color:transparent;}
+  :focus-visible{outline:2px solid var(--navy);outline-offset:2px;}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
+
+  /* ===== LOGIN ===== */
+  .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .login-card{width:100%;max-width:360px;background:var(--surface);border-radius:18px;padding:38px 28px 30px;border:1px solid var(--line);}
+  .login-icon{display:flex;justify-content:center;margin-bottom:16px;}
+  .login-title{font-size:21px;font-weight:800;color:var(--navy);text-align:center;letter-spacing:-0.01em;}
+  .login-sub{font-size:13.5px;color:var(--muted);text-align:center;margin-top:5px;margin-bottom:28px;}
+  .field{margin-bottom:16px;border-radius:10px;transition:background .15s ease;}
+  .field label{display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px;}
+  .field input{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);font-size:15px;font-family:inherit;color:var(--ink);background:#FAFBFC;}
+  .field input:focus{outline:none;border-color:var(--navy);background:var(--surface);box-shadow:0 0 0 3px rgba(30,42,68,.12);}
+  .field select{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);font-size:15px;font-family:inherit;color:var(--ink);background:#FAFBFC;}
+  .field select:focus{outline:none;border-color:var(--navy);background:var(--surface);box-shadow:0 0 0 3px rgba(30,42,68,.12);}
+  .detail-value{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);font-size:15px;font-family:inherit;color:var(--ink);background:#FAFBFC;margin:0;word-break:break-word;}
+  /* highlight kolom/field yang sedang aktif dipilih/diisi */
+  .field:focus-within{background:var(--amber-soft);box-shadow:0 0 0 1px rgba(199,123,35,.35) inset;}
+  .field:focus-within label{color:var(--amber);}
+
+  /* ===== FORM MODAL (COMPACT) — khusus form tambah/ubah pengiriman ===== */
+  #formModal .modal-sheet{padding:16px 18px calc(16px + env(safe-area-inset-bottom));max-height:92vh;}
+  #formModal .modal-header{margin-bottom:12px;}
+  #formModal .field{margin-bottom:9px;padding:4px 6px;margin-left:-6px;margin-right:-6px;}
+  #formModal .field label{font-size:11.5px;margin-bottom:3px;}
+  #formModal .field input,
+  #formModal .field select{padding:8px 11px;font-size:14px;border-radius:8px;}
+  #formModal .role-note{margin:2px 0 0;font-size:10.5px;}
+  #formModal .btn-primary-full{padding:11px;margin-top:6px;font-size:14px;}
+  .btn-primary-full{width:100%;padding:13px;border-radius:10px;border:none;background:var(--navy);color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:2px;}
+  .btn-primary-full:disabled{opacity:.6;cursor:default;}
+  .login-error{color:var(--rose);font-size:13px;text-align:center;margin-top:12px;min-height:16px;}
+  .login-hint{text-align:center;font-size:12px;color:var(--muted);margin-top:16px;}
+
+  /* ===== APP SHELL ===== */
+  .app-shell{max-width:480px;margin:0 auto;min-height:100vh;background:var(--paper);position:relative;}
+  .app-header{background:var(--navy);color:#fff;padding:16px 20px 18px;position:sticky;top:0;z-index:10;}
+  .app-header-row{display:flex;align-items:center;justify-content:space-between;}
+  .app-header-title{font-size:16px;font-weight:700;letter-spacing:-0.01em;}
+  .app-header-actions{display:flex;align-items:center;gap:8px;}
+  .header-icon-btn{background:rgba(255,255,255,.14);border:none;color:#fff;width:34px;height:34px;border-radius:var(--radius-pill);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .header-icon-btn svg{transition:transform .5s ease;}
+  .header-icon-btn.spinning svg{animation:spin-refresh .6s linear;}
+  .logout-btn{background:rgba(255,255,255,.14);border:none;color:#fff;width:34px;height:34px;border-radius:var(--radius-pill);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .app-greeting{font-size:13.5px;color:rgba(255,255,255,.78);margin-top:6px;}
+  .app-greeting b{color:#fff;}
+  .role-note{font-size:12px;color:var(--muted);margin:-6px 0 16px;}
+
+  .app-content{padding:18px 16px 100px;}
+  .page{display:none;}
+  .page.active{display:block;}
+
+  /* ===== STATS / CTA ===== */
+  .stats-row{display:flex;gap:10px;margin-bottom:18px;}
+  .stat-card{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-card);padding:12px 6px;text-align:center;}
+  .stat-card .num{font-size:16px;font-weight:800;color:var(--navy);display:block;}
+  .stat-card .lbl{font-size:10px;color:var(--muted);margin-top:2px;display:block;white-space:nowrap;}
+  .cta-add{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;background:var(--amber);color:#fff;border:none;border-radius:12px;font-size:14.5px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:8px;}
+  .section-title{font-size:13px;font-weight:700;color:var(--navy);margin:0 0 12px;}
+  .chart-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-card);padding:16px 14px 8px;margin-bottom:12px;}
+  .filter-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-card);padding:12px 14px;margin-bottom:16px;position:sticky;top:var(--header-h,76px);z-index:8;box-shadow:0 6px 10px -6px rgba(28,35,51,.12);}
+  .search-box{display:flex;align-items:center;gap:8px;background:var(--paper);border-radius:10px;padding:9px 12px;margin-bottom:10px;}
+  .search-box svg{color:var(--muted);flex-shrink:0;}
+  .search-box input{border:none;background:none;outline:none;font-family:inherit;font-size:13.5px;color:var(--ink);flex:1;min-width:0;}
+  .filter-date-row{display:flex;align-items:center;gap:8px;}
+  .filter-date-row label{font-size:12.5px;color:var(--muted);font-weight:600;flex-shrink:0;}
+  .filter-date-row input[type=date]{flex:1;border:1.5px solid var(--line);border-radius:8px;padding:7px 9px;font-family:inherit;font-size:13px;color:var(--ink);background:#FAFBFC;min-width:0;}
+  .filter-kurir-row{display:flex;align-items:center;gap:8px;margin-top:10px;}
+  .filter-kurir-row label{font-size:12.5px;color:var(--muted);font-weight:600;flex-shrink:0;}
+  .filter-kurir-row select{flex:1;border:1.5px solid var(--line);border-radius:8px;padding:7px 9px;font-family:inherit;font-size:13px;color:var(--ink);background:#FAFBFC;min-width:0;}
+  @keyframes spin-refresh{to{transform:rotate(360deg);}}
+  .donut-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding-bottom:12px;}
+  .legend{flex:1;min-width:130px;display:flex;flex-direction:column;gap:9px;}
+  .legend-row{display:flex;align-items:center;gap:8px;font-size:12.5px;}
+  .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+  .legend-label{flex:1;color:var(--ink);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .legend-value{color:var(--muted);font-weight:700;flex-shrink:0;}
+
+  /* ===== DELIVERY CARD ===== */
+  .card{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:var(--radius-card);padding:14px 14px 12px;margin-bottom:12px;}
+  .card.status-todo{border-left-color:var(--amber);}
+  .card.status-done{border-left-color:var(--green);}
+  .card.status-onhold{border-left-color:var(--rose);}
+  .card.selected{border-color:var(--navy);box-shadow:0 0 0 1.5px var(--navy);}
+
+  /* ===== PILIH BEBERAPA (BULK ASSIGN KURIR) DI TO-DO ===== */
+  .select-toggle-row{display:flex;justify-content:flex-end;}
+  .btn-select-toggle{background:var(--paper);color:var(--navy);border:none;border-radius:var(--radius-pill);padding:7px 13px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;}
+  .btn-select-toggle.active{background:var(--navy);color:#fff;}
+  .card-select-row{display:flex;align-items:center;gap:8px;margin:-2px 0 9px;padding-bottom:9px;border-bottom:1px dashed var(--line);font-size:12.5px;font-weight:700;color:var(--navy);cursor:pointer;}
+  .card-select-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--navy);cursor:pointer;flex-shrink:0;}
+  .bulk-bar{position:fixed;bottom:64px;left:50%;transform:translateX(-50%) translateY(16px);width:100%;max-width:480px;background:var(--navy);color:#fff;padding:10px 12px calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:8px;z-index:22;box-shadow:0 -6px 14px rgba(28,35,51,.18);opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;}
+  .bulk-bar.open{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
+  .bulk-bar .bulk-count{font-size:11.5px;font-weight:700;white-space:nowrap;flex-shrink:0;max-width:64px;line-height:1.25;}
+  .bulk-bar select{flex:1;min-width:0;border-radius:8px;border:none;padding:8px 9px;font-family:inherit;font-size:12.5px;color:var(--ink);background:#fff;}
+  .btn-bulk-assign{background:var(--amber);color:#fff;border:none;border-radius:var(--radius-pill);padding:9px 13px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+  .btn-bulk-assign:disabled{opacity:.6;}
+  .card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;gap:8px;}
+  .card-date{font-size:12px;color:var(--muted);font-weight:600;}
+  .resi{font-family:ui-monospace,'SF Mono','Roboto Mono',Consolas,monospace;font-size:11.5px;color:var(--navy);background:var(--paper);padding:2px 7px;border-radius:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;}
+  .card-kurir{display:inline-block;font-size:10.5px;font-weight:700;color:var(--navy);background:var(--amber-soft);padding:2px 8px;border-radius:var(--radius-pill);margin-bottom:6px;}
+  .card-name{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+  .card-row{font-size:13px;margin-bottom:2px;line-height:1.4;}
+  .muted{color:var(--muted);}
+  .small{font-size:12px;}
+  .card-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);flex-wrap:wrap;gap:8px;}
+  .cod-amount{font-size:14.5px;font-weight:800;color:var(--navy);}
+  .card-actions{display:flex;gap:6px;flex-wrap:wrap;}
+
+  .btn{border:none;border-radius:var(--radius-pill);padding:7px 13px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;}
+  .btn-success{background:var(--green-soft);color:var(--green);}
+  .btn-ghost{background:var(--paper);color:var(--ink);}
+  .btn-danger{background:var(--rose-soft);color:var(--rose);}
+
+  .empty{text-align:center;padding:50px 20px;color:var(--muted);font-size:13.5px;}
+
+  /* ===== COD TAB ===== */
+  .cod-summary{display:flex;gap:10px;margin-bottom:20px;position:sticky;top:var(--header-h,76px);z-index:8;background:var(--paper);padding:10px 0 12px;box-shadow:0 6px 10px -6px rgba(28,35,51,.12);}
+  .cod-summary .stat-card .num{font-size:14px;}
+  .cod-item{display:flex;justify-content:space-between;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-card);padding:13px 14px;margin-bottom:10px;gap:10px;}
+  .cod-item-right{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
+  .badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:var(--radius-pill);white-space:nowrap;}
+  .badge-todo{background:var(--amber-soft);color:var(--amber);}
+  .badge-done{background:var(--green-soft);color:var(--green);}
+  .kurir-cod-group{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-card);padding:14px;margin-bottom:14px;}
+  .kurir-cod-header{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .kurir-cod-name{font-size:14.5px;font-weight:800;color:var(--navy);}
+  .kurir-cod-total{font-size:14.5px;font-weight:800;color:var(--navy);flex-shrink:0;}
+  .kurir-cod-sub{display:flex;gap:14px;font-size:11.5px;color:var(--muted);margin:4px 0 10px;padding-bottom:10px;border-bottom:1px dashed var(--line);}
+  .kurir-cod-group .cod-item:last-child{margin-bottom:0;}
+
+  /* ===== TAB BAR ===== */
+  .tabbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--surface);border-top:1px solid var(--line);display:flex;padding:8px 6px calc(8px + env(safe-area-inset-bottom));z-index:20;}
+  .tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;border-radius:12px;margin:0 2px;padding:6px 1px;color:var(--muted);font-family:inherit;font-size:10px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .15s ease,color .15s ease;}
+  .tab-btn svg{width:19px;height:19px;}
+  /* highlight menu/tab yang sedang dipilih */
+  .tab-btn.active{color:var(--navy);font-weight:800;background:var(--amber-soft);}
+
+  /* ===== FAB ===== */
+  .fab{position:fixed;bottom:86px;right:max(18px,calc(50% - 240px + 18px));width:52px;height:52px;border-radius:50%;background:var(--amber);color:#fff;border:none;font-size:26px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 14px rgba(199,123,35,.4);z-index:21;}
+  .fab-photo{position:fixed;bottom:150px;right:max(18px,calc(50% - 240px + 18px));width:46px;height:46px;border-radius:50%;background:var(--navy);color:#fff;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 14px rgba(30,42,68,.4);z-index:21;}
+
+  /* ===== MODAL ===== */
+  .modal-overlay{position:fixed;inset:0;background:rgba(28,35,51,.45);display:none;align-items:flex-end;justify-content:center;z-index:30;}
+  .modal-overlay.open{display:flex;}
+  .modal-sheet{background:var(--surface);width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom));max-height:88vh;overflow-y:auto;}
+  .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+  .modal-title{font-size:16px;font-weight:800;color:var(--navy);}
+  .modal-close{background:var(--paper);border:none;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);}
+
+  .field-row{display:flex;gap:8px;align-items:stretch;}
+  .field-row input{flex:1;min-width:0;}
+
+  /* ===== TOAST ===== */
+  .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:11px 20px;border-radius:var(--radius-pill);font-size:13px;font-weight:600;opacity:0;transition:opacity .25s ease,transform .25s ease;z-index:40;pointer-events:none;max-width:90%;text-align:center;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div id="loginScreen" class="login-wrap">
+  <form id="loginForm" class="login-card">
+    <div class="login-icon">
+      <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M26 5L47 16v20L26 47 5 36V16L26 5z" stroke="#C77B23" stroke-width="2.4" stroke-linejoin="round"/>
+        <path d="M5 16l21 11 21-11M26 27v20" stroke="#C77B23" stroke-width="2.4" stroke-linejoin="round"/>
+        <path d="M15.5 10.5l21 11" stroke="#1E2A44" stroke-width="2.4" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h1 class="login-title">Pengiriman Paket</h1>
+    <p class="login-sub">Masuk untuk mengelola pengiriman harian Anda</p>
+    <div class="field">
+      <label for="username">Username</label>
+      <input type="text" id="username" autocomplete="username" required>
+    </div>
+    <div class="field">
+      <label for="password">Password</label>
+      <input type="password" id="password" autocomplete="current-password" required>
+    </div>
+    <button type="submit" class="btn-primary-full" id="loginBtn">Masuk</button>
+    <div class="login-error" id="loginError"></div>
+    <p class="login-hint">Hubungi admin jika Anda belum memiliki akun.</p>
+  </form>
+</div>
+
+<!-- ===== APP SCREEN ===== -->
+<div id="appScreen" class="app-shell" style="display:none;">
+  <header class="app-header" id="appHeader">
+    <div class="app-header-row">
+      <div class="app-header-title">Pengiriman Paket</div>
+      <div class="app-header-actions">
+        <button class="header-icon-btn" id="btnRefreshHeader" onclick="refreshApp()" title="Refresh" aria-label="Refresh">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-2.64-6.36"/><path d="M21 4v6h-6"/></svg>
+        </button>
+        <button class="logout-btn" onclick="logout()" title="Keluar" aria-label="Keluar">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4H6.5A2.5 2.5 0 004 6.5v11A2.5 2.5 0 006.5 20H9"/><path d="M16 16l4-4-4-4"/><path d="M20 12H9"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="app-greeting">Halo, <b id="greetingName">-</b> &#128075;</div>
+  </header>
+
+  <main class="app-content">
+
+    <!-- KURIR / DASHBOARD -->
+    <section id="page-kurir" class="page">
+      <div class="filter-card">
+        <div class="filter-date-row">
+          <label for="filterDateKurir">Tanggal</label>
+          <input type="date" id="filterDateKurir">
+        </div>
+        <div class="filter-kurir-row" id="filterKurirRow">
+          <label for="filterKurirDashboard">Kurir</label>
+          <select id="filterKurirDashboard"><option value="ALL">Semua Kurir</option></select>
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card"><span class="num" id="statTodo">0</span><span class="lbl">To-Do</span></div>
+        <div class="stat-card"><span class="num" id="statTerkirim">0</span><span class="lbl">Terkirim</span></div>
+        <div class="stat-card"><span class="num" id="statOnHold">0</span><span class="lbl">On-Hold</span></div>
+        <div class="stat-card"><span class="num" id="statCod">Rp0</span><span class="lbl">Total COD</span></div>
+      </div>
+      <button class="cta-add" id="ctaAddPengiriman" style="display:none;" onclick="openAddForm()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        Tambah Pengiriman Baru
+      </button>
+      <p class="role-note" id="kurirRoleNote"></p>
+      <button class="cta-add" id="btnKelolaAkun" style="display:none;background:var(--navy);margin-bottom:16px;" onclick="openUserListModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.8-3 3-4.5 5.5-4.5s4.7 1.5 5.5 4.5"/><circle cx="17.5" cy="8.5" r="2.3"/><path d="M15.7 14.7c1.9.4 3.3 1.7 3.9 4.3"/></svg>
+        Kelola Akun Kurir
+      </button>
+
+      <div class="chart-card">
+        <p class="section-title">Distribusi per Kurir</p>
+        <div id="chartKurir"></div>
+      </div>
+    </section>
+
+    <!-- TO-DO -->
+    <section id="page-todo" class="page">
+      <div class="filter-card">
+        <div class="search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input type="text" id="searchTodo" placeholder="Ketik kata kunci pencarian...">
+        </div>
+        <div class="select-toggle-row" id="selectToggleRow" style="display:none;">
+          <button type="button" class="btn-select-toggle" id="btnToggleSelectTodo" onclick="toggleSelectModeTodo()">Pilih Beberapa</button>
+        </div>
+      </div>
+      <p class="section-title">Pengiriman yang perlu diantar</p>
+      <div id="listTodo"></div>
+    </section>
+
+    <!-- TERKIRIM -->
+    <section id="page-terkirim" class="page">
+      <div class="filter-card">
+        <div class="search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input type="text" id="searchTerkirim" placeholder="Ketik kata kunci pencarian...">
+        </div>
+      </div>
+      <p class="section-title">Riwayat pengiriman selesai</p>
+      <div id="listTerkirim"></div>
+    </section>
+
+    <!-- ON-HOLD -->
+    <section id="page-onhold" class="page">
+      <div class="filter-card">
+        <div class="search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input type="text" id="searchOnHold" placeholder="Ketik kata kunci pencarian...">
+        </div>
+      </div>
+      <p class="section-title">Paket yang gagal kirim</p>
+      <div id="listOnHold"></div>
+    </section>
+
+    <!-- COD -->
+    <section id="page-cod" class="page">
+      <div class="cod-summary">
+        <div class="stat-card"><span class="num" id="codTotal">Rp0</span><span class="lbl">Total COD</span></div>
+      </div>
+      <div id="codList"></div>
+    </section>
+
+  </main>
+
+  <nav class="tabbar">
+    <button class="tab-btn" id="tab-kurir" onclick="switchTab('kurir')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><circle cx="12" cy="10" r="2.3"/><path d="M8.5 16.5c.7-1.7 2-2.5 3.5-2.5s2.8.8 3.5 2.5"/></svg>
+      Kurir
+    </button>
+    <button class="tab-btn" id="tab-todo" onclick="switchTab('todo')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3.5h6v2H9z"/><path d="M8.5 11h7M8.5 14.5h7M8.5 18h4"/></svg>
+      To-Do
+    </button>
+    <button class="tab-btn" id="tab-terkirim" onclick="switchTab('terkirim')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 12.2l2.3 2.3 4.7-4.9"/></svg>
+      Terkirim
+    </button>
+    <button class="tab-btn" id="tab-onhold" onclick="switchTab('onhold')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5l3.2 1.9"/></svg>
+      On-Hold
+    </button>
+    <button class="tab-btn" id="tab-cod" onclick="switchTab('cod')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5A2.5 2.5 0 016.5 5h11A2.5 2.5 0 0120 7.5v9a2.5 2.5 0 01-2.5 2.5h-11A2.5 2.5 0 014 16.5v-9z"/><path d="M14.5 12a1.5 1.5 0 103 0 1.5 1.5 0 00-3 0z"/></svg>
+      COD
+    </button>
+  </nav>
+
+  <button class="fab-photo" id="fabImportPhoto" style="display:none;" onclick="openOcrTool()" title="Impor dari Foto" aria-label="Impor dari Foto">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+  </button>
+  <button class="fab" id="fabAdd" style="display:none;" onclick="openAddForm()" title="Tambah Pengiriman" aria-label="Tambah Pengiriman">+</button>
+
+  <!-- BAR TUGASKAN KE KURIR (muncul saat mode "Pilih Beberapa" di To-Do aktif) -->
+  <div class="bulk-bar" id="bulkBar">
+    <span class="bulk-count" id="bulkCount">0 dipilih</span>
+    <select id="bulkKurirSelect"></select>
+    <button type="button" class="btn-bulk-assign" id="btnBulkAssign" onclick="applyBulkAssign()">Tugaskan</button>
+  </div>
+</div>
+
+<!-- ===== MODAL FORM ===== -->
+<div class="modal-overlay" id="formModal">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <span class="modal-title" id="formTitle">Tambah Pengiriman</span>
+      <button class="modal-close" onclick="closeForm()" aria-label="Tutup">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <form id="deliveryForm">
+      <div class="field">
+        <label for="inputTanggal">Tanggal</label>
+        <input type="date" id="inputTanggal" required>
+      </div>
+      <div class="field">
+        <label for="inputKurir">Kurir</label>
+        <select id="inputKurir" required></select>
+        <p class="role-note" id="inputKurirLockNote" style="display:none;">Hanya admin yang dapat mengubah kurir untuk pengiriman ini.</p>
+      </div>
+      <div class="field">
+        <label for="inputResi">No. Resi</label>
+        <input type="text" id="inputResi" placeholder="Contoh: JX881029384MY" required>
+      </div>
+      <div class="field">
+        <label for="inputNama">Nama Penerima <span class="muted small">(opsional)</span></label>
+        <input type="text" id="inputNama" placeholder="Nama lengkap">
+      </div>
+      <div class="field">
+        <label for="inputAlamat">Alamat <span class="muted small">(opsional)</span></label>
+        <input type="text" id="inputAlamat" placeholder="Alamat pengiriman">
+      </div>
+      <div class="field">
+        <label for="inputTelp">No. Telp <span class="muted small">(opsional)</span></label>
+        <input type="tel" id="inputTelp" placeholder="08xxxxxxxxxx">
+      </div>
+      <div class="field">
+        <label for="inputCod">Jumlah COD (Rp) <span class="muted small">(opsional)</span></label>
+        <input type="number" id="inputCod" min="0" placeholder="0">
+      </div>
+      <button type="submit" class="btn-primary-full" id="formSaveBtn">Simpan</button>
+    </form>
+  </div>
+</div>
+
+<!-- ===== MODAL REVIEW (DETAIL, READ-ONLY) ===== -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <span class="modal-title">Detail Pengiriman</span>
+      <button class="modal-close" onclick="closeDetailModal()" aria-label="Tutup">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="field">
+      <label>Status</label>
+      <p class="detail-value" id="detailStatus">-</p>
+    </div>
+    <div class="field">
+      <label>Tanggal</label>
+      <p class="detail-value" id="detailTanggal">-</p>
+    </div>
+    <div class="field">
+      <label>No. Resi</label>
+      <p class="detail-value" id="detailResi">-</p>
+    </div>
+    <div class="field">
+      <label>Nama Penerima</label>
+      <p class="detail-value" id="detailNama">-</p>
+    </div>
+    <div class="field">
+      <label>Alamat</label>
+      <p class="detail-value" id="detailAlamat">-</p>
+    </div>
+    <div class="field">
+      <label>No. Telp</label>
+      <p class="detail-value" id="detailTelp">-</p>
+    </div>
+    <div class="field">
+      <label>Jumlah COD</label>
+      <p class="detail-value" id="detailCod">-</p>
+    </div>
+    <div class="field">
+      <label>Kurir</label>
+      <p class="detail-value" id="detailKurir">-</p>
+    </div>
+    <button type="button" class="btn-primary-full" id="detailEditBtn" onclick="editFromDetail()">Ubah Data Ini</button>
+  </div>
+</div>
+
+<!-- ===== MODAL DAFTAR AKUN ===== -->
+<div class="modal-overlay" id="userListModal">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <span class="modal-title">Kelola Akun Kurir</span>
+      <button class="modal-close" onclick="closeUserListModal()" aria-label="Tutup">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <button class="cta-add" onclick="openAddUserForm()" style="margin-bottom:14px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      Tambah Akun Baru
+    </button>
+    <div id="userListContainer"><p class="empty">Memuat data...</p></div>
+  </div>
+</div>
+
+<!-- ===== MODAL FORM AKUN ===== -->
+<div class="modal-overlay" id="userFormModal">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <span class="modal-title" id="userFormTitle">Tambah Akun</span>
+      <button class="modal-close" onclick="closeUserForm()" aria-label="Tutup">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <form id="userForm">
+      <div class="field">
+        <label for="inputUserUsername">Username</label>
+        <input type="text" id="inputUserUsername" autocomplete="off" required>
+      </div>
+      <div class="field">
+        <label for="inputUserPassword">Password</label>
+        <input type="text" id="inputUserPassword" autocomplete="off" placeholder="Min. 4 karakter">
+        <p class="small muted" id="userPasswordHint" style="margin-top:5px;"></p>
+      </div>
+      <div class="field">
+        <label for="inputUserNamaKurir">Nama Kurir</label>
+        <input type="text" id="inputUserNamaKurir" placeholder="Nama tampilan" required>
+      </div>
+      <div class="field">
+        <label for="inputUserRole">Role</label>
+        <select id="inputUserRole">
+          <option value="kurir">Kurir</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <button type="submit" class="btn-primary-full" id="userFormSaveBtn">Simpan</button>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  /* =====================================================================
+   *  SHIM: google.script.run -> fetch() REST (untuk app hybrid Capacitor)
+   * =====================================================================
+   *  Index.html ini aslinya jalan di iframe Apps Script, di mana
+   *  `google.script.run` disediakan otomatis oleh Google. Di app hybrid
+   *  (di luar Apps Script), objek itu tidak ada sama sekali — jadi kita
+   *  buat tiruannya di sini, supaya SEMUA kode di bawah (yang menulis
+   *  google.script.run.withSuccessHandler(...).withFailureHandler(...).
+   *  namaFungsi(args)) tetap jalan TANPA DIUBAH SATU BARIS PUN. Di balik
+   *  layar, panggilan itu sekarang dikirim lewat fetch() ke endpoint
+   *  Rpc.gs (doPost) di project Apps Script yang sama.
+   *
+   *  WAJIB DIISI sebelum build: URL Web App project Apps Script kamu
+   *  (yang sudah ditambah file Rpc.gs, lihat gas-addon/Rpc.gs), diakhiri
+   *  "/exec".
+   * ===================================================================== */
+  var GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxqXDm9HNnDkRjxaxXNJxGa866puhby_cHL2_dxHoC5FHPhXXTS0HNn9tK_SRJmSzpYoA/exec';
+
+  function callGas(fnName, args) {
+    return fetch(GAS_ENDPOINT, {
+      method: 'POST',
+      // Content-Type text/plain sengaja dipakai (bukan application/json)
+      // supaya browser/WebView tidak mengirim preflight OPTIONS dulu -
+      // Apps Script tidak bisa menjawab preflight itu. Isinya tetap JSON
+      // valid, Rpc.gs tetap mem-parsingnya sebagai JSON di sisi server.
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ fn: fnName, args: args })
+    }).then(function (resp) {
+      if (!resp.ok) throw new Error('HTTP ' + resp.status + ' dari server.');
+      return resp.json();
+    }).then(function (json) {
+      if (!json || json.ok !== true) {
+        throw new Error((json && json.message) || 'Terjadi kesalahan pada server.');
+      }
+      return json.result;
+    });
+  }
+
+  // Tiruan chainable google.script.run.withSuccessHandler(cb).withFailureHandler(cb).fn(args)
+  function makeGasRunner(successHandler, failureHandler) {
+    var handlers = {
+      withSuccessHandler: function (cb) { return makeGasRunner(cb, failureHandler); },
+      withFailureHandler: function (cb) { return makeGasRunner(successHandler, cb); }
+    };
+    return new Proxy(handlers, {
+      get: function (target, prop) {
+        if (prop in target) return target[prop];
+        if (typeof prop !== 'string') return undefined;
+        return function () {
+          var args = Array.prototype.slice.call(arguments);
+          callGas(prop, args).then(function (result) {
+            if (successHandler) successHandler(result);
+          }).catch(function (err) {
+            if (failureHandler) failureHandler(err);
+            else console.error('Panggilan GAS gagal (' + prop + '):', err);
+          });
+        };
+      }
+    });
+  }
+
+  window.google = window.google || {};
+  window.google.script = window.google.script || {};
+  window.google.script.run = makeGasRunner(null, null);
+  /* =====================================================================
+   *  AKHIR SHIM — kode asli Index.html berlanjut apa adanya di bawah ini.
+   * ===================================================================== */
+
+  var currentUser = null;
+
+  // Ukur tinggi header aktual (bisa beda-beda tergantung device/font) dan
+  // simpan sebagai CSS variable, supaya .filter-card nempel pas di
+  // bawahnya (sticky) dan tidak ketutup saat halaman di-scroll.
+  function updateHeaderHeight(){
+    var header = document.getElementById('appHeader');
+    if(header){
+      document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px');
+    }
+  }
+  window.addEventListener('resize', updateHeaderHeight);
+  window.addEventListener('load', updateHeaderHeight);
+  updateHeaderHeight();
+  var activeTab = 'kurir';
+  var rawListTodo = [];
+  var rawListTerkirim = [];
+  var rawListOnHold = [];
+  var editingId = null;
+  function isAdmin(){ return !!currentUser && String(currentUser.role || '').trim().toLowerCase() === 'admin'; }
+
+  /* ---------- LOGIN ---------- */
+  document.getElementById('loginForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var username = document.getElementById('username').value.trim();
+    var password = document.getElementById('password').value;
+    if(!username || !password) return;
+    setLoginLoading(true);
+    showLoginError('');
+    // Dulu: login() lalu (setelah sukses) masih 2x panggilan server lagi
+    // (getCourierList + getDeliveries lewat loadDashboard) sebelum layar
+    // Kurir siap ditampilkan — total 3x bolak-balik ke server, itulah
+    // sumber utama lag/lemot yang terasa di login pertama.
+    // Sekarang: loginAndBootstrap() mengembalikan semuanya SEKALIGUS
+    // dalam 1x panggilan.
+    google.script.run.withSuccessHandler(onLoginResult).withFailureHandler(onLoginError).loginAndBootstrap(username, password);
+  });
+
+  function onLoginResult(res){
+    setLoginLoading(false);
+    if(res && res.success){
+      currentUser = res;
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('appScreen').style.display = 'block';
+      document.getElementById('greetingName').textContent = res.namaKurir;
+      document.getElementById('kurirRoleNote').textContent = (isAdmin())
+        ? 'Anda masuk sebagai Administrator - statistik mencakup semua kurir.' : '';
+      document.getElementById('btnKelolaAkun').style.display = isAdmin() ? 'flex' : 'none';
+      if(!isAdmin()){
+        // Akun kurir: elemen tombol tambah pengiriman & scanner foto
+        // dibuang total dari DOM (bukan cuma disembunyikan pakai CSS),
+        // supaya tidak bisa dimunculkan lagi lewat inspect element dsb.
+        ['ctaAddPengiriman','fabAdd','fabImportPhoto'].forEach(function(id){
+          var el = document.getElementById(id);
+          if(el) el.remove();
+        });
+      }
+      updateHeaderHeight();
+      document.getElementById('filterDateKurir').value = todayInputDate();
+
+      // Data kurir & data dashboard sudah ikut di respons di atas —
+      // langsung dipakai di sini tanpa memanggil server lagi.
+      courierList = res.courierList || [];
+      rawListDashboard = res.deliveries || [];
+      switchTab('kurir', true); // true = jangan fetch ulang, data sudah ada
+      populateDashboardKurirFilter();
+      renderDashboardStats();
+    } else {
+      showLoginError((res && res.message) || 'Username atau password salah.');
+    }
+  }
+  function onLoginError(err){ setLoginLoading(false); showLoginError('Terjadi kesalahan: ' + err.message); }
+
+  var courierList = [];
+  function loadCourierList(){
+    google.script.run
+      .withSuccessHandler(function(names){
+        courierList = names || [];
+        populateDashboardKurirFilter();
+      })
+      .withFailureHandler(function(){ courierList = []; })
+      .getCourierList();
+  }
+
+  // Dropdown "Kurir" di tab Dashboard. Hanya admin yang melihatnya —
+  // akun kurir hanya pernah melihat datanya sendiri, jadi filter ini
+  // tidak relevan untuk mereka.
+  function populateDashboardKurirFilter(){
+    var row = document.getElementById('filterKurirRow');
+    var select = document.getElementById('filterKurirDashboard');
+    if(!select || !row) return;
+    if(!isAdmin()){
+      row.style.display = 'none';
+      return;
+    }
+    row.style.display = 'flex';
+    var current = select.value || 'ALL';
+    select.innerHTML = '<option value="ALL">Semua Kurir</option>' + courierList.map(function(name){
+      return '<option value="' + escapeHtml(name) + '">' + escapeHtml(name) + '</option>';
+    }).join('');
+    select.value = courierList.includes(current) ? current : 'ALL';
+  }
+
+  function populateKurirSelect(selectedValue){
+    var select = document.getElementById('inputKurir');
+    var names = courierList.length ? courierList : [currentUser.namaKurir];
+    select.innerHTML = names.map(function(name){
+      return '<option value="' + escapeHtml(name) + '">' + escapeHtml(name) + '</option>';
+    }).join('');
+    if(isAdmin()){
+      // Admin bebas memilih kurir siapa pun untuk pengiriman ini.
+      select.disabled = false;
+      select.value = selectedValue || currentUser.namaKurir;
+      if (!select.value && names.length) select.selectedIndex = 0;
+      document.getElementById('inputKurirLockNote').style.display = 'none';
+    } else {
+      // Akun kurir (non-admin) tidak dapat mengubah opsi kurir —
+      // dropdown dikunci ke nama dirinya sendiri.
+      if(!names.includes(currentUser.namaKurir)){
+        select.innerHTML += '<option value="' + escapeHtml(currentUser.namaKurir) + '">' + escapeHtml(currentUser.namaKurir) + '</option>';
+      }
+      select.value = currentUser.namaKurir;
+      select.disabled = true;
+      document.getElementById('inputKurirLockNote').style.display = 'block';
+    }
+  }
+  function setLoginLoading(loading){
+    var btn = document.getElementById('loginBtn');
+    btn.disabled = loading; btn.textContent = loading ? 'Memproses...' : 'Masuk';
+  }
+  function showLoginError(msg){ document.getElementById('loginError').textContent = msg; }
+  function logout(){
+    currentUser = null;
+    document.getElementById('appScreen').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('loginForm').reset();
+    showLoginError('');
+  }
+
+  /* ---------- NAVIGASI TAB ---------- */
+  // skipLoad=true dipakai sekali saja tepat setelah login: data tab
+  // Kurir sudah ikut datang dari loginAndBootstrap() jadi di sini
+  // cukup tampilkan tab-nya saja, tanpa minta ulang ke server.
+  function switchTab(tab, skipLoad){
+    activeTab = tab;
+    ['kurir','todo','terkirim','onhold','cod'].forEach(function(t){
+      document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+      document.getElementById('page-' + t).classList.toggle('active', t === tab);
+    });
+    // Untuk akun kurir, elemen fabAdd/fabImportPhoto sudah dibuang dari
+    // DOM sejak login (lihat onLoginResult) — cek elemen ada dulu
+    // supaya tidak error saat switchTab dipanggil di sesi kurir.
+    // Keluar dari mode "Pilih Beberapa" setiap kali pindah dari tab To-Do,
+    // supaya bar Tugaskan ke Kurir tidak tertinggal aktif di tab lain.
+    if(tab !== 'todo') exitSelectModeTodo();
+    var elSelectToggleRow = document.getElementById('selectToggleRow');
+    if(elSelectToggleRow) elSelectToggleRow.style.display = (isAdmin() && tab === 'todo') ? 'flex' : 'none';
+
+    var showFabs = isAdmin() && (tab === 'todo' || tab === 'kurir') && !selectModeTodo;
+    var elFabAdd = document.getElementById('fabAdd');
+    var elFabPhoto = document.getElementById('fabImportPhoto');
+    if(elFabAdd) elFabAdd.style.display = showFabs ? 'flex' : 'none';
+    if(elFabPhoto) elFabPhoto.style.display = showFabs ? 'flex' : 'none';
+    if(skipLoad) return;
+    if(tab === 'kurir') loadDashboard();
+    if(tab === 'todo') loadDeliveries('To-Do');
+    if(tab === 'terkirim') loadDeliveries('Terkirim');
+    if(tab === 'onhold') loadDeliveries('On-Hold');
+    if(tab === 'cod') loadCOD();
+  }
+  function refreshCurrentTab(){ switchTab(activeTab); }
+
+  // Tombol refresh di header (di samping tombol Keluar): memuat ulang
+  // data tab yang sedang dibuka, dari mana saja pengguna berada.
+  function refreshApp(){
+    var btn = document.getElementById('btnRefreshHeader');
+    btn.classList.add('spinning');
+    refreshCurrentTab();
+    setTimeout(function(){ btn.classList.remove('spinning'); }, 650);
+  }
+
+  /* ---------- DASHBOARD ---------- */
+  var rawListDashboard = [];
+
+  function loadDashboard(isManualRefresh){
+    populateDashboardKurirFilter();
+    var kurirFetch = isAdmin() ? 'ALL' : currentUser.namaKurir;
+    document.getElementById('chartKurir').innerHTML = '<p class="empty">Memuat data...</p>';
+    google.script.run
+      .withSuccessHandler(function(data){
+        rawListDashboard = data || [];
+        renderDashboardStats();
+        if(isManualRefresh) showToast('Data diperbarui');
+      })
+      .withFailureHandler(function(err){
+        showToast('Gagal memuat statistik: ' + err.message);
+      })
+      .getDeliveries(null, kurirFetch); // status null = semua status (To-Do/Terkirim/On-Hold)
+  }
+
+  // Hitung ulang statistik + grafik distribusi dari data yang sudah
+  // dimuat (rawListDashboard), disaring berdasarkan tanggal & kurir
+  // yang dipilih — tanpa perlu panggil server lagi tiap ganti filter.
+  function renderDashboardStats(){
+    var dateVal = document.getElementById('filterDateKurir').value;
+    var kurirVal = isAdmin() ? document.getElementById('filterKurirDashboard').value : currentUser.namaKurir;
+
+    var filtered = rawListDashboard.filter(function(d){
+      var matchDate = !dateVal || toInputDate(d.tanggal) === dateVal;
+      var matchKurir = !kurirVal || kurirVal === 'ALL' || d.kurir === kurirVal;
+      return matchDate && matchKurir;
+    });
+
+    var todo = 0, terkirim = 0, onHold = 0, codTotal = 0;
+    var byKurirCount = {}, kurirOrder = [];
+    filtered.forEach(function(d){
+      if(d.status === 'To-Do') todo++;
+      if(d.status === 'On-Hold') onHold++;
+      if(d.status === 'Terkirim'){
+        terkirim++;
+        codTotal += Number(d.jumlahCod) || 0;
+        var kName = d.kurir ? String(d.kurir) : '(Tanpa Nama)';
+        if(!(kName in byKurirCount)){ byKurirCount[kName] = 0; kurirOrder.push(kName); }
+        byKurirCount[kName]++;
+      }
+    });
+
+    document.getElementById('statTodo').textContent = todo;
+    document.getElementById('statTerkirim').textContent = terkirim;
+    document.getElementById('statOnHold').textContent = onHold;
+    document.getElementById('statCod').textContent = formatRupiah(codTotal);
+
+    var container = document.getElementById('chartKurir');
+    var breakdown = kurirOrder
+      .map(function(name){ return { kurir: name, count: byKurirCount[name] }; })
+      .sort(function(a, b){ return b.count - a.count; });
+
+    if(!breakdown.length){
+      container.innerHTML = '<p class="empty">Belum ada data pengiriman' + (dateVal || (kurirVal && kurirVal !== 'ALL') ? ' yang cocok dengan filter ini.' : '.') + '</p>';
+      return;
+    }
+    renderDonutChart('chartKurir', breakdown.map(function(item, idx){
+      return { label: item.kurir, value: item.count, color: DONUT_COLORS[idx % DONUT_COLORS.length] };
+    }));
+  }
+
+  document.getElementById('filterDateKurir').addEventListener('change', renderDashboardStats);
+  document.getElementById('filterKurirDashboard').addEventListener('change', renderDashboardStats);
+
+  // Filter tanggal & kurir di tab Kurir (dashboard) dipakai bersama —
+  // tab To-Do, Terkirim, On-Hold, dan COD ikut menampilkan data sesuai
+  // tanggal & kurir yang sedang dipilih di sini (dibaca ulang setiap
+  // tab tersebut dibuka/direfresh, jadi selalu ikut filter terbaru).
+  function getActiveFilterDate(){
+    var el = document.getElementById('filterDateKurir');
+    return el ? el.value : '';
+  }
+  function getActiveFilterKurir(){
+    if(!isAdmin()) return currentUser.namaKurir;
+    var el = document.getElementById('filterKurirDashboard');
+    return el ? (el.value || 'ALL') : 'ALL';
+  }
+
+  /* ---------- TO-DO / TERKIRIM / ON-HOLD ---------- */
+  var STATUS_SUFFIX = { 'To-Do': 'Todo', 'Terkirim': 'Terkirim', 'On-Hold': 'OnHold' };
+  function getRawList_(status){
+    if(status === 'To-Do') return rawListTodo;
+    if(status === 'On-Hold') return rawListOnHold;
+    return rawListTerkirim;
+  }
+  function setRawList_(status, data){
+    if(status === 'To-Do'){ rawListTodo = data; }
+    else if(status === 'On-Hold'){ rawListOnHold = data; }
+    else { rawListTerkirim = data; }
+  }
+
+  function loadDeliveries(status){
+    var suffix = STATUS_SUFFIX[status];
+    var container = document.getElementById('list' + suffix);
+    container.innerHTML = '<p class="empty">Memuat data...</p>';
+    var kurirFilter = getActiveFilterKurir();
+    google.script.run
+      .withSuccessHandler(function(data){
+        setRawList_(status, data);
+        applyFilter(status);
+      })
+      .withFailureHandler(function(){ container.innerHTML = '<p class="empty">Gagal memuat data.</p>'; })
+      .getDeliveries(status, kurirFilter);
+  }
+
+  function applyFilter(status){
+    var suffix = STATUS_SUFFIX[status];
+    var searchVal = document.getElementById('search' + suffix).value.trim().toLowerCase();
+    var dateVal = getActiveFilterDate();
+    var source = getRawList_(status);
+    var container = document.getElementById('list' + suffix);
+    var filterActive = !!searchVal || !!dateVal;
+
+    var filtered = source.filter(function(d){
+      var matchSearch = !searchVal ||
+        String(d.noResi || '').toLowerCase().indexOf(searchVal) !== -1 ||
+        String(d.nama || '').toLowerCase().indexOf(searchVal) !== -1 ||
+        String(d.alamat || '').toLowerCase().indexOf(searchVal) !== -1;
+      var matchDate = !dateVal || toInputDate(d.tanggal) === dateVal;
+      return matchSearch && matchDate;
+    });
+
+    renderDeliveryList(container, filtered, status, filterActive);
+  }
+
+  function findLoadedItem(id){
+    var found = rawListTodo.find(function(d){ return d.id === id; });
+    if (found) return found;
+    found = rawListTerkirim.find(function(d){ return d.id === id; });
+    if (found) return found;
+    return rawListOnHold.find(function(d){ return d.id === id; });
+  }
+
+  ['Todo', 'Terkirim', 'OnHold'].forEach(function(suffix){
+    var status = suffix === 'Todo' ? 'To-Do' : (suffix === 'OnHold' ? 'On-Hold' : 'Terkirim');
+    document.getElementById('search' + suffix).addEventListener('input', function(){ applyFilter(status); });
+  });
+
+  function renderDeliveryList(container, data, status, filterActive){
+    if(!data.length){
+      var emptyMsg = filterActive
+        ? 'Tidak ada hasil yang cocok dengan pencarian/filter.'
+        : (status === 'To-Do' ? 'Belum ada pengiriman yang perlu diantar.'
+          : status === 'On-Hold' ? 'Belum ada paket yang gagal kirim.'
+          : 'Belum ada riwayat pengiriman selesai.');
+      container.innerHTML = '<div class="empty">' + emptyMsg + '</div>';
+      return;
+    }
+    var cardClass = status === 'To-Do' ? 'todo' : (status === 'On-Hold' ? 'onhold' : 'done');
+    var isTodo = status === 'To-Do';
+    // Saat mode "Pilih Beberapa" aktif di tab To-Do, tombol aksi per-kartu
+    // disembunyikan dan diganti checkbox — aksinya lalu dilakukan sekaligus
+    // lewat bar "Tugaskan ke Kurir" di bawah.
+    var showCheck = isTodo && selectModeTodo;
+    container.innerHTML = data.map(function(d){
+      var actions;
+      if(status === 'To-Do'){
+        // Kartu To-Do tidak lagi membuka modal preview saat diklik (lihat
+        // openAttr di bawah), jadi tombol aksi di sini tidak perlu lagi
+        // event.stopPropagation() - tidak ada lagi klik di induk kartu
+        // yang perlu dicegah menyebar.
+        actions = showCheck ? '' :
+          '<button class="btn btn-success" onclick="markDelivered(\'' + d.id + '\')">Tandai Terkirim</button>' +
+          '<button class="btn btn-danger" onclick="markOnHold(\'' + d.id + '\')">Tandai Gagal</button>' +
+          '<button class="btn btn-ghost" onclick="openEditForm(\'' + d.id + '\')">Ubah</button>' +
+          '<button class="btn btn-danger" onclick="confirmDelete(\'' + d.id + '\')">Hapus</button>';
+      } else if(status === 'On-Hold'){
+        actions = '<button class="btn btn-success" onclick="event.stopPropagation(); markDelivered(\'' + d.id + '\')">Tandai Terkirim</button>' +
+          '<button class="btn btn-ghost" onclick="event.stopPropagation(); revertToTodo(\'' + d.id + '\')">Coba Lagi</button>' +
+          '<button class="btn btn-ghost" onclick="event.stopPropagation(); openEditForm(\'' + d.id + '\')">Ubah</button>' +
+          '<button class="btn btn-danger" onclick="event.stopPropagation(); confirmDelete(\'' + d.id + '\')">Hapus</button>';
+      } else {
+        actions = '<button class="btn btn-ghost" onclick="event.stopPropagation(); revertToTodo(\'' + d.id + '\')">Kembalikan</button>' +
+          '<button class="btn btn-ghost" onclick="event.stopPropagation(); openEditForm(\'' + d.id + '\')">Ubah</button>' +
+          '<button class="btn btn-danger" onclick="event.stopPropagation(); confirmDelete(\'' + d.id + '\')">Hapus</button>';
+      }
+      // Kartu Terkirim & On-Hold masih bisa diklik untuk membuka modal
+      // detail (preview). Kartu To-Do sudah menampilkan semua info penting
+      // (termasuk nama kurir) langsung di kartu, jadi modal preview itu
+      // tidak dipasang lagi di kartu To-Do karena sudah tidak dibutuhkan.
+      var openAttr = isTodo ? '' : ' onclick="openDetailModal(\'' + d.id + '\')"';
+      var checkedAttr = selectedTodoIds[d.id] ? ' checked' : '';
+      var checkboxHtml = showCheck
+        ? '<label class="card-select-row">' +
+            '<input type="checkbox"' + checkedAttr + ' onchange="toggleCardCheck(\'' + d.id + '\', this.checked, this)">' +
+            '<span>Pilih untuk ditugaskan ke kurir</span>' +
+          '</label>'
+        : '';
+      var cardClasses = 'card status-' + cardClass + (showCheck && selectedTodoIds[d.id] ? ' selected' : '');
+      return '<div class="' + cardClasses + '"' + openAttr + '>' +
+          checkboxHtml +
+          '<div class="card-top"><span class="card-date">' + escapeHtml(d.tanggal) + '</span><span class="resi">' + escapeHtml(d.noResi) + '</span></div>' +
+          (isTodo && d.kurir ? '<span class="card-kurir">' + escapeHtml(d.kurir) + '</span>' : '') +
+          '<div class="card-name">' + escapeHtml(d.nama || '(Tanpa nama)') + '</div>' +
+          (d.alamat ? '<div class="card-row muted">' + escapeHtml(d.alamat) + '</div>' : '') +
+          (d.noTelp ? '<div class="card-row muted">' + escapeHtml(d.noTelp) + '</div>' : '') +
+          '<div class="card-bottom">' +
+            '<span class="cod-amount">' + (d.jumlahCod > 0 ? formatRupiah(d.jumlahCod) : 'Non-COD') + '</span>' +
+            (actions ? '<div class="card-actions">' + actions + '</div>' : '') +
+          '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  /* ---------- PILIH BEBERAPA (BULK ASSIGN KURIR) DI TO-DO ---------- */
+  var selectModeTodo = false;
+  var selectedTodoIds = {};
+
+  function toggleSelectModeTodo(){
+    selectModeTodo = !selectModeTodo;
+    selectedTodoIds = {};
+    var btn = document.getElementById('btnToggleSelectTodo');
+    if(btn){
+      btn.textContent = selectModeTodo ? 'Batal Pilih' : 'Pilih Beberapa';
+      btn.classList.toggle('active', selectModeTodo);
+    }
+    var elFabAdd = document.getElementById('fabAdd');
+    var elFabPhoto = document.getElementById('fabImportPhoto');
+    var showFabs = isAdmin() && activeTab === 'todo' && !selectModeTodo;
+    if(elFabAdd) elFabAdd.style.display = showFabs ? 'flex' : 'none';
+    if(elFabPhoto) elFabPhoto.style.display = showFabs ? 'flex' : 'none';
+    if(selectModeTodo) populateBulkKurirSelect();
+    updateBulkBar();
+    applyFilter('To-Do'); // render ulang supaya checkbox muncul/hilang di tiap kartu
+  }
+
+  // Dipanggil saat pindah tab dari To-Do, supaya bar Tugaskan ke Kurir
+  // tidak tertinggal aktif kalau pengguna belum sempat menekan Batal.
+  function exitSelectModeTodo(){
+    if(!selectModeTodo) return;
+    selectModeTodo = false;
+    selectedTodoIds = {};
+    var btn = document.getElementById('btnToggleSelectTodo');
+    if(btn){ btn.textContent = 'Pilih Beberapa'; btn.classList.remove('active'); }
+    updateBulkBar();
+  }
+
+  function toggleCardCheck(id, checked, checkboxEl){
+    if(checked) selectedTodoIds[id] = true; else delete selectedTodoIds[id];
+    var card = checkboxEl && checkboxEl.closest('.card');
+    if(card) card.classList.toggle('selected', checked);
+    updateBulkBar();
+  }
+
+  function updateBulkBar(){
+    var bar = document.getElementById('bulkBar');
+    var count = Object.keys(selectedTodoIds).length;
+    bar.classList.toggle('open', selectModeTodo && count > 0);
+    document.getElementById('bulkCount').textContent = count + ' dipilih';
+  }
+
+  function populateBulkKurirSelect(){
+    var select = document.getElementById('bulkKurirSelect');
+    var names = courierList.length ? courierList : [currentUser.namaKurir];
+    select.innerHTML = names.map(function(name){
+      return '<option value="' + escapeHtml(name) + '">' + escapeHtml(name) + '</option>';
+    }).join('');
+  }
+
+  function applyBulkAssign(){
+    var ids = Object.keys(selectedTodoIds);
+    if(!ids.length){ showToast('Pilih minimal satu kartu dulu'); return; }
+    var kurir = document.getElementById('bulkKurirSelect').value;
+    if(!kurir){ showToast('Pilih kurir tujuan dulu'); return; }
+    var btn = document.getElementById('btnBulkAssign');
+    btn.disabled = true;
+    google.script.run
+      .withSuccessHandler(function(res){
+        btn.disabled = false;
+        if(res && res.success === false){ showToast(res.message || 'Gagal menugaskan kurir'); return; }
+        showToast((res.count || ids.length) + ' paket ditugaskan ke ' + kurir);
+        exitSelectModeTodo();
+        refreshCurrentTab();
+      })
+      .withFailureHandler(function(err){
+        btn.disabled = false;
+        showToast('Gagal menugaskan kurir: ' + err.message);
+      })
+      .bulkAssignKurir(currentUser.username, ids, kurir);
+  }
+
+  function markDelivered(id){
+    google.script.run
+      .withSuccessHandler(function(){ showToast('Ditandai sebagai terkirim'); refreshCurrentTab(); })
+      .withFailureHandler(function(){ showToast('Gagal memperbarui status'); })
+      .updateDeliveryStatus(id, 'Terkirim');
+  }
+  function markOnHold(id){
+    google.script.run
+      .withSuccessHandler(function(){ showToast('Ditandai gagal kirim (On-Hold)'); refreshCurrentTab(); })
+      .withFailureHandler(function(){ showToast('Gagal memperbarui status'); })
+      .updateDeliveryStatus(id, 'On-Hold');
+  }
+  function revertToTodo(id){
+    google.script.run
+      .withSuccessHandler(function(){ showToast('Dikembalikan ke To-Do'); refreshCurrentTab(); })
+      .withFailureHandler(function(){ showToast('Gagal memperbarui status'); })
+      .updateDeliveryStatus(id, 'To-Do');
+  }
+  function confirmDelete(id){
+    if(!confirm('Hapus data pengiriman ini?')) return;
+    google.script.run
+      .withSuccessHandler(function(){ showToast('Data dihapus'); refreshCurrentTab(); })
+      .withFailureHandler(function(){ showToast('Gagal menghapus data'); })
+      .deleteDelivery(id);
+  }
+
+  /* ---------- COD ---------- */
+  function loadCOD(){
+    var container = document.getElementById('codList');
+    container.innerHTML = '<p class="empty">Memuat data...</p>';
+    var kurirFilter = getActiveFilterKurir();
+    google.script.run.withSuccessHandler(function(summary){
+      renderCODSummary(summary);
+    }).withFailureHandler(function(err){
+      container.innerHTML = '<p class="empty">Gagal memuat data.</p>';
+      showToast('Gagal memuat data COD: ' + err.message);
+    }).getCODSummary(kurirFilter);
+  }
+
+  // Terapkan filter tanggal (dari tab Kurir/dashboard) ke ringkasan COD
+  // yang baru diambil dari server, lalu hitung ulang total per kurir
+  // & total keseluruhan supaya konsisten dengan data yang ditampilkan.
+  // Paket On-Hold tetap ditampilkan di daftar tapi tidak dihitung ke
+  // total, sama seperti logika di server (lihat getCODSummary di Code.gs).
+  function renderCODSummary(summary){
+    var container = document.getElementById('codList');
+    var dateVal = getActiveFilterDate();
+
+    var groups = (summary.byKurir || []).map(function(group){
+      var list = !dateVal ? group.list : group.list.filter(function(d){ return toInputDate(d.tanggal) === dateVal; });
+      var total = 0, totalTerkumpul = 0, totalPending = 0;
+      list.forEach(function(d){
+        var cod = Number(d.jumlahCod) || 0;
+        if(d.status === 'On-Hold') return;
+        total += cod;
+        if(d.status === 'Terkirim'){ totalTerkumpul += cod; } else { totalPending += cod; }
+      });
+      return { kurir: group.kurir, list: list, total: total, totalTerkumpul: totalTerkumpul, totalPending: totalPending };
+    }).filter(function(group){ return group.list.length > 0; });
+
+    var grandTotal = groups.reduce(function(sum, g){ return sum + g.total; }, 0);
+    document.getElementById('codTotal').textContent = formatRupiah(grandTotal);
+
+    if(!groups.length){
+      container.innerHTML = '<div class="empty">Belum ada transaksi COD' + (dateVal ? ' pada tanggal ini' : '') + '.</div>';
+      return;
+    }
+    container.innerHTML = groups.map(renderKurirCodGroup).join('');
+  }
+
+  function renderKurirCodGroup(group){
+    var items = group.list.map(function(d){
+      var badgeClass = d.status === 'Terkirim' ? 'badge-done' : 'badge-todo';
+      return '<div class="cod-item">' +
+          '<div class="cod-item-info">' +
+            '<div class="card-name">' + escapeHtml(d.nama || '(Tanpa nama)') + '</div>' +
+            '<div class="muted small">No. Resi ' + escapeHtml(d.noResi) + '</div>' +
+            '<div class="muted small">' + escapeHtml(d.tanggal) + '</div>' +
+          '</div>' +
+          '<div class="cod-item-right">' +
+            '<span class="cod-amount">' + formatRupiah(d.jumlahCod) + '</span>' +
+            '<span class="badge ' + badgeClass + '">' + d.status + '</span>' +
+          '</div>' +
+        '</div>';
+    }).join('');
+
+    return '<div class="kurir-cod-group">' +
+        '<div class="kurir-cod-header">' +
+          '<span class="kurir-cod-name">' + escapeHtml(group.kurir) + '</span>' +
+          '<span class="kurir-cod-total">' + formatRupiah(group.total) + '</span>' +
+        '</div>' +
+        '<div class="kurir-cod-sub">' +
+          '<span>Aktual COD ' + formatRupiah(group.totalTerkumpul) + '</span>' +
+        '</div>' +
+        items +
+      '</div>';
+  }
+
+  /* ---------- FORM TAMBAH / UBAH ---------- */
+  function openAddForm(){
+    editingId = null;
+    document.getElementById('formTitle').textContent = 'Tambah Pengiriman';
+    document.getElementById('deliveryForm').reset();
+    document.getElementById('inputTanggal').valueAsDate = new Date();
+    populateKurirSelect(currentUser.namaKurir);
+    document.getElementById('formModal').classList.add('open');
+  }
+  function openEditForm(id){
+    var item = findLoadedItem(id);
+    if(!item) return;
+    editingId = id;
+    document.getElementById('formTitle').textContent = 'Ubah Pengiriman';
+    document.getElementById('inputTanggal').value = toInputDate(item.tanggal);
+    populateKurirSelect(item.kurir);
+    document.getElementById('inputResi').value = item.noResi;
+    document.getElementById('inputNama').value = item.nama;
+    document.getElementById('inputAlamat').value = item.alamat;
+    document.getElementById('inputTelp').value = item.noTelp;
+    document.getElementById('inputCod').value = item.jumlahCod;
+    document.getElementById('formModal').classList.add('open');
+  }
+  function closeForm(){ document.getElementById('formModal').classList.remove('open'); }
+  document.getElementById('formModal').addEventListener('click', function(e){ if(e.target === this) closeForm(); });
+
+  /* ---------- MODAL REVIEW (DETAIL, READ-ONLY) ----------
+     Dibuka saat kartu pengiriman diklik di bagian mana pun (kecuali
+     tombol aksi, yang di-stopPropagation supaya tidak ikut membuka
+     review ini). */
+  var detailId = null;
+  var STATUS_LABEL = { 'To-Do': 'Perlu Diantar (To-Do)', 'Terkirim': 'Terkirim', 'On-Hold': 'Gagal Kirim (On-Hold)' };
+
+  function openDetailModal(id){
+    var item = findLoadedItem(id);
+    if(!item) return;
+    detailId = id;
+    document.getElementById('detailStatus').textContent = STATUS_LABEL[item.status] || item.status || '-';
+    document.getElementById('detailTanggal').textContent = item.tanggal || '-';
+    document.getElementById('detailResi').textContent = item.noResi || '-';
+    document.getElementById('detailNama').textContent = item.nama || '(Tanpa nama)';
+    document.getElementById('detailAlamat').textContent = item.alamat || '-';
+    document.getElementById('detailTelp').textContent = item.noTelp || '-';
+    document.getElementById('detailCod').textContent = item.jumlahCod > 0 ? formatRupiah(item.jumlahCod) : 'Non-COD';
+    document.getElementById('detailKurir').textContent = item.kurir || '-';
+    document.getElementById('detailModal').classList.add('open');
+  }
+  function closeDetailModal(){ document.getElementById('detailModal').classList.remove('open'); }
+  document.getElementById('detailModal').addEventListener('click', function(e){ if(e.target === this) closeDetailModal(); });
+  function editFromDetail(){
+    var id = detailId;
+    closeDetailModal();
+    openEditForm(id);
+  }
+
+  document.getElementById('deliveryForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var payload = {
+      tanggal: document.getElementById('inputTanggal').value,
+      noResi: document.getElementById('inputResi').value.trim(),
+      nama: document.getElementById('inputNama').value.trim(),
+      alamat: document.getElementById('inputAlamat').value.trim(),
+      noTelp: document.getElementById('inputTelp').value.trim(),
+      jumlahCod: Number(document.getElementById('inputCod').value) || 0,
+      kurir: document.getElementById('inputKurir').value || currentUser.namaKurir
+    };
+    if(!payload.noResi){ showToast('No Resi wajib diisi'); return; }
+    setFormLoading(true);
+    if(editingId){
+      google.script.run.withSuccessHandler(handleSaveResult).withFailureHandler(handleFormError).updateDelivery(currentUser.username, editingId, payload);
+    } else {
+      google.script.run.withSuccessHandler(handleSaveResult).withFailureHandler(handleFormError).addDelivery(currentUser.username, payload);
+    }
+  });
+
+  function handleSaveResult(res){
+    setFormLoading(false);
+    if(res && res.success === false){ showToast(res.message || 'Gagal menyimpan data'); return; }
+    closeForm();
+    var msg = editingId ? 'Data diperbarui' : 'Pengiriman ditambahkan';
+    if(!editingId && res && res.existing){
+      msg = res.updated ? 'No Resi sudah terdaftar - data kosong sudah dilengkapi' : 'No Resi sudah terdaftar - tidak ada data baru untuk dilengkapi';
+    }
+    showToast(msg);
+    refreshCurrentTab();
+  }
+  function setFormLoading(loading){
+    var btn = document.getElementById('formSaveBtn');
+    btn.disabled = loading; btn.textContent = loading ? 'Menyimpan...' : 'Simpan';
+  }
+  function handleFormError(err){ setFormLoading(false); showToast('Gagal menyimpan: ' + err.message); }
+
+  /* ---------- HELPER ---------- */
+  var DONUT_COLORS = ['#C77B23', '#2F8F5B', '#2E6FA3', '#8B5FA6', '#B23A32', '#B89B2E'];
+
+  function polarPoint(cx, cy, r, angleDeg){
+    var rad = angleDeg * Math.PI / 180;
+    return { x: cx + r * Math.sin(rad), y: cy - r * Math.cos(rad) };
+  }
+
+  function donutSlicePath(cx, cy, rOuter, rInner, startAngle, endAngle){
+    var outerStart = polarPoint(cx, cy, rOuter, startAngle);
+    var outerEnd = polarPoint(cx, cy, rOuter, endAngle);
+    var innerEnd = polarPoint(cx, cy, rInner, endAngle);
+    var innerStart = polarPoint(cx, cy, rInner, startAngle);
+    var largeArc = (endAngle - startAngle) > 180 ? 1 : 0;
+    return [
+      'M', outerStart.x.toFixed(2), outerStart.y.toFixed(2),
+      'A', rOuter, rOuter, 0, largeArc, 1, outerEnd.x.toFixed(2), outerEnd.y.toFixed(2),
+      'L', innerEnd.x.toFixed(2), innerEnd.y.toFixed(2),
+      'A', rInner, rInner, 0, largeArc, 0, innerStart.x.toFixed(2), innerStart.y.toFixed(2),
+      'Z'
+    ].join(' ');
+  }
+
+  function renderDonutChart(containerId, items){
+    var cx = 100, cy = 100, rOuter = 80, rInner = 46;
+    var total = items.reduce(function(sum, i){ return sum + Math.max(Number(i.value) || 0, 0); }, 0);
+    var svgSlices = '<path d="' + donutSlicePath(cx, cy, rOuter, rInner, 0, 359.99) + '" fill="#E2E5E9"></path>';
+    var cumAngle = 0;
+
+    if (total > 0){
+      items.forEach(function(item){
+        var val = Math.max(Number(item.value) || 0, 0);
+        if (val <= 0) return;
+        var angleSpan = (val / total) * 360;
+        var endAngle = Math.min(cumAngle + angleSpan, 359.99);
+        svgSlices += '<path d="' + donutSlicePath(cx, cy, rOuter, rInner, cumAngle, endAngle) + '" fill="' + item.color + '"></path>';
+        cumAngle = endAngle;
+      });
+    }
+
+    var centerText =
+      '<text x="100" y="94" text-anchor="middle" font-size="26" font-weight="800" fill="#1E2A44">' + total + '</text>' +
+      '<text x="100" y="114" text-anchor="middle" font-size="10.5" fill="#6B7280">Total Paket</text>';
+
+    var svg = '<svg viewBox="0 0 200 200" style="width:150px;height:150px;flex-shrink:0;" width="150" height="150">' + svgSlices + centerText + '</svg>';
+
+    var legend = items.map(function(item){
+      var val = Math.max(Number(item.value) || 0, 0);
+      var pct = total > 0 ? Math.round(val / total * 100) : 0;
+      return '<div class="legend-row">' +
+        '<span class="legend-dot" style="background:' + item.color + '"></span>' +
+        '<span class="legend-label">' + escapeHtml(item.label) + '</span>' +
+        '<span class="legend-value">' + val + ' (' + pct + '%)</span>' +
+        '</div>';
+    }).join('');
+
+    document.getElementById(containerId).innerHTML =
+      '<div class="donut-row">' + svg + '<div class="legend">' + legend + '</div></div>';
+  }
+
+  function formatRupiah(num){ num = Number(num) || 0; return 'Rp' + num.toLocaleString('id-ID'); }
+  // Tanggal hari ini dalam format yyyy-mm-dd (sesuai zona waktu lokal
+  // perangkat), dipakai sebagai nilai default filter tanggal & saat
+  // tombol refresh ditekan — selalu mengikuti tanggal saat ini.
+  function todayInputDate(){
+    var d = new Date();
+    var mm = String(d.getMonth() + 1).padStart(2, '0');
+    var dd = String(d.getDate()).padStart(2, '0');
+    return d.getFullYear() + '-' + mm + '-' + dd;
+  }
+  function toInputDate(ddmmyyyy){
+    var parts = String(ddmmyyyy).split('/');
+    if(parts.length !== 3) return '';
+    return parts[2] + '-' + parts[1] + '-' + parts[0];
+  }
+  function escapeHtml(str){
+    if(str === null || str === undefined) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function showToast(msg){
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+  }
+
+  /* ---------- KELOLA AKUN (ADMIN) ---------- */
+  var rawUserList = [];
+  var editingUsername = null;
+
+  function openUserListModal(){
+    document.getElementById('userListModal').classList.add('open');
+    loadUserList();
+  }
+  function closeUserListModal(){ document.getElementById('userListModal').classList.remove('open'); }
+  document.getElementById('userListModal').addEventListener('click', function(e){ if(e.target === this) closeUserListModal(); });
+
+  function loadUserList(){
+    var container = document.getElementById('userListContainer');
+    container.innerHTML = '<p class="empty">Memuat data...</p>';
+    google.script.run
+      .withSuccessHandler(function(res){
+        if(!res || res.success === false){
+          container.innerHTML = '<p class="empty">' + ((res && res.message) || 'Gagal memuat akun.') + '</p>';
+          return;
+        }
+        rawUserList = res.list || [];
+        renderUserList();
+      })
+      .withFailureHandler(function(err){
+        container.innerHTML = '<p class="empty">Gagal memuat akun: ' + err.message + '</p>';
+      })
+      .getUserList(currentUser.username);
+  }
+
+  function renderUserList(){
+    var container = document.getElementById('userListContainer');
+    if(!rawUserList.length){
+      container.innerHTML = '<p class="empty">Belum ada akun.</p>';
+      return;
+    }
+    container.innerHTML = rawUserList.map(function(u){
+      var isSelf = u.username === currentUser.username;
+      return '<div class="cod-item">' +
+          '<div class="cod-item-info">' +
+            '<div class="card-name">' + escapeHtml(u.namaKurir) + '</div>' +
+            '<div class="muted small">Username: ' + escapeHtml(u.username) + '</div>' +
+          '</div>' +
+          '<div class="cod-item-right">' +
+            '<span class="badge ' + (String(u.role).toLowerCase() === 'admin' ? 'badge-done' : 'badge-todo') + '">' + escapeHtml(u.role) + '</span>' +
+            '<div class="card-actions">' +
+              '<button class="btn btn-ghost" onclick="openEditUserForm(\'' + escapeHtml(u.username) + '\')">Ubah</button>' +
+              (isSelf ? '' : '<button class="btn btn-danger" onclick="confirmDeleteUser(\'' + escapeHtml(u.username) + '\')">Hapus</button>') +
+            '</div>' +
+          '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  function openAddUserForm(){
+    editingUsername = null;
+    document.getElementById('userFormTitle').textContent = 'Tambah Akun';
+    document.getElementById('userForm').reset();
+    document.getElementById('inputUserUsername').disabled = false;
+    document.getElementById('inputUserPassword').required = true;
+    document.getElementById('userPasswordHint').textContent = '';
+    document.getElementById('userFormModal').classList.add('open');
+  }
+
+  function openEditUserForm(username){
+    var u = rawUserList.find(function(x){ return x.username === username; });
+    if(!u) return;
+    editingUsername = username;
+    document.getElementById('userFormTitle').textContent = 'Ubah Akun';
+    document.getElementById('inputUserUsername').value = u.username;
+    document.getElementById('inputUserUsername').disabled = false;
+    document.getElementById('inputUserPassword').value = '';
+    document.getElementById('inputUserPassword').required = false;
+    document.getElementById('userPasswordHint').textContent = 'Kosongkan jika tidak ingin mengubah password.';
+    document.getElementById('inputUserNamaKurir').value = u.namaKurir;
+    document.getElementById('inputUserRole').value = String(u.role).toLowerCase() === 'admin' ? 'admin' : 'kurir';
+    document.getElementById('userFormModal').classList.add('open');
+  }
+
+  function closeUserForm(){ document.getElementById('userFormModal').classList.remove('open'); }
+  document.getElementById('userFormModal').addEventListener('click', function(e){ if(e.target === this) closeUserForm(); });
+
+  document.getElementById('userForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var payload = {
+      username: document.getElementById('inputUserUsername').value.trim(),
+      password: document.getElementById('inputUserPassword').value.trim(),
+      namaKurir: document.getElementById('inputUserNamaKurir').value.trim(),
+      role: document.getElementById('inputUserRole').value
+    };
+    if(!payload.username || !payload.namaKurir){ showToast('Username dan Nama Kurir wajib diisi'); return; }
+    if(!editingUsername && !payload.password){ showToast('Password wajib diisi'); return; }
+    setUserFormLoading(true);
+    if(editingUsername){
+      google.script.run.withSuccessHandler(handleUserSaveResult).withFailureHandler(handleUserFormError)
+        .updateUser(currentUser.username, editingUsername, payload);
+    } else {
+      google.script.run.withSuccessHandler(handleUserSaveResult).withFailureHandler(handleUserFormError)
+        .addUser(currentUser.username, payload);
+    }
+  });
+
+  function handleUserSaveResult(res){
+    setUserFormLoading(false);
+    if(res && res.success === false){ showToast(res.message || 'Gagal menyimpan akun'); return; }
+    closeUserForm();
+    showToast(editingUsername ? 'Akun diperbarui' : 'Akun ditambahkan');
+    loadUserList();
+    loadCourierList();
+  }
+  function setUserFormLoading(loading){
+    var btn = document.getElementById('userFormSaveBtn');
+    btn.disabled = loading; btn.textContent = loading ? 'Menyimpan...' : 'Simpan';
+  }
+  function handleUserFormError(err){ setUserFormLoading(false); showToast('Gagal menyimpan: ' + err.message); }
+
+  function confirmDeleteUser(username){
+    if(!confirm('Hapus akun "' + username + '"?')) return;
+    google.script.run
+      .withSuccessHandler(function(res){
+        if(res && res.success === false){ showToast(res.message || 'Gagal menghapus akun'); return; }
+        showToast('Akun dihapus');
+        loadUserList();
+        loadCourierList();
+      })
+      .withFailureHandler(function(err){ showToast('Gagal menghapus: ' + err.message); })
+      .deleteUser(currentUser.username, username);
+  }
+
+
+  /* ---------- IMPOR DARI APP "SALIN TEKS DARI FOTO" ----------
+     App ini punya deployment/URL terpisah (project Apps Script lain).
+     Dibuka sebagai jendela pop-up. Penyimpanan data ke To-Do sekarang
+     dilakukan LANGSUNG oleh App Foto itu sendiri (tombol "Salin &
+     Simpan" di sana menulis langsung ke Spreadsheet To-Do yang sama —
+     lihat saveFieldsToTodo() di project App Foto). Di sini kita hanya
+     perlu me-refresh daftar & menampilkan notifikasi tiap kali App Foto
+     memberi tahu satu data berhasil disimpan.
+
+     GANTI URL DI BAWAH INI dengan URL Web App "Salin Teks dari Foto"
+     kamu setelah dideploy. */
+  var OCR_APP_URL = 'GANTI-DENGAN-URL-APP-SALIN-TEKS-DARI-FOTO';
+
+  function openOcrTool(){
+    if(!OCR_APP_URL || OCR_APP_URL.indexOf('GANTI-DENGAN-URL') !== -1){
+      showToast('URL App "Salin Teks dari Foto" belum diatur. Isi OCR_APP_URL di kode.');
+      return;
+    }
+    var ocrWindow = window.open(OCR_APP_URL, 'ocrWindow', 'width=420,height=760');
+    if(!ocrWindow){
+      showToast('Gagal membuka jendela. Izinkan pop-up untuk situs ini.');
+    }
+  }
+
+  window.addEventListener('message', function(event){
+    var data = event.data;
+    if(!data || !data.type) return;
+
+    if(data.type === 'OCR_CLOSED'){
+      // Jendela App Foto ditutup user — tidak perlu aksi apa pun di sini.
+      return;
+    }
+
+    if(data.type === 'TODO_SAVED'){
+      // Satu data (satu foto) baru saja disimpan langsung oleh App Foto
+      // ke Spreadsheet To-Do. Refresh daftar supaya langsung terlihat.
+      showToast('Data baru masuk ke To-Do: ' + (data.noResi || ''));
+      refreshCurrentTab();
+    }
+  });
+
+  /* ---------- TOMBOL KEMBALI (BACK) TIDAK LANGSUNG KELUAR APLIKASI ----------
+     Menahan navigasi "back" bawaan browser/Android dengan menambah satu
+     state riwayat penahan. Kalau ada modal yang sedang terbuka, tombol
+     kembali cukup menutup modal itu dulu. Kalau tidak ada modal terbuka,
+     baru tampilkan konfirmasi keluar aplikasi. */
+  function closeOpenModalIfAny(){
+    var openModal = document.querySelector('.modal-overlay.open');
+    if(!openModal) return false;
+    openModal.classList.remove('open');
+    return true;
+  }
+
+  // Kalau tab yang sedang aktif (To-Do/Terkirim/On-Hold) punya kata kunci
+  // pencarian yang sedang diisi, tombol kembali cukup menghapus kata kunci
+  // itu dan menampilkan lagi daftar lengkapnya (urutan normal, tidak
+  // difilter) — belum langsung memicu konfirmasi keluar aplikasi.
+  var TAB_TO_STATUS = { todo: 'To-Do', terkirim: 'Terkirim', onhold: 'On-Hold' };
+  function clearActiveSearchIfAny(){
+    var status = TAB_TO_STATUS[activeTab];
+    if(!status) return false; // tab Kurir/COD tidak punya kolom pencarian
+    var input = document.getElementById('search' + STATUS_SUFFIX[status]);
+    if(!input || !input.value) return false;
+    input.value = '';
+    applyFilter(status);
+    return true;
+  }
+
+  // Beberapa lapis "pengaman" riwayat sekaligus di awal — jaga-jaga kalau
+  // satu tombol kembali ditekan cepat berturut-turut, masih ada cadangan.
+  for (var guardI = 0; guardI < 3; guardI++) {
+    history.pushState({ app: true }, '', location.href);
+  }
+  window.addEventListener('popstate', function(){
+    // Pasang ulang "pengaman" riwayat PALING AWAL, sebelum apa pun diproses
+    // di bawah — supaya tidak ada jeda yang bisa membuat tombol kembali
+    // fisik/gestur Android keburu menembus keluar dari aplikasi.
+    history.pushState({ app: true }, '', location.href);
+
+    if(closeOpenModalIfAny()) return;
+    if(clearActiveSearchIfAny()) return;
+
+    if(confirm('Apakah Anda ingin keluar dari aplikasi?')){
+      // Pengaman di atas sudah menambah satu entri riwayat baru; mundur
+      // sekali untuk benar-benar menjalankan niat "kembali" yang tadi
+      // ditekan pengguna (keluar dari aplikasi).
+      history.go(-1);
+    }
+  });
+
+  // ---------- LAPISAN PENGAMAN KEDUA (BAWAAN BROWSER) ----------
+  // Trik history.pushState di atas TIDAK selalu 100% bisa menahan tombol
+  // kembali fisik Android — ini keterbatasan browser, bukan bug aplikasi.
+  // beforeunload adalah mekanisme resmi browser yang jauh lebih andal:
+  // dipicu setiap kali halaman ini BENAR-BENAR akan ditutup/ditinggalkan
+  // (lewat cara apa pun — tombol kembali, tutup tab, dsb), dan akan
+  // menampilkan konfirmasi bawaan browser sebelum benar-benar keluar.
+  // Catatan: sejak beberapa tahun terakhir, browser modern (Chrome,
+  // Firefox, dst) TIDAK MENGIZINKAN teks konfirmasi kustom di sini demi
+  // keamanan — teks yang muncul pasti teks bawaan browser itu sendiri,
+  // bukan "Apakah Anda ingin keluar dari aplikasi?" seperti di atas.
+  window.addEventListener('beforeunload', function(e){
+    e.preventDefault();
+    e.returnValue = '';
+  });
+</script>
+</body>
+</html>

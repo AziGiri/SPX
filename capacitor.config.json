@@ -1,0 +1,8 @@
+{
+  "appId": "com.pengirimanpaket.app",
+  "appName": "Pengiriman Paket",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}

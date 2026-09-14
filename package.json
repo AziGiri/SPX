@@ -1,0 +1,19 @@
+{
+  "name": "pengiriman-paket-hybrid",
+  "version": "1.0.0",
+  "private": true,
+  "description": "App Pengiriman Paket dibungkus Capacitor jadi Android native, backend tetap Apps Script yang sama.",
+  "scripts": {
+    "sync": "npx cap sync",
+    "add:android": "npx cap add android",
+    "open:android": "npx cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/app": "^6.0.1",
+    "@capacitor/core": "^6.1.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2"
+  }
+}
