@@ -1454,7 +1454,7 @@
 
      GANTI URL DI BAWAH INI dengan URL Web App "Salin Teks dari Foto"
      kamu setelah dideploy. */
-  var OCR_APP_URL = 'GANTI-DENGAN-URL-APP-SALIN-TEKS-DARI-FOTO';
+  var OCR_APP_URL = 'https://script.google.com/macros/s/AKfycbyabRCCJTPigTKQ4OmGq3H-xwxnoCDBptoz2ois0jamsyWU7QE-6okQvSwvsk0aOjo/exec';
 
   function openOcrTool(){
     if(!OCR_APP_URL || OCR_APP_URL.indexOf('GANTI-DENGAN-URL') !== -1){
@@ -1533,21 +1533,55 @@
     }
   });
 
-  // ---------- LAPISAN PENGAMAN KEDUA (BAWAAN BROWSER) ----------
-  // Trik history.pushState di atas TIDAK selalu 100% bisa menahan tombol
-  // kembali fisik Android — ini keterbatasan browser, bukan bug aplikasi.
-  // beforeunload adalah mekanisme resmi browser yang jauh lebih andal:
-  // dipicu setiap kali halaman ini BENAR-BENAR akan ditutup/ditinggalkan
-  // (lewat cara apa pun — tombol kembali, tutup tab, dsb), dan akan
-  // menampilkan konfirmasi bawaan browser sebelum benar-benar keluar.
-  // Catatan: sejak beberapa tahun terakhir, browser modern (Chrome,
-  // Firefox, dst) TIDAK MENGIZINKAN teks konfirmasi kustom di sini demi
-  // keamanan — teks yang muncul pasti teks bawaan browser itu sendiri,
-  // bukan "Apakah Anda ingin keluar dari aplikasi?" seperti di atas.
+  // ---------- CAPACITOR: TANGANI TOMBOL BACK LEWAT PLUGIN NATIVE ----------
+if (window.Capacitor) {
+  import('@capacitor/app').then(function (mod) {
+    var App = mod.App;
+    App.addListener('backButton', function () {
+      if (closeOpenModalIfAny()) return;
+      if (clearActiveSearchIfAny()) return;
+      showExitConfirm();
+    });
+  });
+} else {
+  // Fallback untuk versi Web App biasa (browser, bukan APK)
+  for (var guardI = 0; guardI < 3; guardI++) {
+    history.pushState({ app: true }, '', location.href);
+  }
+  window.addEventListener('popstate', function(){
+    history.pushState({ app: true }, '', location.href);
+    if(closeOpenModalIfAny()) return;
+    if(clearActiveSearchIfAny()) return;
+    if(confirm('Apakah Anda ingin keluar dari aplikasi?')){
+      history.go(-1);
+    }
+  });
   window.addEventListener('beforeunload', function(e){
     e.preventDefault();
     e.returnValue = '';
   });
+}
+
+function showExitConfirm(){
+  if(document.getElementById('exitConfirmOverlay')) return;
+  var div = document.createElement('div');
+  div.id = 'exitConfirmOverlay';
+  div.className = 'modal-overlay open';
+  div.innerHTML =
+    '<div class="modal-sheet" style="text-align:center;">' +
+      '<p style="margin-bottom:18px;font-weight:600;">Apakah Anda ingin keluar dari aplikasi?</p>' +
+      '<div style="display:flex;gap:10px;">' +
+        '<button class="btn btn-ghost" style="flex:1;padding:12px;" id="exitCancelBtn">Batal</button>' +
+        '<button class="btn btn-danger" style="flex:1;padding:12px;" id="exitOkBtn">Keluar</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(div);
+  document.getElementById('exitCancelBtn').onclick = function(){ div.remove(); };
+  document.getElementById('exitOkBtn').onclick = function(){
+    import('@capacitor/app').then(function(mod){ mod.App.exitApp(); });
+  };
+}
+  
 </script>
 </body>
 </html>
