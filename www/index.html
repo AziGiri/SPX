@@ -181,7 +181,13 @@
   .bulk-controls-kurir .btn-bulk-assign{flex:1;}
   .btn-bulk-status-done{background:var(--green);}
   .btn-bulk-status-hold{background:var(--rose);}
+  .btn-bulk-cancel{background:#4B5768;}
+  #bulkBarKurirDash .btn-bulk-assign{padding:8px 6px;font-size:11px;flex:1;text-align:center;}
   .btn-bulk-assign:disabled{opacity:.6;}
+  /* Header "Pilih Beberapa"/"Tandai Semua" di menu Kurir dikunci
+     (sticky) tepat di bawah header aplikasi, supaya tidak ikut ter-
+     scroll bersama daftar paket di bawahnya. */
+  .kurir-claimed-sticky{position:sticky;top:var(--header-h,76px);z-index:9;background:var(--surface);padding:16px 14px 8px;border-radius:14px 14px 0 0;}
   .card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;gap:8px;}
   .card-date{font-size:12px;color:var(--muted);font-weight:600;}
   .resi{font-family:ui-monospace,'SF Mono','Roboto Mono',Consolas,monospace;font-size:11.5px;color:var(--navy);background:var(--paper);padding:2px 7px;border-radius:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;}
@@ -354,16 +360,18 @@
            daftar paket To-Do yang SUDAH ditandai (di-"tandai") oleh
            kurir ini sendiri untuk dia antar, lengkap dengan mode pilih
            beberapa untuk menandai status massal (Terkirim/On-Hold). -->
-      <div class="chart-card" id="kurirClaimedSection" style="display:none;">
-        <div class="section-title-row">
-          <p class="section-title">Paket yang Anda Tandai</p>
-          <button type="button" class="btn-select-toggle" id="btnToggleSelectKurirDash" onclick="toggleSelectModeKurirDash()">Pilih Beberapa</button>
+      <div class="chart-card" id="kurirClaimedSection" style="display:none;padding:0 0 8px;">
+        <div class="kurir-claimed-sticky">
+          <div class="section-title-row">
+            <p class="section-title">Paket yang Anda Tandai</p>
+            <button type="button" class="btn-select-toggle" id="btnToggleSelectKurirDash" onclick="toggleSelectModeKurirDash()">Pilih Beberapa</button>
+          </div>
+          <label class="card-select-row" id="selectAllKurirDashRow" style="display:none;">
+            <input type="checkbox" id="checkAllKurirDash" onchange="toggleSelectAllKurirDash(this.checked)">
+            <span>Tandai Semua</span>
+          </label>
         </div>
-        <label class="card-select-row" id="selectAllKurirDashRow" style="display:none;">
-          <input type="checkbox" id="checkAllKurirDash" onchange="toggleSelectAllKurirDash(this.checked)">
-          <span>Tandai Semua</span>
-        </label>
-        <div id="listKurirClaimed"></div>
+        <div id="listKurirClaimed" style="padding:0 14px;"></div>
       </div>
     </section>
 
@@ -377,6 +385,10 @@
         <div class="select-toggle-row" id="selectToggleRow" style="display:none;">
           <button type="button" class="btn-select-toggle" id="btnToggleSelectTodo" onclick="toggleSelectModeTodo()">Pilih Beberapa</button>
         </div>
+        <label class="card-select-row" id="selectAllTodoRow" style="display:none;">
+          <input type="checkbox" id="checkAllTodo" onchange="toggleSelectAllTodo(this.checked)">
+          <span>Pilih Semua</span>
+        </label>
       </div>
       <p class="section-title">Pengiriman yang perlu diantar</p>
       <div id="listTodo"></div>
@@ -452,19 +464,20 @@
       <select id="bulkKurirSelect"></select>
       <button type="button" class="btn-bulk-assign" id="btnBulkAssign" onclick="applyBulkAssign()">Tugaskan</button>
     </span>
-    <!-- Kontrol untuk akun kurir: hanya boleh update status massal, tidak bisa pindah kurir -->
+    <!-- Kontrol untuk akun kurir: hanya boleh menandai (klaim) paket
+         yang belum ada pemiliknya, tidak bisa mengubah status di sini. -->
     <span class="bulk-controls-kurir" id="bulkKurirControls">
-      <button type="button" class="btn-bulk-assign btn-bulk-status-done" onclick="applyBulkStatus('Terkirim')">Tandai Terkirim</button>
-      <button type="button" class="btn-bulk-assign btn-bulk-status-hold" onclick="applyBulkStatus('On-Hold')">Tandai On-Hold</button>
+      <button type="button" class="btn-bulk-assign" onclick="applyBulkClaim()">Tandai untuk Saya</button>
     </span>
   </div>
 
   <!-- BAR TANDAI MASSAL (menu Kurir/Dashboard, khusus akun kurir) -->
   <div class="bulk-bar" id="bulkBarKurirDash">
     <span class="bulk-count" id="bulkCountKurirDash">0 dipilih</span>
-    <span style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;">
-      <button type="button" class="btn-bulk-assign btn-bulk-status-done" onclick="applyBulkStatusKurirDash('Terkirim')">Tandai Terkirim</button>
-      <button type="button" class="btn-bulk-assign btn-bulk-status-hold" onclick="applyBulkStatusKurirDash('On-Hold')">Tandai On-Hold</button>
+    <span style="display:flex;align-items:center;gap:6px;flex:1;min-width:0;">
+      <button type="button" class="btn-bulk-assign btn-bulk-status-done" onclick="applyBulkStatusKurirDash('Terkirim')">Terkirim</button>
+      <button type="button" class="btn-bulk-assign btn-bulk-status-hold" onclick="applyBulkStatusKurirDash('On-Hold')">On-Hold</button>
+      <button type="button" class="btn-bulk-assign btn-bulk-cancel" onclick="applyBulkUnclaimKurirDash()">Batal Tandai</button>
     </span>
   </div>
 </div>
@@ -661,7 +674,7 @@
    *  (yang sudah ditambah file Rpc.gs, lihat gas-addon/Rpc.gs), diakhiri
    *  "/exec".
    * ===================================================================== */
-  var GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxGKkDxVNRj0m98PYLdOXJTothLKTaHgBlvmE_XUtSKZS430Vzw38g4pxrBKXG34RY_fg/exec';
+  var GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzYxYOvbTLoidLLpgnGqPqxmest-2lEaC5jg0TLR7i97M_q5ZRZ9m-Xs0kV9hA4vof0zQ/exec';
 
   function callGas(fnName, args) {
     return fetch(GAS_ENDPOINT, {
@@ -731,6 +744,7 @@
   var rawListTodo = [];
   var rawListTerkirim = [];
   var rawListOnHold = [];
+  var lastFilteredTodoList = []; // daftar To-Do yang sedang tampil (sudah difilter search/tanggal), dipakai oleh "Pilih Semua"
   var editingId = null;
   function isAdmin(){ return !!currentUser && String(currentUser.role || '').trim().toLowerCase() === 'admin'; }
 
@@ -884,12 +898,10 @@
     if(tab !== 'todo') exitSelectModeTodo();
     if(tab !== 'kurir') exitSelectModeKurirDash();
     var elSelectToggleRow = document.getElementById('selectToggleRow');
-    // Mode "Pilih Beberapa" di tab To-Do sekarang KHUSUS admin (untuk
-    // menugaskan kurir secara massal). Akun kurir punya mode pilihnya
-    // sendiri di menu Kurir/Dashboard (lihat toggleSelectModeKurirDash()),
-    // karena tab To-Do sekarang menampilkan SEMUA data milik admin, bukan
-    // cuma milik kurir yang login.
-    if(elSelectToggleRow) elSelectToggleRow.style.display = (tab === 'todo' && isAdmin()) ? 'flex' : 'none';
+    // Mode "Pilih Beberapa" di tab To-Do sekarang tersedia untuk admin
+    // (menugaskan kurir secara massal) MAUPUN akun kurir (menandai/
+    // klaim banyak paket sekaligus untuk dirinya sendiri).
+    if(elSelectToggleRow) elSelectToggleRow.style.display = (tab === 'todo') ? 'flex' : 'none';
 
     var showFabs = isAdmin() && (tab === 'todo' || tab === 'kurir') && !selectModeTodo;
     var elFabAdd = document.getElementById('fabAdd');
@@ -1017,12 +1029,13 @@
       return;
     }
 
+    // Kartu di sini sekarang murni tampilan (read-only) â€” tidak ada lagi
+    // tombol aksi per-kartu (Tandai Terkirim/Tandai Gagal/Batal Tandai).
+    // Semua aksi dilakukan lewat mode "Pilih Beberapa" + bar di bawah
+    // (lihat toggleSelectModeKurirDash(), applyBulkStatusKurirDash(),
+    // applyBulkUnclaimKurirDash()).
     var showCheck = selectModeKurirDash;
     container.innerHTML = kurirDashClaimedList.map(function(d){
-      var actions = showCheck ? '' :
-        '<button class="btn btn-success" onclick="markDelivered(\'' + d.id + '\')">Tandai Terkirim</button>' +
-        '<button class="btn btn-danger" onclick="markOnHold(\'' + d.id + '\')">Tandai Gagal</button>' +
-        '<button class="btn btn-ghost" onclick="unclaimAndRefresh(\'' + d.id + '\')">Batal Tandai</button>';
       var checkedAttr = selectedKurirDashIds[d.id] ? ' checked' : '';
       var checkboxHtml = showCheck
         ? '<label class="card-select-row">' +
@@ -1039,7 +1052,6 @@
           (d.noTelp ? '<div class="card-row muted">' + escapeHtml(d.noTelp) + '</div>' : '') +
           '<div class="card-bottom">' +
             '<span class="cod-amount">' + (d.jumlahCod > 0 ? formatRupiah(d.jumlahCod) : 'Non-COD') + '</span>' +
-            (actions ? '<div class="card-actions">' + actions + '</div>' : '') +
           '</div>' +
         '</div>';
     }).join('');
@@ -1130,6 +1142,29 @@
         showToast('Gagal memperbarui status: ' + err.message);
       })
       .bulkUpdateStatus(currentUser.username, ids, newStatus);
+  }
+
+  // Batalkan tanda (unclaim) massal untuk paket yang dicentang di menu
+  // Kurir/Dashboard â€” paket kembali terbuka supaya bisa ditandai kurir
+  // lain lewat tab To-Do.
+  function applyBulkUnclaimKurirDash(){
+    var ids = Object.keys(selectedKurirDashIds);
+    if(!ids.length){ showToast('Pilih minimal satu paket dulu'); return; }
+    var buttons = document.querySelectorAll('#bulkBarKurirDash .btn-bulk-assign');
+    buttons.forEach(function(b){ b.disabled = true; });
+    google.script.run
+      .withSuccessHandler(function(res){
+        buttons.forEach(function(b){ b.disabled = false; });
+        if(res && res.success === false){ showToast(res.message || 'Gagal membatalkan tanda'); return; }
+        showToast((res.count || ids.length) + ' paket dibatalkan tandanya');
+        exitSelectModeKurirDash();
+        loadDashboard();
+      })
+      .withFailureHandler(function(err){
+        buttons.forEach(function(b){ b.disabled = false; });
+        showToast('Gagal membatalkan tanda: ' + err.message);
+      })
+      .bulkUnclaimDelivery(currentUser.username, ids);
   }
 
   /* ---------- GAJI KURIR & KEUNTUNGAN ADMIN ---------- */
@@ -1395,7 +1430,9 @@
       return matchSearch && matchDate;
     });
 
+    if(status === 'To-Do') lastFilteredTodoList = filtered;
     renderDeliveryList(container, filtered, status, filterActive);
+    if(status === 'To-Do') updateSelectAllTodoCheckbox();
   }
 
   function findLoadedItem(id){
@@ -1423,12 +1460,17 @@
     }
     var cardClass = status === 'To-Do' ? 'todo' : (status === 'On-Hold' ? 'onhold' : 'done');
     var isTodo = status === 'To-Do';
-    // Saat mode "Pilih Beberapa" aktif di tab To-Do, tombol aksi per-kartu
-    // disembunyikan dan diganti checkbox â€” aksinya lalu dilakukan sekaligus
-    // lewat bar "Tugaskan ke Kurir" di bawah.
+    // Saat mode "Pilih Beberapa" aktif di tab To-Do:
+    // - Admin: checkbox tampil di SEMUA kartu (dipakai untuk menugaskan
+    //   kurir secara massal lewat bar "Tugaskan ke Kurir").
+    // - Akun kurir: checkbox HANYA tampil di kartu yang BELUM ada
+    //   pemiliknya (yang tombolnya "Tandai untuk Saya") â€” dipakai untuk
+    //   menandai/klaim banyak paket sekaligus lewat bar di bawah.
     var showCheck = isTodo && selectModeTodo;
     container.innerHTML = data.map(function(d){
-      var actions;
+      var actions = '';
+      var ownedByMeTodo = false;
+      var unclaimedTodo = false;
       if(status === 'To-Do'){
         // Kartu To-Do tidak lagi membuka modal preview saat diklik (lihat
         // openAttr di bawah), jadi tombol aksi di sini tidak perlu lagi
@@ -1443,17 +1485,17 @@
         } else {
           // Akun kurir sekarang melihat SEMUA data To-Do milik admin.
           // Kurir hanya boleh menandai (klaim) paket yang belum ada
-          // pemiliknya, atau mengelola status paket yang SUDAH dia
-          // tandai sendiri â€” tidak bisa merebut/mengubah paket yang
-          // sudah ditandai kurir lain.
-          var ownedByMeTodo = d.kurir && d.kurir === currentUser.namaKurir;
-          var unclaimedTodo = !d.kurir;
-          if(ownedByMeTodo){
-            actions = '<button class="btn btn-success" onclick="markDelivered(\'' + d.id + '\')">Tandai Terkirim</button>' +
-              '<button class="btn btn-danger" onclick="markOnHold(\'' + d.id + '\')">Tandai Gagal</button>' +
-              '<button class="btn btn-ghost" onclick="unclaimAndRefresh(\'' + d.id + '\')">Batal Tandai</button>';
+          // pemiliknya lewat tab ini â€” mengelola status paket yang SUDAH
+          // dia tandai (Tandai Terkirim/On-Hold/Batal Tandai) sekarang
+          // dilakukan lewat menu Kurir/Dashboard, bukan di sini lagi.
+          ownedByMeTodo = d.kurir && d.kurir === currentUser.namaKurir;
+          unclaimedTodo = !d.kurir;
+          if(showCheck){
+            actions = ''; // diganti checkbox (khusus paket yang belum ditandai, lihat di bawah)
           } else if(unclaimedTodo){
             actions = '<button class="btn btn-success" onclick="claimAndRefresh(\'' + d.id + '\')">Tandai untuk Saya</button>';
+          } else if(ownedByMeTodo){
+            actions = '<span class="muted small">Sudah Anda tandai untuk diantar</span>';
           } else {
             actions = '<span class="muted small">Sudah ditandai oleh ' + escapeHtml(d.kurir) + '</span>';
           }
@@ -1474,14 +1516,18 @@
       // tidak dipasang lagi di kartu To-Do karena sudah tidak dibutuhkan.
       var openAttr = isTodo ? '' : ' onclick="openDetailModal(\'' + d.id + '\')"';
       var checkedAttr = selectedTodoIds[d.id] ? ' checked' : '';
-      var selectLabel = isAdmin() ? 'Pilih untuk ditugaskan ke kurir' : 'Pilih untuk update status massal';
-      var checkboxHtml = showCheck
+      // Untuk akun kurir, checkbox hanya boleh muncul di paket yang
+      // belum ada pemiliknya (unclaimedTodo) â€” paket milik sendiri/kurir
+      // lain tidak bisa ikut dipilih di sini.
+      var canCheckThis = showCheck && (isAdmin() || unclaimedTodo);
+      var selectLabel = isAdmin() ? 'Pilih untuk ditugaskan ke kurir' : 'Pilih untuk ditandai';
+      var checkboxHtml = canCheckThis
         ? '<label class="card-select-row">' +
             '<input type="checkbox"' + checkedAttr + ' onchange="toggleCardCheck(\'' + d.id + '\', this.checked, this)">' +
             '<span>' + selectLabel + '</span>' +
           '</label>'
         : '';
-      var cardClasses = 'card status-' + cardClass + (showCheck && selectedTodoIds[d.id] ? ' selected' : '');
+      var cardClasses = 'card status-' + cardClass + (canCheckThis && selectedTodoIds[d.id] ? ' selected' : '');
       return '<div class="' + cardClasses + '"' + openAttr + '>' +
           checkboxHtml +
           '<div class="card-top"><span class="card-date">' + escapeHtml(d.tanggal) + '</span><span class="resi">' + escapeHtml(d.noResi) + '</span></div>' +
@@ -1515,24 +1561,31 @@
     if(elFabAdd) elFabAdd.style.display = showFabs ? 'flex' : 'none';
     if(elFabPhoto) elFabPhoto.style.display = showFabs ? 'flex' : 'none';
     // Admin melihat kontrol "Tugaskan ke Kurir", akun kurir melihat
-    // kontrol "Tandai Terkirim / On-Hold" â€” hanya salah satu yang tampil.
+    // kontrol "Tandai untuk Saya" â€” hanya salah satu yang tampil.
     var elBulkAdmin = document.getElementById('bulkAdminControls');
     var elBulkKurir = document.getElementById('bulkKurirControls');
     if(elBulkAdmin) elBulkAdmin.style.display = isAdmin() ? 'flex' : 'none';
     if(elBulkKurir) elBulkKurir.style.display = isAdmin() ? 'none' : 'flex';
     if(selectModeTodo && isAdmin()) populateBulkKurirSelect();
+    var rowAllTodo = document.getElementById('selectAllTodoRow');
+    if(rowAllTodo) rowAllTodo.style.display = selectModeTodo ? 'flex' : 'none';
+    var checkAllTodoEl = document.getElementById('checkAllTodo');
+    if(checkAllTodoEl) checkAllTodoEl.checked = false;
     updateBulkBar();
     applyFilter('To-Do'); // render ulang supaya checkbox muncul/hilang di tiap kartu
   }
 
-  // Dipanggil saat pindah tab dari To-Do, supaya bar Tugaskan ke Kurir
-  // tidak tertinggal aktif kalau pengguna belum sempat menekan Batal.
+  // Dipanggil saat pindah tab dari To-Do, supaya bar Tugaskan ke
+  // Kurir/Tandai untuk Saya tidak tertinggal aktif kalau pengguna belum
+  // sempat menekan Batal.
   function exitSelectModeTodo(){
     if(!selectModeTodo) return;
     selectModeTodo = false;
     selectedTodoIds = {};
     var btn = document.getElementById('btnToggleSelectTodo');
     if(btn){ btn.textContent = 'Pilih Beberapa'; btn.classList.remove('active'); }
+    var rowAllTodo = document.getElementById('selectAllTodoRow');
+    if(rowAllTodo) rowAllTodo.style.display = 'none';
     updateBulkBar();
   }
 
@@ -1541,6 +1594,29 @@
     var card = checkboxEl && checkboxEl.closest('.card');
     if(card) card.classList.toggle('selected', checked);
     updateBulkBar();
+    updateSelectAllTodoCheckbox();
+  }
+
+  // "Pilih Semua" di tab To-Do. Admin: memilih SEMUA kartu yang sedang
+  // tampil (mengikuti filter). Akun kurir: hanya memilih kartu yang
+  // BELUM ada pemiliknya (yang tombolnya "Tandai untuk Saya"), sesuai
+  // dengan aksi bulk satu-satunya yang tersedia untuk kurir di tab ini.
+  function toggleSelectAllTodo(checked){
+    selectedTodoIds = {};
+    if(checked){
+      lastFilteredTodoList.forEach(function(d){
+        if(isAdmin() || !d.kurir) selectedTodoIds[d.id] = true;
+      });
+    }
+    applyFilter('To-Do');
+    updateBulkBar();
+  }
+
+  function updateSelectAllTodoCheckbox(){
+    var checkAllEl = document.getElementById('checkAllTodo');
+    if(!checkAllEl) return;
+    var selectable = lastFilteredTodoList.filter(function(d){ return isAdmin() || !d.kurir; });
+    checkAllEl.checked = selectable.length > 0 && selectable.every(function(d){ return !!selectedTodoIds[d.id]; });
   }
 
   function updateBulkBar(){
@@ -1580,10 +1656,11 @@
       .bulkAssignKurir(currentUser.username, ids, kurir);
   }
 
-  // Update status massal (Terkirim / On-Hold) untuk paket yang dicentang.
-  // Dipakai oleh akun kurir (dan tetap bisa dipakai admin) lewat dua
-  // tombol di bulk-bar â€” TIDAK mengubah/menugaskan kurir, hanya status.
-  function applyBulkStatus(newStatus){
+  // Klaim (tandai) massal paket To-Do yang belum ada pemiliknya, untuk
+  // akun kurir lewat mode "Pilih Beberapa" di tab To-Do. Paket yang
+  // sudah keburu ditandai kurir lain akan dilewati oleh server
+  // (lihat bulkClaimDelivery() di Code.gs), bukan direbut.
+  function applyBulkClaim(){
     var ids = Object.keys(selectedTodoIds);
     if(!ids.length){ showToast('Pilih minimal satu kartu dulu'); return; }
     var buttons = document.querySelectorAll('#bulkKurirControls .btn-bulk-assign');
@@ -1591,17 +1668,16 @@
     google.script.run
       .withSuccessHandler(function(res){
         buttons.forEach(function(b){ b.disabled = false; });
-        if(res && res.success === false){ showToast(res.message || 'Gagal memperbarui status'); return; }
-        var label = newStatus === 'Terkirim' ? 'Terkirim' : 'On-Hold';
-        showToast((res.count || ids.length) + ' paket ditandai ' + label);
+        if(res && res.success === false){ showToast(res.message || 'Gagal menandai paket'); return; }
+        showToast((res.count || ids.length) + ' paket ditandai untuk Anda');
         exitSelectModeTodo();
         refreshCurrentTab();
       })
       .withFailureHandler(function(err){
         buttons.forEach(function(b){ b.disabled = false; });
-        showToast('Gagal memperbarui status: ' + err.message);
+        showToast('Gagal menandai: ' + err.message);
       })
-      .bulkUpdateStatus(currentUser.username, ids, newStatus);
+      .bulkClaimDelivery(currentUser.username, ids);
   }
 
   function markDelivered(id){
