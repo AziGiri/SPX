@@ -56,7 +56,7 @@
   .field:focus-within{background:var(--amber-soft);box-shadow:0 0 0 1px rgba(199,123,35,.35) inset;}
   .field:focus-within label{color:var(--amber);}
 
-  /* ===== FORM MODAL (COMPACT) — khusus form tambah/ubah pengiriman ===== */
+  /* ===== FORM MODAL (COMPACT) â€” khusus form tambah/ubah pengiriman ===== */
   #formModal .modal-sheet{padding:16px 18px calc(16px + env(safe-area-inset-bottom));max-height:92vh;}
   #formModal .modal-header{margin-bottom:12px;}
   #formModal .field{margin-bottom:9px;padding:4px 6px;margin-left:-6px;margin-right:-6px;}
@@ -102,7 +102,33 @@
   .search-box input{border:none;background:none;outline:none;font-family:inherit;font-size:13.5px;color:var(--ink);flex:1;min-width:0;}
   .filter-date-row{display:flex;align-items:center;gap:8px;}
   .filter-date-row label{font-size:12.5px;color:var(--muted);font-weight:600;flex-shrink:0;}
-  .filter-date-row input[type=date]{flex:1;border:1.5px solid var(--line);border-radius:8px;padding:7px 9px;font-family:inherit;font-size:13px;color:var(--ink);background:#FAFBFC;min-width:0;}
+  .date-range-trigger{flex:1;display:flex;align-items:center;justify-content:space-between;gap:8px;border:1.5px solid var(--line);border-radius:8px;padding:7px 10px;font-family:inherit;font-size:12.5px;color:var(--ink);background:#FAFBFC;min-width:0;cursor:pointer;text-align:left;}
+  .date-range-trigger span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .date-range-trigger svg{flex-shrink:0;color:var(--muted);}
+
+  /* ===== MODAL KARTU TANGGAL (kalender pilih rentang: dari - s.d.) ===== */
+  #dateRangeModal .modal-sheet{padding-bottom:calc(18px + env(safe-area-inset-bottom));}
+  .date-range-summary{display:flex;align-items:center;gap:10px;background:var(--paper);border-radius:12px;padding:10px 12px;margin-bottom:16px;}
+  .date-range-summary-item{flex:1;min-width:0;}
+  .date-range-summary-label{display:block;font-size:10.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.02em;}
+  .date-range-summary-value{display:block;font-size:14px;font-weight:700;color:var(--navy);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .date-range-summary-arrow{color:var(--muted);flex-shrink:0;font-size:14px;}
+  .date-range-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .date-range-nav-btn{background:var(--paper);border:none;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--navy);flex-shrink:0;}
+  .date-range-month-label{font-size:14.5px;font-weight:800;color:var(--navy);}
+  .date-range-weekdays{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;}
+  .date-range-grid{display:grid;grid-template-columns:repeat(7,1fr);row-gap:2px;}
+  .dr-day{position:relative;height:38px;display:flex;align-items:center;justify-content:center;}
+  .dr-day-btn{width:32px;height:32px;border-radius:50%;border:none;background:none;font-family:inherit;font-size:13px;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;}
+  .dr-day.today .dr-day-btn{box-shadow:0 0 0 1.5px var(--navy) inset;font-weight:700;}
+  .dr-day.in-range::before{content:'';position:absolute;inset:0 0 0 0;background:var(--amber-soft);z-index:0;}
+  .dr-day.range-start.in-range::before{left:50%;}
+  .dr-day.range-end.in-range::before{right:50%;}
+  .dr-day.range-start .dr-day-btn,.dr-day.range-end .dr-day-btn{background:var(--navy);color:#fff;font-weight:700;}
+  .date-range-actions{display:flex;align-items:center;justify-content:space-between;margin-top:14px;}
+  .date-range-actions-right{display:flex;align-items:center;gap:6px;}
+  .btn-text{background:none;border:none;font-family:inherit;font-size:13px;font-weight:700;color:var(--muted);padding:8px 10px;cursor:pointer;}
+  .btn-text-primary{background:var(--navy);color:#fff;border-radius:var(--radius-pill);padding:8px 18px;}
   .filter-kurir-row{display:flex;align-items:center;gap:8px;margin-top:10px;}
   .filter-kurir-row label{font-size:12.5px;color:var(--muted);font-weight:600;flex-shrink:0;}
   .filter-kurir-row select{flex:1;border:1.5px solid var(--line);border-radius:8px;padding:7px 9px;font-family:inherit;font-size:13px;color:var(--ink);background:#FAFBFC;min-width:0;}
@@ -113,6 +139,21 @@
   .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
   .legend-label{flex:1;color:var(--ink);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .legend-value{color:var(--muted);font-weight:700;flex-shrink:0;}
+
+  /* ===== GAJI KURIR (akun kurir) & GAJI/KEUNTUNGAN (akun admin) ===== */
+  .gaji-kurir-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-card);padding:16px 14px;margin-bottom:16px;text-align:center;}
+  .gaji-kurir-label{font-size:12.5px;color:var(--muted);font-weight:600;}
+  .gaji-kurir-value{font-size:24px;font-weight:800;color:var(--green);margin-top:4px;}
+  .gaji-kurir-sub{font-size:11.5px;color:var(--muted);margin-top:4px;}
+  .gaji-admin-section{margin-bottom:6px;}
+  .gaji-row{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-card);padding:12px 14px;margin-bottom:8px;}
+  .gaji-row-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px;}
+  .gaji-row-name{font-size:13.5px;font-weight:700;color:var(--navy);}
+  .gaji-row-count{font-size:11px;color:var(--muted);white-space:nowrap;}
+  .gaji-row-amounts{display:flex;gap:16px;margin-top:6px;}
+  .gaji-amount,.keuntungan-amount{font-size:12.5px;font-weight:700;}
+  .gaji-amount{color:var(--green);}
+  .keuntungan-amount{color:var(--amber);}
 
   /* ===== DELIVERY CARD ===== */
   .card{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:var(--radius-card);padding:14px 14px 12px;margin-bottom:12px;}
@@ -132,6 +173,12 @@
   .bulk-bar .bulk-count{font-size:11.5px;font-weight:700;white-space:nowrap;flex-shrink:0;max-width:64px;line-height:1.25;}
   .bulk-bar select{flex:1;min-width:0;border-radius:8px;border:none;padding:8px 9px;font-family:inherit;font-size:12.5px;color:var(--ink);background:#fff;}
   .btn-bulk-assign{background:var(--amber);color:#fff;border:none;border-radius:var(--radius-pill);padding:9px 13px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+  .btn-bulk-assign:disabled{opacity:.6;cursor:default;}
+  /* Bar bulk khusus akun kurir: dua tombol status (bukan assign kurir) */
+  .bulk-controls-kurir{display:none;align-items:center;gap:8px;flex:1;min-width:0;}
+  .bulk-controls-kurir .btn-bulk-assign{flex:1;}
+  .btn-bulk-status-done{background:var(--green);}
+  .btn-bulk-status-hold{background:var(--rose);}
   .btn-bulk-assign:disabled{opacity:.6;}
   .card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;gap:8px;}
   .card-date{font-size:12px;color:var(--muted);font-weight:600;}
@@ -192,7 +239,7 @@
   /* ===== TOAST ===== */
   .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:11px 20px;border-radius:var(--radius-pill);font-size:13px;font-weight:600;opacity:0;transition:opacity .25s ease,transform .25s ease;z-index:40;pointer-events:none;max-width:90%;text-align:center;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-  #fabImportPhoto{ display:none !important; }
+#fabImportPhoto{ display:none !important; }
 </style>
 </head>
 <body>
@@ -232,6 +279,10 @@
         <button class="header-icon-btn" id="btnRefreshHeader" onclick="refreshApp()" title="Refresh" aria-label="Refresh">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-2.64-6.36"/><path d="M21 4v6h-6"/></svg>
         </button>
+        <button class="header-icon-btn" id="btnToggleGaji" style="display:none;" onclick="toggleGajiVisibility()" title="Tampilkan/Sembunyikan Gaji &amp; Keuntungan" aria-label="Tampilkan/Sembunyikan Gaji dan Keuntungan">
+          <svg id="iconEyeOpen" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg id="iconEyeClosed" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-7-11-7a21.4 21.4 0 015.06-6.06M9.9 4.24A9.9 9.9 0 0112 4c7 0 11 7 11 7a21.4 21.4 0 01-2.16 3.19"/><path d="M14.12 14.12a3 3 0 11-4.24-4.24"/><path d="M1 1l22 22"/></svg>
+        </button>
         <button class="logout-btn" onclick="logout()" title="Keluar" aria-label="Keluar">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4H6.5A2.5 2.5 0 004 6.5v11A2.5 2.5 0 006.5 20H9"/><path d="M16 16l4-4-4-4"/><path d="M20 12H9"/></svg>
         </button>
@@ -246,8 +297,11 @@
     <section id="page-kurir" class="page">
       <div class="filter-card">
         <div class="filter-date-row">
-          <label for="filterDateKurir">Tanggal</label>
-          <input type="date" id="filterDateKurir">
+          <label>Tanggal</label>
+          <button type="button" class="date-range-trigger" id="dateRangeTrigger" onclick="openDateRangeModal()">
+            <span id="dateRangeTriggerLabel">Semua Tanggal</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="2.5"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg>
+          </button>
         </div>
         <div class="filter-kurir-row" id="filterKurirRow">
           <label for="filterKurirDashboard">Kurir</label>
@@ -260,6 +314,25 @@
         <div class="stat-card"><span class="num" id="statOnHold">0</span><span class="lbl">On-Hold</span></div>
         <div class="stat-card"><span class="num" id="statCod">Rp0</span><span class="lbl">Total COD</span></div>
       </div>
+
+      <!-- Kartu gaji khusus akun kurir: Rp3.000 per paket berstatus Terkirim -->
+      <div class="gaji-kurir-card" id="gajiKurirCard" style="display:none;">
+        <div class="gaji-kurir-label">Gaji Anda</div>
+        <div class="gaji-kurir-value" id="gajiKurirValue">Rp0</div>
+        <div class="gaji-kurir-sub" id="gajiKurirSub">0 paket terkirim &times; Rp3.000</div>
+      </div>
+
+      <!-- Seksi gaji & keuntungan semua kurir, khusus admin â€” disembunyikan
+           secara default, ditampilkan/disembunyikan lewat ikon mata di header. -->
+      <div class="gaji-admin-section" id="gajiAdminSection" style="display:none;">
+        <div class="stats-row">
+          <div class="stat-card"><span class="num" id="totalGajiSemua">Rp0</span><span class="lbl">Total Gaji Kurir</span></div>
+          <div class="stat-card"><span class="num" id="totalKeuntunganSemua">Rp0</span><span class="lbl">Total Keuntungan</span></div>
+        </div>
+        <p class="section-title">Gaji per Kurir (Rp3.000/paket terkirim)</p>
+        <div id="listGajiKurir"></div>
+      </div>
+
       <button class="cta-add" id="ctaAddPengiriman" style="display:none;" onclick="openAddForm()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
         Tambah Pengiriman Baru
@@ -356,8 +429,48 @@
   <!-- BAR TUGASKAN KE KURIR (muncul saat mode "Pilih Beberapa" di To-Do aktif) -->
   <div class="bulk-bar" id="bulkBar">
     <span class="bulk-count" id="bulkCount">0 dipilih</span>
-    <select id="bulkKurirSelect"></select>
-    <button type="button" class="btn-bulk-assign" id="btnBulkAssign" onclick="applyBulkAssign()">Tugaskan</button>
+    <!-- Kontrol untuk admin: tugaskan banyak paket ke satu kurir sekaligus -->
+    <span class="bulk-controls-admin" id="bulkAdminControls" style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;">
+      <select id="bulkKurirSelect"></select>
+      <button type="button" class="btn-bulk-assign" id="btnBulkAssign" onclick="applyBulkAssign()">Tugaskan</button>
+    </span>
+    <!-- Kontrol untuk akun kurir: hanya boleh update status massal, tidak bisa pindah kurir -->
+    <span class="bulk-controls-kurir" id="bulkKurirControls">
+      <button type="button" class="btn-bulk-assign btn-bulk-status-done" onclick="applyBulkStatus('Terkirim')">Tandai Terkirim</button>
+      <button type="button" class="btn-bulk-assign btn-bulk-status-hold" onclick="applyBulkStatus('On-Hold')">Tandai On-Hold</button>
+    </span>
+  </div>
+</div>
+
+<!-- ===== MODAL KARTU TANGGAL (pilih rentang: dari - s.d.) ===== -->
+<div class="modal-overlay" id="dateRangeModal">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <span class="modal-title">Pilih Tanggal</span>
+      <button class="modal-close" onclick="closeDateRangeModal()" aria-label="Tutup">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="date-range-nav">
+      <button type="button" class="date-range-nav-btn" onclick="shiftDateRangeMonth(-1)" aria-label="Bulan sebelumnya">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <span class="date-range-month-label" id="drMonthLabel">-</span>
+      <button type="button" class="date-range-nav-btn" onclick="shiftDateRangeMonth(1)" aria-label="Bulan berikutnya">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+    <div class="date-range-weekdays">
+      <span>M</span><span>S</span><span>S</span><span>R</span><span>K</span><span>J</span><span>S</span>
+    </div>
+    <div class="date-range-grid" id="drGrid"></div>
+    <div class="date-range-actions">
+      <button type="button" class="btn-text" onclick="resetDateRangeSelection()">Reset</button>
+      <div class="date-range-actions-right">
+        <button type="button" class="btn-text" onclick="closeDateRangeModal()">Batal</button>
+        <button type="button" class="btn-text btn-text-primary" onclick="applyDateRangeSelection()">Oke</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -510,7 +623,7 @@
    * =====================================================================
    *  Index.html ini aslinya jalan di iframe Apps Script, di mana
    *  `google.script.run` disediakan otomatis oleh Google. Di app hybrid
-   *  (di luar Apps Script), objek itu tidak ada sama sekali — jadi kita
+   *  (di luar Apps Script), objek itu tidak ada sama sekali â€” jadi kita
    *  buat tiruannya di sini, supaya SEMUA kode di bawah (yang menulis
    *  google.script.run.withSuccessHandler(...).withFailureHandler(...).
    *  namaFungsi(args)) tetap jalan TANPA DIUBAH SATU BARIS PUN. Di balik
@@ -521,7 +634,7 @@
    *  (yang sudah ditambah file Rpc.gs, lihat gas-addon/Rpc.gs), diakhiri
    *  "/exec".
    * ===================================================================== */
-  var GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwxhR4nWddv0pUIo2LlbqVe20fI_pUYukQnJcBxgHdoIKmpiZAxds-1UdMyvvrPnInvww/exec';
+  var GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxqXDm9HNnDkRjxaxXNJxGa866puhby_cHL2_dxHoC5FHPhXXTS0HNn9tK_SRJmSzpYoA/exec';
 
   function callGas(fnName, args) {
     return fetch(GAS_ENDPOINT, {
@@ -570,7 +683,7 @@
   window.google.script = window.google.script || {};
   window.google.script.run = makeGasRunner(null, null);
   /* =====================================================================
-   *  AKHIR SHIM — kode asli Index.html berlanjut apa adanya di bawah ini.
+   *  AKHIR SHIM â€” kode asli Index.html berlanjut apa adanya di bawah ini.
    * ===================================================================== */
 
   var currentUser = null;
@@ -604,7 +717,7 @@
     showLoginError('');
     // Dulu: login() lalu (setelah sukses) masih 2x panggilan server lagi
     // (getCourierList + getDeliveries lewat loadDashboard) sebelum layar
-    // Kurir siap ditampilkan — total 3x bolak-balik ke server, itulah
+    // Kurir siap ditampilkan â€” total 3x bolak-balik ke server, itulah
     // sumber utama lag/lemot yang terasa di login pertama.
     // Sekarang: loginAndBootstrap() mengembalikan semuanya SEKALIGUS
     // dalam 1x panggilan.
@@ -621,19 +734,31 @@
       document.getElementById('kurirRoleNote').textContent = (isAdmin())
         ? 'Anda masuk sebagai Administrator - statistik mencakup semua kurir.' : '';
       document.getElementById('btnKelolaAkun').style.display = isAdmin() ? 'flex' : 'none';
+      if(isAdmin()){
+        // Admin: tampilkan tombol mata di header (gaji & keuntungan
+        // tetap disembunyikan sampai admin sendiri menekannya).
+        document.getElementById('btnToggleGaji').style.display = 'flex';
+      } else {
+        // Akun kurir: tampilkan kartu gaji miliknya sendiri.
+        document.getElementById('gajiKurirCard').style.display = 'block';
+      }
       if(!isAdmin()){
         // Akun kurir: elemen tombol tambah pengiriman & scanner foto
         // dibuang total dari DOM (bukan cuma disembunyikan pakai CSS),
         // supaya tidak bisa dimunculkan lagi lewat inspect element dsb.
-        ['ctaAddPengiriman','fabAdd','fabImportPhoto'].forEach(function(id){
+        // Seksi gaji/keuntungan semua kurir (khusus admin) juga ikut
+        // dibuang total, bukan hanya disembunyikan lewat CSS.
+        ['ctaAddPengiriman','fabAdd','fabImportPhoto','btnToggleGaji','gajiAdminSection'].forEach(function(id){
           var el = document.getElementById(id);
           if(el) el.remove();
         });
       }
       updateHeaderHeight();
-      document.getElementById('filterDateKurir').value = todayInputDate();
+      appliedDateFrom = todayInputDate();
+      appliedDateTo = todayInputDate();
+      updateDateRangeTriggerLabel();
 
-      // Data kurir & data dashboard sudah ikut di respons di atas —
+      // Data kurir & data dashboard sudah ikut di respons di atas â€”
       // langsung dipakai di sini tanpa memanggil server lagi.
       courierList = res.courierList || [];
       rawListDashboard = res.deliveries || [];
@@ -657,7 +782,7 @@
       .getCourierList();
   }
 
-  // Dropdown "Kurir" di tab Dashboard. Hanya admin yang melihatnya —
+  // Dropdown "Kurir" di tab Dashboard. Hanya admin yang melihatnya â€”
   // akun kurir hanya pernah melihat datanya sendiri, jadi filter ini
   // tidak relevan untuk mereka.
   function populateDashboardKurirFilter(){
@@ -689,7 +814,7 @@
       if (!select.value && names.length) select.selectedIndex = 0;
       document.getElementById('inputKurirLockNote').style.display = 'none';
     } else {
-      // Akun kurir (non-admin) tidak dapat mengubah opsi kurir —
+      // Akun kurir (non-admin) tidak dapat mengubah opsi kurir â€”
       // dropdown dikunci ke nama dirinya sendiri.
       if(!names.includes(currentUser.namaKurir)){
         select.innerHTML += '<option value="' + escapeHtml(currentUser.namaKurir) + '">' + escapeHtml(currentUser.namaKurir) + '</option>';
@@ -723,13 +848,16 @@
       document.getElementById('page-' + t).classList.toggle('active', t === tab);
     });
     // Untuk akun kurir, elemen fabAdd/fabImportPhoto sudah dibuang dari
-    // DOM sejak login (lihat onLoginResult) — cek elemen ada dulu
+    // DOM sejak login (lihat onLoginResult) â€” cek elemen ada dulu
     // supaya tidak error saat switchTab dipanggil di sesi kurir.
     // Keluar dari mode "Pilih Beberapa" setiap kali pindah dari tab To-Do,
     // supaya bar Tugaskan ke Kurir tidak tertinggal aktif di tab lain.
     if(tab !== 'todo') exitSelectModeTodo();
     var elSelectToggleRow = document.getElementById('selectToggleRow');
-    if(elSelectToggleRow) elSelectToggleRow.style.display = (isAdmin() && tab === 'todo') ? 'flex' : 'none';
+    // Dulu hanya admin (untuk tugaskan kurir massal). Sekarang akun kurir
+    // juga boleh memakai mode pilih ini, tapi aksinya dibatasi hanya
+    // untuk update status massal (Terkirim / On-Hold) â€” lihat toggleSelectModeTodo().
+    if(elSelectToggleRow) elSelectToggleRow.style.display = (tab === 'todo') ? 'flex' : 'none';
 
     var showFabs = isAdmin() && (tab === 'todo' || tab === 'kurir') && !selectModeTodo;
     var elFabAdd = document.getElementById('fabAdd');
@@ -775,13 +903,13 @@
 
   // Hitung ulang statistik + grafik distribusi dari data yang sudah
   // dimuat (rawListDashboard), disaring berdasarkan tanggal & kurir
-  // yang dipilih — tanpa perlu panggil server lagi tiap ganti filter.
+  // yang dipilih â€” tanpa perlu panggil server lagi tiap ganti filter.
   function renderDashboardStats(){
-    var dateVal = document.getElementById('filterDateKurir').value;
+    var dateRange = getActiveFilterDateRange();
     var kurirVal = isAdmin() ? document.getElementById('filterKurirDashboard').value : currentUser.namaKurir;
 
     var filtered = rawListDashboard.filter(function(d){
-      var matchDate = !dateVal || toInputDate(d.tanggal) === dateVal;
+      var matchDate = matchDateRange(toInputDate(d.tanggal), dateRange);
       var matchKurir = !kurirVal || kurirVal === 'ALL' || d.kurir === kurirVal;
       return matchDate && matchKurir;
     });
@@ -804,6 +932,11 @@
     document.getElementById('statTerkirim').textContent = terkirim;
     document.getElementById('statOnHold').textContent = onHold;
     document.getElementById('statCod').textContent = formatRupiah(codTotal);
+    // Gaji (akun kurir) / gaji & keuntungan per kurir (akun admin) dihitung
+    // dari data yang sama, ikut mengikuti filter tanggal & kurir yang aktif
+    // di atas â€” dipisah dari kode grafik donat di bawah supaya tetap
+    // ter-update walau belum ada data Terkirim sama sekali (breakdown kosong).
+    renderGajiInfo(terkirim, byKurirCount, kurirOrder);
 
     var container = document.getElementById('chartKurir');
     var breakdown = kurirOrder
@@ -811,7 +944,8 @@
       .sort(function(a, b){ return b.count - a.count; });
 
     if(!breakdown.length){
-      container.innerHTML = '<p class="empty">Belum ada data pengiriman' + (dateVal || (kurirVal && kurirVal !== 'ALL') ? ' yang cocok dengan filter ini.' : '.') + '</p>';
+      var dateFilterActive = !!dateRange.from || !!dateRange.to;
+      container.innerHTML = '<p class="empty">Belum ada data pengiriman' + (dateFilterActive || (kurirVal && kurirVal !== 'ALL') ? ' yang cocok dengan filter ini.' : '.') + '</p>';
       return;
     }
     renderDonutChart('chartKurir', breakdown.map(function(item, idx){
@@ -819,21 +953,220 @@
     }));
   }
 
-  document.getElementById('filterDateKurir').addEventListener('change', renderDashboardStats);
+  /* ---------- GAJI KURIR & KEUNTUNGAN ADMIN ---------- */
+  var GAJI_PER_PAKET = 3000;       // upah kurir per paket berstatus Terkirim
+  var KEUNTUNGAN_PER_PAKET = 2600; // keuntungan per paket Terkirim, khusus tampilan admin
+
+  // Dipanggil dari renderDashboardStats() setiap kali statistik dihitung
+  // ulang (termasuk saat filter tanggal/kurir berubah). Untuk akun kurir
+  // hanya mengisi kartu gaji miliknya sendiri; untuk admin mengisi total
+  // + daftar gaji & keuntungan tiap kurir. Elemen terkait sudah dibuang
+  // dari DOM untuk role yang tidak berhak (lihat onLoginResult()), jadi
+  // di sini cukup dicek elemen-nya ada dulu sebelum diisi.
+  function renderGajiInfo(terkirim, byKurirCount, kurirOrder){
+    if(isAdmin()){
+      var elTotalGaji = document.getElementById('totalGajiSemua');
+      var elTotalKeuntungan = document.getElementById('totalKeuntunganSemua');
+      if(elTotalGaji) elTotalGaji.textContent = formatRupiah(terkirim * GAJI_PER_PAKET);
+      if(elTotalKeuntungan) elTotalKeuntungan.textContent = formatRupiah(terkirim * KEUNTUNGAN_PER_PAKET);
+
+      var listEl = document.getElementById('listGajiKurir');
+      if(!listEl) return; // sudah dibuang dari DOM (bukan admin) â€” aman, tidak perlu lanjut
+      var ranked = kurirOrder
+        .map(function(name){ return { kurir: name, count: byKurirCount[name] }; })
+        .sort(function(a, b){ return b.count - a.count; });
+      if(!ranked.length){
+        listEl.innerHTML = '<p class="empty">Belum ada paket terkirim.</p>';
+        return;
+      }
+      listEl.innerHTML = ranked.map(function(item){
+        return '<div class="gaji-row">' +
+            '<div class="gaji-row-top">' +
+              '<span class="gaji-row-name">' + escapeHtml(item.kurir) + '</span>' +
+              '<span class="gaji-row-count">' + item.count + ' paket terkirim</span>' +
+            '</div>' +
+            '<div class="gaji-row-amounts">' +
+              '<span class="gaji-amount">Gaji: ' + formatRupiah(item.count * GAJI_PER_PAKET) + '</span>' +
+              '<span class="keuntungan-amount">Untung: ' + formatRupiah(item.count * KEUNTUNGAN_PER_PAKET) + '</span>' +
+            '</div>' +
+          '</div>';
+      }).join('');
+    } else {
+      var elValue = document.getElementById('gajiKurirValue');
+      var elSub = document.getElementById('gajiKurirSub');
+      if(elValue) elValue.textContent = formatRupiah(terkirim * GAJI_PER_PAKET);
+      if(elSub) elSub.textContent = terkirim + ' paket terkirim \u00d7 Rp3.000';
+    }
+  }
+
+  // Toggle tampilkan/sembunyikan seksi gaji & keuntungan â€” HANYA ada di
+  // akun admin (tombolnya sendiri sudah dibuang dari DOM untuk akun kurir).
+  var gajiAdminVisible = false;
+  function toggleGajiVisibility(){
+    gajiAdminVisible = !gajiAdminVisible;
+    var section = document.getElementById('gajiAdminSection');
+    var iconOpen = document.getElementById('iconEyeOpen');
+    var iconClosed = document.getElementById('iconEyeClosed');
+    if(section) section.style.display = gajiAdminVisible ? 'block' : 'none';
+    if(iconOpen) iconOpen.style.display = gajiAdminVisible ? 'block' : 'none';
+    if(iconClosed) iconClosed.style.display = gajiAdminVisible ? 'none' : 'block';
+  }
+
   document.getElementById('filterKurirDashboard').addEventListener('change', renderDashboardStats);
 
-  // Filter tanggal & kurir di tab Kurir (dashboard) dipakai bersama —
+  // Filter tanggal & kurir di tab Kurir (dashboard) dipakai bersama â€”
   // tab To-Do, Terkirim, On-Hold, dan COD ikut menampilkan data sesuai
   // tanggal & kurir yang sedang dipilih di sini (dibaca ulang setiap
   // tab tersebut dibuka/direfresh, jadi selalu ikut filter terbaru).
-  function getActiveFilterDate(){
-    var el = document.getElementById('filterDateKurir');
-    return el ? el.value : '';
+  // Nilai tanggal yang SUDAH DITERAPKAN (bukan yang sedang dipilih di
+  // kalender) disimpan di dua variabel ini â€” diisi lewat kartu tanggal
+  // kustom (lihat blok "KARTU TANGGAL" di bawah), bukan input <date> lagi.
+  var appliedDateFrom = '';
+  var appliedDateTo = '';
+  function getActiveFilterDateRange(){
+    return { from: appliedDateFrom, to: appliedDateTo };
+  }
+  // Cek apakah tanggal (format yyyy-mm-dd, hasil toInputDate()) berada
+  // di dalam rentang "Dari" - "S.d." yang aktif. Kalau salah satu batas
+  // dikosongkan, batas itu dianggap terbuka (tidak dibatasi). Kalau item
+  // tidak punya tanggal valid (itemDateIso kosong) dan rentang sedang
+  // aktif, item tidak dianggap cocok â€” supaya tidak "lolos" filter.
+  function matchDateRange(itemDateIso, range){
+    if(!range.from && !range.to) return true;
+    if(!itemDateIso) return false;
+    if(range.from && itemDateIso < range.from) return false;
+    if(range.to && itemDateIso > range.to) return false;
+    return true;
   }
   function getActiveFilterKurir(){
     if(!isAdmin()) return currentUser.namaKurir;
     var el = document.getElementById('filterKurirDashboard');
     return el ? (el.value || 'ALL') : 'ALL';
+  }
+
+  /* ---------- KARTU TANGGAL (kalender pilih rentang: dari - s.d.) ----------
+     Menggantikan dua input <date> bawaan browser dengan satu kartu/tombol
+     yang membuka modal kalender kustom (mirip gaya date picker Android,
+     tapi mendukung pemilihan RENTANG tanggal, bukan cuma satu tanggal). */
+  var MONTH_NAMES_ID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  var MONTH_SHORT_ID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  var drCalendarMonth = new Date(); // tanggal 1 di bulan yang sedang ditampilkan di kalender
+  var drSelStart = null; // 'yyyy-mm-dd' â€” tanggal awal yang SEDANG dipilih di kalender (belum tentu diterapkan)
+  var drSelEnd = null;   // 'yyyy-mm-dd' â€” tanggal akhir yang SEDANG dipilih di kalender
+
+  function isoToDateParts_(iso){
+    var p = iso.split('-');
+    return { y: Number(p[0]), m: Number(p[1]), d: Number(p[2]) };
+  }
+  function formatIsoShortId_(iso){
+    if(!iso) return '';
+    var p = isoToDateParts_(iso);
+    return p.d + ' ' + MONTH_SHORT_ID[p.m - 1] + ' ' + p.y;
+  }
+
+  // Isi ulang label kartu tanggal di halaman Kurir sesuai rentang yang
+  // SUDAH DITERAPKAN (appliedDateFrom/appliedDateTo) â€” dipanggil setiap
+  // kali rentang berubah (login, atau setelah tombol "Oke" di kalender).
+  function updateDateRangeTriggerLabel(){
+    var el = document.getElementById('dateRangeTriggerLabel');
+    if(!el) return;
+    if(!appliedDateFrom && !appliedDateTo){
+      el.textContent = 'Semua Tanggal';
+    } else if(appliedDateFrom === appliedDateTo){
+      el.textContent = formatIsoShortId_(appliedDateFrom);
+    } else if(!appliedDateFrom){
+      el.textContent = 's.d. ' + formatIsoShortId_(appliedDateTo);
+    } else if(!appliedDateTo){
+      el.textContent = 'Mulai ' + formatIsoShortId_(appliedDateFrom);
+    } else {
+      el.textContent = formatIsoShortId_(appliedDateFrom) + ' \u2013 ' + formatIsoShortId_(appliedDateTo);
+    }
+  }
+
+  function openDateRangeModal(){
+    // Kalender selalu mulai dari rentang yang SUDAH diterapkan supaya
+    // membuka ulang kartu tanggal menampilkan pilihan terakhir, bukan
+    // kosong terus.
+    drSelStart = appliedDateFrom || null;
+    drSelEnd = appliedDateTo || null;
+    drCalendarMonth = drSelStart ? new Date(drSelStart + 'T00:00:00') : new Date();
+    renderDateRangeCalendar();
+    document.getElementById('dateRangeModal').classList.add('open');
+  }
+  function closeDateRangeModal(){
+    document.getElementById('dateRangeModal').classList.remove('open');
+  }
+  document.getElementById('dateRangeModal').addEventListener('click', function(e){ if(e.target === this) closeDateRangeModal(); });
+
+  function shiftDateRangeMonth(delta){
+    drCalendarMonth.setMonth(drCalendarMonth.getMonth() + delta);
+    renderDateRangeCalendar();
+  }
+
+  function resetDateRangeSelection(){
+    var todayIso = todayInputDate();
+    drSelStart = todayIso;
+    drSelEnd = todayIso;
+    drCalendarMonth = new Date(todayIso + 'T00:00:00');
+    renderDateRangeCalendar();
+  }
+
+  function selectDateRangeDay(iso){
+    if(!drSelStart || (drSelStart && drSelEnd)){
+      // Belum ada pilihan, atau rentang sebelumnya sudah lengkap â€”
+      // mulai pilihan baru dari tanggal yang baru saja ditekan.
+      drSelStart = iso;
+      drSelEnd = null;
+    } else if(iso < drSelStart){
+      // Tanggal yang ditekan lebih awal dari titik awal â€” jadikan
+      // titik awal baru, titik awal lama jadi titik akhir.
+      drSelEnd = drSelStart;
+      drSelStart = iso;
+    } else {
+      drSelEnd = iso;
+    }
+    renderDateRangeCalendar();
+  }
+
+  function applyDateRangeSelection(){
+    appliedDateFrom = drSelStart || '';
+    appliedDateTo = drSelEnd || drSelStart || ''; // hanya 1 tanggal ditekan = rentang 1 hari
+    updateDateRangeTriggerLabel();
+    closeDateRangeModal();
+    renderDashboardStats();
+  }
+
+  // Gambar ulang label bulan, ringkasan Dari/S.d., dan grid tanggal â€”
+  // dipanggil tiap kali bulan berganti atau tanggal dipilih/direset.
+  function renderDateRangeCalendar(){
+    document.getElementById('drMonthLabel').textContent =
+      MONTH_NAMES_ID[drCalendarMonth.getMonth()] + ' ' + drCalendarMonth.getFullYear();
+
+    var year = drCalendarMonth.getFullYear();
+    var month = drCalendarMonth.getMonth(); // 0-based
+    var firstDow = new Date(year, month, 1).getDay(); // 0 = Minggu
+    var daysInMonth = new Date(year, month + 1, 0).getDate();
+    var todayIso = todayInputDate();
+
+    var cells = [];
+    for(var i = 0; i < firstDow; i++){ cells.push('<div class="dr-day"></div>'); }
+    var hasRange = !!(drSelStart && drSelEnd && drSelStart !== drSelEnd);
+    for(var d = 1; d <= daysInMonth; d++){
+      var iso = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+      var classes = ['dr-day'];
+      if(iso === todayIso) classes.push('today');
+      if(hasRange && iso > drSelStart && iso < drSelEnd) classes.push('in-range');
+      if(drSelStart === iso){
+        classes.push('range-start');
+        if(hasRange) classes.push('in-range');
+      }
+      if(hasRange && drSelEnd === iso){
+        classes.push('range-end');
+        classes.push('in-range');
+      }
+      cells.push('<div class="' + classes.join(' ') + '"><button type="button" class="dr-day-btn" onclick="selectDateRangeDay(\'' + iso + '\')">' + d + '</button></div>');
+    }
+    document.getElementById('drGrid').innerHTML = cells.join('');
   }
 
   /* ---------- TO-DO / TERKIRIM / ON-HOLD ---------- */
@@ -866,17 +1199,17 @@
   function applyFilter(status){
     var suffix = STATUS_SUFFIX[status];
     var searchVal = document.getElementById('search' + suffix).value.trim().toLowerCase();
-    var dateVal = getActiveFilterDate();
+    var dateRange = getActiveFilterDateRange();
     var source = getRawList_(status);
     var container = document.getElementById('list' + suffix);
-    var filterActive = !!searchVal || !!dateVal;
+    var filterActive = !!searchVal || !!dateRange.from || !!dateRange.to;
 
     var filtered = source.filter(function(d){
       var matchSearch = !searchVal ||
         String(d.noResi || '').toLowerCase().indexOf(searchVal) !== -1 ||
         String(d.nama || '').toLowerCase().indexOf(searchVal) !== -1 ||
         String(d.alamat || '').toLowerCase().indexOf(searchVal) !== -1;
-      var matchDate = !dateVal || toInputDate(d.tanggal) === dateVal;
+      var matchDate = matchDateRange(toInputDate(d.tanggal), dateRange);
       return matchSearch && matchDate;
     });
 
@@ -909,7 +1242,7 @@
     var cardClass = status === 'To-Do' ? 'todo' : (status === 'On-Hold' ? 'onhold' : 'done');
     var isTodo = status === 'To-Do';
     // Saat mode "Pilih Beberapa" aktif di tab To-Do, tombol aksi per-kartu
-    // disembunyikan dan diganti checkbox — aksinya lalu dilakukan sekaligus
+    // disembunyikan dan diganti checkbox â€” aksinya lalu dilakukan sekaligus
     // lewat bar "Tugaskan ke Kurir" di bawah.
     var showCheck = isTodo && selectModeTodo;
     container.innerHTML = data.map(function(d){
@@ -923,7 +1256,7 @@
           '<button class="btn btn-success" onclick="markDelivered(\'' + d.id + '\')">Tandai Terkirim</button>' +
           '<button class="btn btn-danger" onclick="markOnHold(\'' + d.id + '\')">Tandai Gagal</button>' +
           '<button class="btn btn-ghost" onclick="openEditForm(\'' + d.id + '\')">Ubah</button>' +
-          '<button class="btn btn-danger" onclick="confirmDelete(\'' + d.id + '\')">Hapus</button>';
+          (isAdmin() ? '<button class="btn btn-danger" onclick="confirmDelete(\'' + d.id + '\')">Hapus</button>' : '');
       } else if(status === 'On-Hold'){
         actions = '<button class="btn btn-success" onclick="event.stopPropagation(); markDelivered(\'' + d.id + '\')">Tandai Terkirim</button>' +
           '<button class="btn btn-ghost" onclick="event.stopPropagation(); revertToTodo(\'' + d.id + '\')">Coba Lagi</button>' +
@@ -940,10 +1273,11 @@
       // tidak dipasang lagi di kartu To-Do karena sudah tidak dibutuhkan.
       var openAttr = isTodo ? '' : ' onclick="openDetailModal(\'' + d.id + '\')"';
       var checkedAttr = selectedTodoIds[d.id] ? ' checked' : '';
+      var selectLabel = isAdmin() ? 'Pilih untuk ditugaskan ke kurir' : 'Pilih untuk update status massal';
       var checkboxHtml = showCheck
         ? '<label class="card-select-row">' +
             '<input type="checkbox"' + checkedAttr + ' onchange="toggleCardCheck(\'' + d.id + '\', this.checked, this)">' +
-            '<span>Pilih untuk ditugaskan ke kurir</span>' +
+            '<span>' + selectLabel + '</span>' +
           '</label>'
         : '';
       var cardClasses = 'card status-' + cardClass + (showCheck && selectedTodoIds[d.id] ? ' selected' : '');
@@ -979,7 +1313,13 @@
     var showFabs = isAdmin() && activeTab === 'todo' && !selectModeTodo;
     if(elFabAdd) elFabAdd.style.display = showFabs ? 'flex' : 'none';
     if(elFabPhoto) elFabPhoto.style.display = showFabs ? 'flex' : 'none';
-    if(selectModeTodo) populateBulkKurirSelect();
+    // Admin melihat kontrol "Tugaskan ke Kurir", akun kurir melihat
+    // kontrol "Tandai Terkirim / On-Hold" â€” hanya salah satu yang tampil.
+    var elBulkAdmin = document.getElementById('bulkAdminControls');
+    var elBulkKurir = document.getElementById('bulkKurirControls');
+    if(elBulkAdmin) elBulkAdmin.style.display = isAdmin() ? 'flex' : 'none';
+    if(elBulkKurir) elBulkKurir.style.display = isAdmin() ? 'none' : 'flex';
+    if(selectModeTodo && isAdmin()) populateBulkKurirSelect();
     updateBulkBar();
     applyFilter('To-Do'); // render ulang supaya checkbox muncul/hilang di tiap kartu
   }
@@ -1039,6 +1379,30 @@
       .bulkAssignKurir(currentUser.username, ids, kurir);
   }
 
+  // Update status massal (Terkirim / On-Hold) untuk paket yang dicentang.
+  // Dipakai oleh akun kurir (dan tetap bisa dipakai admin) lewat dua
+  // tombol di bulk-bar â€” TIDAK mengubah/menugaskan kurir, hanya status.
+  function applyBulkStatus(newStatus){
+    var ids = Object.keys(selectedTodoIds);
+    if(!ids.length){ showToast('Pilih minimal satu kartu dulu'); return; }
+    var buttons = document.querySelectorAll('#bulkKurirControls .btn-bulk-assign');
+    buttons.forEach(function(b){ b.disabled = true; });
+    google.script.run
+      .withSuccessHandler(function(res){
+        buttons.forEach(function(b){ b.disabled = false; });
+        if(res && res.success === false){ showToast(res.message || 'Gagal memperbarui status'); return; }
+        var label = newStatus === 'Terkirim' ? 'Terkirim' : 'On-Hold';
+        showToast((res.count || ids.length) + ' paket ditandai ' + label);
+        exitSelectModeTodo();
+        refreshCurrentTab();
+      })
+      .withFailureHandler(function(err){
+        buttons.forEach(function(b){ b.disabled = false; });
+        showToast('Gagal memperbarui status: ' + err.message);
+      })
+      .bulkUpdateStatus(currentUser.username, ids, newStatus);
+  }
+
   function markDelivered(id){
     google.script.run
       .withSuccessHandler(function(){ showToast('Ditandai sebagai terkirim'); refreshCurrentTab(); })
@@ -1058,11 +1422,15 @@
       .updateDeliveryStatus(id, 'To-Do');
   }
   function confirmDelete(id){
+    if(!isAdmin()){ showToast('Hanya admin yang dapat menghapus data pengiriman'); return; }
     if(!confirm('Hapus data pengiriman ini?')) return;
     google.script.run
-      .withSuccessHandler(function(){ showToast('Data dihapus'); refreshCurrentTab(); })
-      .withFailureHandler(function(){ showToast('Gagal menghapus data'); })
-      .deleteDelivery(id);
+      .withSuccessHandler(function(res){
+        if(res && res.success === false){ showToast(res.message || 'Gagal menghapus data'); return; }
+        showToast('Data dihapus'); refreshCurrentTab();
+      })
+      .withFailureHandler(function(err){ showToast('Gagal menghapus data: ' + err.message); })
+      .deleteDelivery(currentUser.username, id);
   }
 
   /* ---------- COD ---------- */
@@ -1085,10 +1453,10 @@
   // total, sama seperti logika di server (lihat getCODSummary di Code.gs).
   function renderCODSummary(summary){
     var container = document.getElementById('codList');
-    var dateVal = getActiveFilterDate();
+    var dateRange = getActiveFilterDateRange();
 
     var groups = (summary.byKurir || []).map(function(group){
-      var list = !dateVal ? group.list : group.list.filter(function(d){ return toInputDate(d.tanggal) === dateVal; });
+      var list = (!dateRange.from && !dateRange.to) ? group.list : group.list.filter(function(d){ return matchDateRange(toInputDate(d.tanggal), dateRange); });
       var total = 0, totalTerkumpul = 0, totalPending = 0;
       list.forEach(function(d){
         var cod = Number(d.jumlahCod) || 0;
@@ -1103,7 +1471,8 @@
     document.getElementById('codTotal').textContent = formatRupiah(grandTotal);
 
     if(!groups.length){
-      container.innerHTML = '<div class="empty">Belum ada transaksi COD' + (dateVal ? ' pada tanggal ini' : '') + '.</div>';
+      var codDateFilterActive = !!dateRange.from || !!dateRange.to;
+      container.innerHTML = '<div class="empty">Belum ada transaksi COD' + (codDateFilterActive ? ' pada rentang tanggal ini' : '') + '.</div>';
       return;
     }
     container.innerHTML = groups.map(renderKurirCodGroup).join('');
@@ -1292,7 +1661,7 @@
   function formatRupiah(num){ num = Number(num) || 0; return 'Rp' + num.toLocaleString('id-ID'); }
   // Tanggal hari ini dalam format yyyy-mm-dd (sesuai zona waktu lokal
   // perangkat), dipakai sebagai nilai default filter tanggal & saat
-  // tombol refresh ditekan — selalu mengikuti tanggal saat ini.
+  // tombol refresh ditekan â€” selalu mengikuti tanggal saat ini.
   function todayInputDate(){
     var d = new Date();
     var mm = String(d.getMonth() + 1).padStart(2, '0');
@@ -1448,14 +1817,14 @@
      App ini punya deployment/URL terpisah (project Apps Script lain).
      Dibuka sebagai jendela pop-up. Penyimpanan data ke To-Do sekarang
      dilakukan LANGSUNG oleh App Foto itu sendiri (tombol "Salin &
-     Simpan" di sana menulis langsung ke Spreadsheet To-Do yang sama —
+     Simpan" di sana menulis langsung ke Spreadsheet To-Do yang sama â€”
      lihat saveFieldsToTodo() di project App Foto). Di sini kita hanya
      perlu me-refresh daftar & menampilkan notifikasi tiap kali App Foto
      memberi tahu satu data berhasil disimpan.
 
      GANTI URL DI BAWAH INI dengan URL Web App "Salin Teks dari Foto"
      kamu setelah dideploy. */
-  var OCR_APP_URL = 'https://script.google.com/macros/s/AKfycbyabRCCJTPigTKQ4OmGq3H-xwxnoCDBptoz2ois0jamsyWU7QE-6okQvSwvsk0aOjo/exec';
+  var OCR_APP_URL = 'GANTI-DENGAN-URL-APP-SALIN-TEKS-DARI-FOTO';
 
   function openOcrTool(){
     if(!OCR_APP_URL || OCR_APP_URL.indexOf('GANTI-DENGAN-URL') !== -1){
@@ -1473,7 +1842,7 @@
     if(!data || !data.type) return;
 
     if(data.type === 'OCR_CLOSED'){
-      // Jendela App Foto ditutup user — tidak perlu aksi apa pun di sini.
+      // Jendela App Foto ditutup user â€” tidak perlu aksi apa pun di sini.
       return;
     }
 
@@ -1500,7 +1869,7 @@
   // Kalau tab yang sedang aktif (To-Do/Terkirim/On-Hold) punya kata kunci
   // pencarian yang sedang diisi, tombol kembali cukup menghapus kata kunci
   // itu dan menampilkan lagi daftar lengkapnya (urutan normal, tidak
-  // difilter) — belum langsung memicu konfirmasi keluar aplikasi.
+  // difilter) â€” belum langsung memicu konfirmasi keluar aplikasi.
   var TAB_TO_STATUS = { todo: 'To-Do', terkirim: 'Terkirim', onhold: 'On-Hold' };
   function clearActiveSearchIfAny(){
     var status = TAB_TO_STATUS[activeTab];
@@ -1512,81 +1881,42 @@
     return true;
   }
 
-  // Beberapa lapis "pengaman" riwayat sekaligus di awal — jaga-jaga kalau
-  // satu tombol kembali ditekan cepat berturut-turut, masih ada cadangan.
-  for (var guardI = 0; guardI < 3; guardI++) {
-    history.pushState({ app: true }, '', location.href);
+  // Tombol kembali HANYA menutup modal yang sedang terbuka (kalau ada),
+  // atau menghapus kata kunci pencarian yang sedang diisi (kalau ada).
+  // Tidak ada lagi konfirmasi "keluar dari aplikasi" â€” tombol kembali
+  // akan berperilaku normal (keluar dari aplikasi/halaman) kalau tidak
+  // ada modal terbuka maupun kata kunci pencarian yang aktif.
+  function handleBackAction(){
+    if(closeOpenModalIfAny()) return true;
+    if(clearActiveSearchIfAny()) return true;
+    return false;
   }
-  window.addEventListener('popstate', function(){
-    // Pasang ulang "pengaman" riwayat PALING AWAL, sebelum apa pun diproses
-    // di bawah — supaya tidak ada jeda yang bisa membuat tombol kembali
-    // fisik/gestur Android keburu menembus keluar dari aplikasi.
-    history.pushState({ app: true }, '', location.href);
 
-    if(closeOpenModalIfAny()) return;
-    if(clearActiveSearchIfAny()) return;
-
-    if(confirm('Apakah Anda ingin keluar dari aplikasi?')){
-      // Pengaman di atas sudah menambah satu entri riwayat baru; mundur
-      // sekali untuk benar-benar menjalankan niat "kembali" yang tadi
-      // ditekan pengguna (keluar dari aplikasi).
-      history.go(-1);
-    }
-  });
-// ---------- CAPACITOR: TANGANI TOMBOL BACK LEWAT PLUGIN NATIVE ----------
-function isNativeApp(){
-  return !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
-}
-
-if (isNativeApp() && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
-  window.Capacitor.Plugins.App.addListener('backButton', function () {
-    if (closeOpenModalIfAny()) return;
-    if (clearActiveSearchIfAny()) return;
-    showExitConfirm();
-  });
-} else {
-  // Fallback untuk versi Web App biasa (browser, bukan APK)
-  for (var guardI = 0; guardI < 3; guardI++) {
-    history.pushState({ app: true }, '', location.href);
-  }
-  window.addEventListener('popstate', function(){
-    history.pushState({ app: true }, '', location.href);
-    if(closeOpenModalIfAny()) return;
-    if(clearActiveSearchIfAny()) return;
-    if(confirm('Apakah Anda ingin keluar dari aplikasi?')){
-      history.go(-1);
-    }
-  });
-  window.addEventListener('beforeunload', function(e){
-    e.preventDefault();
-    e.returnValue = '';
-  });
-}
-
-function showExitConfirm(){
-  if(document.getElementById('exitConfirmOverlay')) return;
-  var div = document.createElement('div');
-  div.id = 'exitConfirmOverlay';
-  div.className = 'modal-overlay open';
-  div.innerHTML =
-    '<div class="modal-sheet" style="text-align:center;">' +
-      '<p style="margin-bottom:18px;font-weight:600;">Apakah Anda ingin keluar dari aplikasi?</p>' +
-      '<div style="display:flex;gap:10px;">' +
-        '<button class="btn btn-ghost" style="flex:1;padding:12px;" id="exitCancelBtn">Batal</button>' +
-        '<button class="btn btn-danger" style="flex:1;padding:12px;" id="exitOkBtn">Keluar</button>' +
-      '</div>' +
-    '</div>';
-  document.body.appendChild(div);
-  document.getElementById('exitCancelBtn').onclick = function(){ div.remove(); };
-  document.getElementById('exitOkBtn').onclick = function(){
-    if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+  // Di dalam app Android (Capacitor), pakai listener RESMI dari plugin
+  // @capacitor/app (sudah terpasang di package.json, capacitor.js
+  // otomatis disuntikkan runtime native ke WebView) â€” jauh lebih andal
+  // daripada trik history.pushState untuk menangkap tombol kembali
+  // fisik/gestur Android. Kalau tidak ada modal/pencarian aktif, baru
+  // app benar-benar ditutup lewat App.exitApp().
+  if(window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App){
+    window.Capacitor.Plugins.App.addListener('backButton', function(){
+      if(handleBackAction()) return;
       window.Capacitor.Plugins.App.exitApp();
-    } else {
-      div.remove();
-    }
-  };
-}
-  
+    });
+  } else {
+    // Fallback kalau file ini dibuka di browser biasa (bukan lewat app
+    // Android/Capacitor) â€” mis. saat development di laptop â€” objek
+    // Capacitor tidak ada, jadi pakai trik history.pushState seperti
+    // sebelumnya.
+    history.pushState({ app: true }, '', location.href);
+    window.addEventListener('popstate', function(){
+      if(handleBackAction()){
+        history.pushState({ app: true }, '', location.href);
+      }
+      // Tidak ada modal terbuka maupun kata kunci aktif â€” biarkan
+      // navigasi kembali berjalan seperti biasa (tidak menahan riwayat).
+    });
+  }
 </script>
 </body>
 </html>
