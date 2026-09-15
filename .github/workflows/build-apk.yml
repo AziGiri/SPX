@@ -26,7 +26,20 @@ jobs:
           java-version: '17'
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        # Sengaja TIDAK pakai action android-actions/setup-android@v3 di
+        # sini â€” action itu (dan turunan berbasis "tools" lain) mencoba
+        # menginstal paket SDK lama bernama "tools" yang sudah dihapus
+        # total dari server Google, jadi step-nya SELALU gagal (error
+        # "Failed to find package 'tools'"). Runner ubuntu-latest bawaan
+        # GitHub Actions sudah punya Android SDK + cmdline-tools
+        # terpasang otomatis (variabel ANDROID_HOME sudah diset), jadi
+        # kita cukup pastikan platform & build-tools yang dibutuhkan
+        # Capacitor/Gradle sudah ada lewat sdkmanager bawaan itu.
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
+            "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
       - name: Install dependency npm
         run: npm install
