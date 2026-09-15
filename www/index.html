@@ -1499,11 +1499,17 @@
           }
         }
       } else if(status === 'On-Hold'){
-        actions = '<button class="btn btn-success" onclick="event.stopPropagation(); markDelivered(\'' + d.id + '\')">Tandai Terkirim</button>' +
-          '<button class="btn btn-ghost" onclick="event.stopPropagation(); revertToTodo(\'' + d.id + '\')">Coba Lagi</button>' +
-          '<button class="btn btn-ghost" onclick="event.stopPropagation(); openEditForm(\'' + d.id + '\')">Ubah</button>' +
-          '<button class="btn btn-danger" onclick="event.stopPropagation(); confirmDelete(\'' + d.id + '\')">Hapus</button>';
-      } else {
+    // Hanya admin yang boleh mengubah status/ubah/hapus paket
+    // On-Hold (ditegakkan ulang di server, lihat updateDeliveryStatus/
+    // updateDelivery/deleteDelivery di Code.gs). Akun kurir hanya
+    // melihat kartu ini sebagai read-only, tanpa tombol aksi.
+    actions = isAdmin()
+      ? '<button class="btn btn-success" onclick="event.stopPropagation(); markDelivered(\'' + d.id + '\')">Tandai Terkirim</button>' +
+        '<button class="btn btn-ghost" onclick="event.stopPropagation(); revertToTodo(\'' + d.id + '\')">Coba Lagi</button>' +
+        '<button class="btn btn-ghost" onclick="event.stopPropagation(); openEditForm(\'' + d.id + '\')">Ubah</button>' +
+        '<button class="btn btn-danger" onclick="event.stopPropagation(); confirmDelete(\'' + d.id + '\')">Hapus</button>'
+      : '';
+  } else {
         actions = '<button class="btn btn-ghost" onclick="event.stopPropagation(); revertToTodo(\'' + d.id + '\')">Kembalikan</button>' +
           '<button class="btn btn-ghost" onclick="event.stopPropagation(); openEditForm(\'' + d.id + '\')">Ubah</button>' +
           '<button class="btn btn-danger" onclick="event.stopPropagation(); confirmDelete(\'' + d.id + '\')">Hapus</button>';
