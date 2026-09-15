@@ -150,7 +150,7 @@
   .gaji-admin-section{margin-bottom:6px;}
   .gaji-row{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-card);padding:12px 14px;margin-bottom:8px;}
   .gaji-row-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px;}
-  .gaji-row-name{font-size:13.5px;font-weight:700;color:var(--navy);}
+  .gaji-row-name{font-size:12.5px;font-weight:700;display:inline-block;padding:2px 9px;border-radius:var(--radius-pill);}
   .gaji-row-count{font-size:11px;color:var(--muted);white-space:nowrap;}
   .gaji-row-amounts{display:flex;gap:16px;margin-top:6px;}
   .gaji-amount,.keuntungan-amount{font-size:12.5px;font-weight:700;}
@@ -191,7 +191,7 @@
   .card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;gap:8px;}
   .card-date{font-size:12px;color:var(--muted);font-weight:600;}
   .resi{font-family:ui-monospace,'SF Mono','Roboto Mono',Consolas,monospace;font-size:11.5px;color:var(--navy);background:var(--paper);padding:2px 7px;border-radius:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;}
-  .card-kurir{display:inline-block;font-size:10.5px;font-weight:700;color:var(--navy);background:var(--amber-soft);padding:2px 8px;border-radius:var(--radius-pill);margin-bottom:6px;}
+  .card-kurir{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:var(--radius-pill);margin-bottom:6px;}
   .card-name{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px;}
   .card-row{font-size:13px;margin-bottom:2px;line-height:1.4;}
   .muted{color:var(--muted);}
@@ -217,7 +217,7 @@
   .badge-done{background:var(--green-soft);color:var(--green);}
   .kurir-cod-group{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-card);padding:14px;margin-bottom:14px;}
   .kurir-cod-header{display:flex;justify-content:space-between;align-items:center;gap:8px;}
-  .kurir-cod-name{font-size:14.5px;font-weight:800;color:var(--navy);}
+  .kurir-cod-name{font-size:13px;font-weight:800;display:inline-block;padding:3px 10px;border-radius:var(--radius-pill);}
   .kurir-cod-total{font-size:14.5px;font-weight:800;color:var(--navy);flex-shrink:0;}
   .kurir-cod-sub{display:flex;gap:14px;font-size:11.5px;color:var(--muted);margin:4px 0 10px;padding-bottom:10px;border-bottom:1px dashed var(--line);}
   .kurir-cod-group .cod-item:last-child{margin-bottom:0;}
@@ -1196,7 +1196,7 @@
       listEl.innerHTML = ranked.map(function(item){
         return '<div class="gaji-row">' +
             '<div class="gaji-row-top">' +
-              '<span class="gaji-row-name">' + escapeHtml(item.kurir) + '</span>' +
+              '<span class="gaji-row-name" style="' + courierColorStyle(item.kurir) + '">' + escapeHtml(item.kurir) + '</span>' +
               '<span class="gaji-row-count">' + item.count + ' paket terkirim</span>' +
             '</div>' +
             '<div class="gaji-row-amounts">' +
@@ -1531,7 +1531,7 @@
       return '<div class="' + cardClasses + '"' + openAttr + '>' +
           checkboxHtml +
           '<div class="card-top"><span class="card-date">' + escapeHtml(d.tanggal) + '</span><span class="resi">' + escapeHtml(d.noResi) + '</span></div>' +
-          (isTodo && d.kurir ? '<span class="card-kurir">' + escapeHtml(d.kurir) + '</span>' : '') +
+          (d.kurir ? '<span class="card-kurir" style="' + courierColorStyle(d.kurir) + '">' + escapeHtml(d.kurir) + '</span>' : '') +
           '<div class="card-name">' + escapeHtml(d.nama || '(Tanpa nama)') + '</div>' +
           (d.alamat ? '<div class="card-row muted">' + escapeHtml(d.alamat) + '</div>' : '') +
           (d.noTelp ? '<div class="card-row muted">' + escapeHtml(d.noTelp) + '</div>' : '') +
@@ -1807,7 +1807,7 @@
 
     return '<div class="kurir-cod-group">' +
         '<div class="kurir-cod-header">' +
-          '<span class="kurir-cod-name">' + escapeHtml(group.kurir) + '</span>' +
+          '<span class="kurir-cod-name" style="' + courierColorStyle(group.kurir) + '">' + escapeHtml(group.kurir) + '</span>' +
           '<span class="kurir-cod-total">' + formatRupiah(group.total) + '</span>' +
         '</div>' +
         '<div class="kurir-cod-sub">' +
@@ -1912,6 +1912,23 @@
   /* ---------- HELPER ---------- */
   var DONUT_COLORS = ['#C77B23', '#2F8F5B', '#2E6FA3', '#8B5FA6', '#B23A32', '#B89B2E'];
 
+  // Warna latar terang + warna teks yang KONSISTEN untuk nama kurir yang
+  // sama, di mana pun namanya muncul (menu Kurir, To-Do, Terkirim,
+  // On-Hold, COD) - dihasilkan dari nama kurir itu sendiri (hash),
+  // jadi tidak perlu diatur manual dan otomatis beda-beda tiap kurir.
+  // Warna latar MENCOLOK (pekat/tua) + teks putih supaya kontras tinggi
+  // dan gampang dibedakan sekilas antar kurir.
+  var KURIR_BG_PALETTE = ['#A61B29','#1B5FA8','#1B7A43','#6B3FA0','#C0630A','#0E7C7B','#A02B6F','#8A4B12','#2C3E6B','#6B7A1B','#B0202E','#1F4E96'];
+  var KURIR_TEXT_PALETTE = ['#FFFFFF','#FFFFFF','#FFFFFF','#FFFFFF','#FFFFFF','#FFFFFF','#FFFFFF','#FFFFFF','#FFFFFF','#FFFFFF','#FFFFFF','#FFFFFF'];
+  function courierColorStyle(name){
+    var str = String(name || '').trim();
+    if(!str) return 'background:var(--paper);color:var(--muted);';
+    var hash = 0;
+    for(var i = 0; i < str.length; i++){ hash = (hash * 31 + str.charCodeAt(i)) >>> 0; }
+    var idx = hash % KURIR_BG_PALETTE.length;
+    return 'background:' + KURIR_BG_PALETTE[idx] + ';color:' + KURIR_TEXT_PALETTE[idx] + ';';
+  }
+
   function polarPoint(cx, cy, r, angleDeg){
     var rad = angleDeg * Math.PI / 180;
     return { x: cx + r * Math.sin(rad), y: cy - r * Math.cos(rad) };
@@ -1960,7 +1977,7 @@
       var pct = total > 0 ? Math.round(val / total * 100) : 0;
       return '<div class="legend-row">' +
         '<span class="legend-dot" style="background:' + item.color + '"></span>' +
-        '<span class="legend-label">' + escapeHtml(item.label) + '</span>' +
+        '<span class="legend-label" style="' + courierColorStyle(item.label) + 'border-radius:6px;padding:1px 7px;">' + escapeHtml(item.label) + '</span>' +
         '<span class="legend-value">' + val + ' (' + pct + '%)</span>' +
         '</div>';
     }).join('');
