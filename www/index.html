@@ -932,7 +932,8 @@
   function loadDashboard(isManualRefresh){
     populateDashboardKurirFilter();
     var kurirFetch = isAdmin() ? 'ALL' : currentUser.namaKurir;
-    document.getElementById('chartKurir').innerHTML = '<p class="empty">Memuat data...</p>';
+    var elChartKurirLoading = document.getElementById('chartKurir');
+    if(elChartKurirLoading) elChartKurirLoading.innerHTML = '<p class="empty">Memuat data...</p>';
     google.script.run
       .withSuccessHandler(function(data){
         rawListDashboard = data || [];
