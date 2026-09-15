@@ -51,6 +51,14 @@ jobs:
           fi
           npx cap sync android
 
+      - name: Generate icon aplikasi dari resources/icon.png
+        # Membaca resources/icon.png (+ icon-foreground.png/icon-background.png
+        # untuk adaptive icon) lalu menimpa semua ukuran ic_launcher di
+        # android/app/src/main/res/mipmap-* secara otomatis. Cukup ganti
+        # file di folder resources/ untuk mengganti icon aplikasi â€” tidak
+        # perlu utak-atik folder android/ secara manual.
+        run: npx @capacitor/assets generate --android
+
       - name: Build APK (debug - siap sideload/install manual)
         run: |
           cd android
