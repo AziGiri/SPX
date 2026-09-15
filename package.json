@@ -6,7 +6,8 @@
   "scripts": {
     "sync": "npx cap sync",
     "add:android": "npx cap add android",
-    "open:android": "npx cap open android"
+    "open:android": "npx cap open android",
+    "icon": "npx @capacitor/assets generate --android"
   },
   "dependencies": {
     "@capacitor/android": "^6.1.2",
@@ -14,6 +15,7 @@
     "@capacitor/core": "^6.1.2"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^6.1.2"
   }
 }
