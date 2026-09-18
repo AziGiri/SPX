@@ -58,7 +58,7 @@
   .field:focus-within{background:var(--amber-soft);box-shadow:0 0 0 1px rgba(199,123,35,.35) inset;}
   .field:focus-within label{color:var(--amber);}
 
-  /* ===== FORM MODAL (COMPACT) — khusus form tambah/ubah pengiriman ===== */
+  /* ===== FORM MODAL (COMPACT) â€” khusus form tambah/ubah pengiriman ===== */
   #formModal .modal-sheet{padding:16px 18px calc(16px + env(safe-area-inset-bottom));max-height:92vh;}
   #formModal .modal-header{margin-bottom:12px;}
   #formModal .field{margin-bottom:9px;padding:4px 6px;margin-left:-6px;margin-right:-6px;}
@@ -199,11 +199,18 @@
   .resi{font-family:ui-monospace,'SF Mono','Roboto Mono',Consolas,monospace;font-size:11.5px;color:var(--navy);background:var(--paper);padding:2px 7px;border-radius:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;}
   .card-kurir{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:var(--radius-pill);margin-bottom:6px;}
   .card-name{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+  .card-name-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .card-name-row .card-name{margin-bottom:0;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .wa-btn{flex-shrink:0;width:30px;height:30px;border-radius:50%;border:none;background:#25D366;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 6px rgba(37,211,102,.35);padding:0;}
+  .wa-btn svg{width:16px;height:16px;}
   .card-row{font-size:13px;margin-bottom:2px;line-height:1.4;}
   .muted{color:var(--muted);}
   .small{font-size:12px;}
   .card-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);flex-wrap:wrap;gap:8px;}
   .cod-amount{font-size:14.5px;font-weight:800;color:var(--navy);}
+  .cod-amount-row{display:flex;align-items:center;gap:8px;}
+  .cod-amount-row .wa-btn{width:26px;height:26px;}
+  .cod-amount-row .wa-btn svg{width:14px;height:14px;}
   .card-actions{display:flex;gap:6px;flex-wrap:wrap;}
 
   .btn{border:none;border-radius:var(--radius-pill);padding:7px 13px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;}
@@ -331,7 +338,7 @@
         <div class="gaji-kurir-sub" id="gajiKurirSub">0 paket terkirim &times; Rp3.000</div>
       </div>
 
-      <!-- Seksi gaji & keuntungan semua kurir, khusus admin — disembunyikan
+      <!-- Seksi gaji & keuntungan semua kurir, khusus admin â€” disembunyikan
            secara default, ditampilkan/disembunyikan lewat ikon mata di header. -->
       <div class="gaji-admin-section" id="gajiAdminSection" style="display:none;">
         <div class="stats-row">
@@ -357,7 +364,7 @@
         <div id="chartKurir"></div>
       </div>
 
-      <!-- Khusus akun kurir: menggantikan grafik distribusi di atas —
+      <!-- Khusus akun kurir: menggantikan grafik distribusi di atas â€”
            daftar paket To-Do yang SUDAH ditandai (di-"tandai") oleh
            kurir ini sendiri untuk dia antar, lengkap dengan mode pilih
            beberapa untuk menandai status massal (Terkirim/On-Hold). -->
@@ -402,6 +409,13 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
           <input type="text" id="searchTerkirim" placeholder="Ketik kata kunci pencarian...">
         </div>
+        <div class="select-toggle-row" id="selectToggleRowTerkirim" style="display:none;">
+          <button type="button" class="btn-select-toggle" id="btnToggleSelectTerkirim" onclick="toggleSelectModeTerkirim()">Pilih Beberapa</button>
+        </div>
+        <label class="card-select-row" id="selectAllTerkirimRow" style="display:none;">
+          <input type="checkbox" id="checkAllTerkirim" onchange="toggleSelectAllTerkirim(this.checked)">
+          <span>Pilih Semua</span>
+        </label>
       </div>
       <p class="section-title">Riwayat pengiriman selesai</p>
       <div id="listTerkirim"></div>
@@ -457,26 +471,26 @@
   </button>
   <button class="fab" id="fabAdd" style="display:none;" onclick="openAddForm()" title="Tambah Pengiriman" aria-label="Tambah Pengiriman">+</button>
 
-  <!-- BAR TUGASKAN KE KURIR / UBAH STATUS (muncul saat mode "Pilih Beberapa" di To-Do aktif) -->
+  <!-- BAR UBAH STATUS / HAPUS TANDA KURIR (muncul saat mode "Pilih Beberapa" di To-Do aktif) -->
   <div class="bulk-bar" id="bulkBar">
     <span class="bulk-count" id="bulkCount">0 dipilih</span>
-    <!-- Kontrol untuk admin: dua aksi massal atas SATU seleksi kartu yang
-         sama — (1) tugaskan banyak paket ke satu kurir sekaligus, cocok
-         untuk paket yang belum ada pemiliknya; (2) ubah status Terkirim/
-         On-Hold. Untuk "Terkirim", paket yang belum ditandai (diklaim)
-         kurir otomatis dilewati (skip) oleh server, bukan digagalkan
-         semua. Untuk "On-Hold" TIDAK ada syarat itu — paket yang belum
-         ditandai kurir sekalipun tetap bisa langsung ditandai On-Hold
-         sekaligus (mis. alamat tidak valid) — lihat bulkUpdateStatus()
-         di Code.gs. -->
+    <!-- Kontrol untuk admin: aksi massal atas SATU seleksi kartu yang
+         sama â€” (1) ubah status Terkirim/On-Hold; (2) hapus tanda kurir
+         dari paket yang sudah ditandai, siapa pun kurirnya. Untuk
+         "Terkirim", paket yang belum ditandai (diklaim) kurir otomatis
+         dilewati (skip) oleh server, bukan digagalkan semua. Untuk
+         "On-Hold" TIDAK ada syarat itu â€” paket yang belum ditandai
+         kurir sekalipun tetap bisa langsung ditandai On-Hold sekaligus
+         (mis. alamat tidak valid) â€” lihat bulkUpdateStatus() di
+         Code.gs. Fitur "Tugaskan" (assign kurir massal) sudah dihapus;
+         admin tidak lagi menugaskan kurir ke paket lewat mode ini. -->
     <span class="bulk-controls-admin" id="bulkAdminControls" style="display:none;">
-      <div class="bulk-admin-row">
-        <select id="bulkKurirSelect"></select>
-        <button type="button" class="btn-bulk-assign" id="btnBulkAssign" onclick="applyBulkAssign()">Tugaskan</button>
-      </div>
       <div class="bulk-admin-row">
         <button type="button" class="btn-bulk-assign btn-bulk-status-done" id="btnBulkStatusDone" onclick="applyBulkStatusTodo('Terkirim')">Terkirim</button>
         <button type="button" class="btn-bulk-assign btn-bulk-status-hold" id="btnBulkStatusHold" onclick="applyBulkStatusTodo('On-Hold')">On-Hold</button>
+      </div>
+      <div class="bulk-admin-row">
+        <button type="button" class="btn-bulk-assign btn-bulk-cancel" id="btnBulkRemoveKurir" onclick="applyBulkRemoveKurir()">Hapus Tanda Kurir</button>
       </div>
     </span>
     <!-- Kontrol untuk akun kurir: hanya boleh menandai (klaim) paket
@@ -493,6 +507,16 @@
       <button type="button" class="btn-bulk-assign btn-bulk-status-done" onclick="applyBulkStatusKurirDash('Terkirim')">Terkirim</button>
       <button type="button" class="btn-bulk-assign btn-bulk-status-hold" onclick="applyBulkStatusKurirDash('On-Hold')">On-Hold</button>
       <button type="button" class="btn-bulk-assign btn-bulk-cancel" onclick="applyBulkUnclaimKurirDash()">Batal Tandai</button>
+    </span>
+  </div>
+
+  <!-- BAR KEMBALIKAN / HAPUS (menu Terkirim, khusus admin, muncul saat
+       mode "Pilih Beberapa" aktif) -->
+  <div class="bulk-bar" id="bulkBarTerkirim">
+    <span class="bulk-count" id="bulkCountTerkirim">0 dipilih</span>
+    <span style="display:flex;align-items:center;gap:6px;flex:1;min-width:0;">
+      <button type="button" class="btn-bulk-assign btn-bulk-cancel" onclick="applyBulkKembalikanTerkirim()">Kembalikan</button>
+      <button type="button" class="btn-bulk-assign btn-bulk-status-hold" onclick="applyBulkDeleteTerkirim()">Hapus</button>
     </span>
   </div>
 </div>
@@ -677,7 +701,7 @@
    * =====================================================================
    *  Index.html ini aslinya jalan di iframe Apps Script, di mana
    *  `google.script.run` disediakan otomatis oleh Google. Di app hybrid
-   *  (di luar Apps Script), objek itu tidak ada sama sekali — jadi kita
+   *  (di luar Apps Script), objek itu tidak ada sama sekali â€” jadi kita
    *  buat tiruannya di sini, supaya SEMUA kode di bawah (yang menulis
    *  google.script.run.withSuccessHandler(...).withFailureHandler(...).
    *  namaFungsi(args)) tetap jalan TANPA DIUBAH SATU BARIS PUN. Di balik
@@ -739,7 +763,7 @@
   // belum ada (artinya sedang dijalankan di luar Apps Script, mis. app
   // Android/Capacitor lewat Rpc.gs). Saat file ini dibuka LANGSUNG lewat
   // Web App di browser (URL .../exec), Apps Script sudah otomatis
-  // menyediakan google.script.run bawaan sebelum baris ini jalan — kalau
+  // menyediakan google.script.run bawaan sebelum baris ini jalan â€” kalau
   // shim tetap menimpanya, semua panggilan (termasuk login) malah
   // dikirim ke GAS_ENDPOINT yang di-hardcode di atas, yang bisa saja
   // beda deployment dari URL yang sedang dibuka dan berakhir error
@@ -748,7 +772,7 @@
     window.google.script.run = makeGasRunner(null, null);
   }
   /* =====================================================================
-   *  AKHIR SHIM — kode asli Index.html berlanjut apa adanya di bawah ini.
+   *  AKHIR SHIM â€” kode asli Index.html berlanjut apa adanya di bawah ini.
    * ===================================================================== */
 
   var currentUser = null;
@@ -774,7 +798,7 @@
      Supaya berpindah tab bolak-balik (Kurir <-> To-Do <-> Terkirim <->
      On-Hold <-> COD) TIDAK selalu memanggil server lagi kalau data yang
      sama sudah pernah dimuat dan belum ada perubahan. Disimpan di
-     memori (bukan localStorage/sessionStorage — hilang begitu halaman
+     memori (bukan localStorage/sessionStorage â€” hilang begitu halaman
      di-refresh, yang memang wajar untuk cache).
 
      Cache DIBATALKAN OTOMATIS (lihat invalidateDeliveryCache()) setiap
@@ -785,25 +809,25 @@
      invalidasi.
   */
   // TTL ini cuma "jaring pengaman" (data dianggap terlalu basi untuk
-  // dipakai bahkan sebagai tampilan sementara) — kebenaran data TETAP
+  // dipakai bahkan sebagai tampilan sementara) â€” kebenaran data TETAP
   // dijaga oleh invalidateDeliveryCache() yang dipanggil setiap ada
   // perubahan, DAN oleh backgroundRefresh_/polling yang selalu diam-diam
   // minta data terbaru tiap kali cache dipakai. Dibuat panjang (12 jam)
   // supaya cache yang disimpan ke localStorage (lihat di bawah) tetap
-  // terpakai walau app baru dibuka lagi jam berikutnya — bukan cuma
+  // terpakai walau app baru dibuka lagi jam berikutnya â€” bukan cuma
   // dalam 1 sesi/tab yang sama.
   var CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12 jam
   var dataCache = {};
 
   /* ---------- PERSISTENSI CACHE KE localStorage (LOCAL-FIRST) ----------
-     Sebelumnya dataCache hanya hidup di memori JS — hilang total setiap
+     Sebelumnya dataCache hanya hidup di memori JS â€” hilang total setiap
      kali halaman di-refresh atau app dibuka ulang, jadi tab pertama yang
      dibuka SELALU menunggu server (layar "Memuat data..." kosong),
      bahkan kalau device sebenarnya sudah pernah menyimpan data yang
      sama beberapa menit lalu.
      Sekarang: setiap cacheSet_ juga ditulis ke localStorage, dan
      cacheGet_ akan membaca dari localStorage kalau entri belum ada di
-     memori (baru buka app) — jadi data LAMA langsung tampil tanpa
+     memori (baru buka app) â€” jadi data LAMA langsung tampil tanpa
      menunggu apa pun, dan backgroundRefresh_/polling tetap jalan di
      belakang layar untuk menyegarkannya. Kalau localStorage tidak
      tersedia (mode privat, WebView tertentu, dsb) app tetap jalan
@@ -817,7 +841,7 @@
   function lsKey_(key){ return LS_PREFIX_ + lsNamespace_() + ':' + key; }
   function lsSet_(key, entry){
     try { localStorage.setItem(lsKey_(key), JSON.stringify(entry)); }
-    catch (err) { /* storage penuh/tidak tersedia — abaikan, cache memori tetap jalan */ }
+    catch (err) { /* storage penuh/tidak tersedia â€” abaikan, cache memori tetap jalan */ }
   }
   function lsGetRaw_(key){
     try {
@@ -830,7 +854,7 @@
   }
   // Hapus semua kunci localStorage milik user ini yang diawali prefix
   // tertentu (dipanggil dari cacheInvalidate_). Iterasi seluruh
-  // localStorage sekali per invalidasi — aman karena hanya dipanggil
+  // localStorage sekali per invalidasi â€” aman karena hanya dipanggil
   // sesekali (sehabis aksi tulis), bukan di jalur baca yang sering.
   function lsRemoveByPrefix_(prefix){
     try {
@@ -847,7 +871,7 @@
   function cacheGet_(key){
     var entry = dataCache[key];
     if(!entry){
-      // Belum ada di memori (mis. baru buka app) — coba ambil dari
+      // Belum ada di memori (mis. baru buka app) â€” coba ambil dari
       // localStorage supaya tetap local-first walau sesi baru.
       entry = lsGetRaw_(key);
       if(entry) dataCache[key] = entry; // simpan lagi ke memori supaya baca berikutnya lebih cepat
@@ -888,12 +912,12 @@
   /* ---------- REFRESH LATAR BELAKANG ----------
      Setiap kali tampilan diisi dari cache (jadi TANPA menunggu server),
      app tetap diam-diam meminta data TERBARU ke server di latar
-     belakang — tanpa "Memuat data...", tanpa toast, tanpa mengganggu
+     belakang â€” tanpa "Memuat data...", tanpa toast, tanpa mengganggu
      apa pun yang sedang dilihat pengguna. Kalau ternyata datanya sudah
      berubah di server (mis. admin lain baru menambah paket, atau kurir
      lain baru mengubah status), tampilan diperbarui diam-diam begitu
      hasilnya datang. Kalau tidak ada perubahan sama sekali, tidak ada
-     render ulang — supaya tidak ada kedipan/reset scroll tanpa alasan.
+     render ulang â€” supaya tidak ada kedipan/reset scroll tanpa alasan.
   */
   var pendingBackgroundFetch_ = {}; // cacheKey -> true kalau sedang berjalan
 
@@ -910,14 +934,14 @@
     }, function(){
       delete pendingBackgroundFetch_[cacheKey];
       // Gagal di latar belakang tidak perlu mengganggu pengguna dengan
-      // toast — data yang sudah tampil (dari cache) tetap valid dilihat,
+      // toast â€” data yang sudah tampil (dari cache) tetap valid dilihat,
       // dan percobaan berikutnya (pindah tab lagi / refresh manual)
       // akan mencoba lagi.
     });
   }
   /* ---------- POLLING OTOMATIS (near-realtime, pengganti WebSocket) ----------
      Google Apps Script Web App TIDAK bisa membuka koneksi persisten
-     (WebSocket/Socket.IO) dari server ke client — Apps Script cuma bisa
+     (WebSocket/Socket.IO) dari server ke client â€” Apps Script cuma bisa
      menjawab request HTTP satu-per-satu (doGet/doPost), tidak bisa
      "mendorong" data sendiri tanpa diminta. Jadi cara paling realistis
      untuk pembaruan otomatis tanpa refresh manual (mis. kurir A
@@ -925,7 +949,7 @@
      adalah POLLING: app diam-diam tanya server tiap beberapa detik,
      memakai jalur backgroundRefresh_ yang sudah ada (tanpa spinner,
      tanpa toast, dan hanya render ulang kalau datanya benar-benar
-     berubah — lihat backgroundRefresh_ di atas).
+     berubah â€” lihat backgroundRefresh_ di atas).
      Polling di-jeda otomatis kalau tab/app sedang tidak terlihat
      (document.hidden) atau belum login, supaya tidak boros baterai/
      kuota kalau HP sedang dikunci atau app di-minimize.
@@ -934,13 +958,13 @@
   var pollTimer_ = null;
 
   function pollActiveTab_(){
-    if(document.hidden) return; // app di background/layar terkunci — jangan polling
+    if(document.hidden) return; // app di background/layar terkunci â€” jangan polling
     if(!currentUser) return; // belum login
     var appVisible = document.getElementById('appScreen').style.display !== 'none';
     if(!appVisible) return;
     // forceRefresh=false: masing-masing loadX akan lewat cacheGet_ (yang
     // pasti ada isinya di sini karena tab sudah pernah dimuat) lalu
-    // memicu backgroundRefresh_ — persis mekanisme "refresh diam-diam"
+    // memicu backgroundRefresh_ â€” persis mekanisme "refresh diam-diam"
     // yang sudah dipakai saat pindah tab, cuma sekarang dipicu otomatis
     // oleh timer, bukan oleh klik pengguna.
     if(activeTab === 'kurir') loadDashboard(false);
@@ -967,6 +991,7 @@
   startPolling_();
 
   var lastFilteredTodoList = []; // daftar To-Do yang sedang tampil (sudah difilter search/tanggal), dipakai oleh "Pilih Semua"
+  var lastFilteredTerkirimList = []; // daftar Terkirim yang sedang tampil, dipakai oleh "Pilih Semua" di tab Terkirim (khusus admin)
   var editingId = null;
   function isAdmin(){ return !!currentUser && String(currentUser.role || '').trim().toLowerCase() === 'admin'; }
 
@@ -980,7 +1005,7 @@
     showLoginError('');
     // Dulu: login() lalu (setelah sukses) masih 2x panggilan server lagi
     // (getCourierList + getDeliveries lewat loadDashboard) sebelum layar
-    // Kurir siap ditampilkan — total 3x bolak-balik ke server, itulah
+    // Kurir siap ditampilkan â€” total 3x bolak-balik ke server, itulah
     // sumber utama lag/lemot yang terasa di login pertama.
     // Sekarang: loginAndBootstrap() mengembalikan semuanya SEKALIGUS
     // dalam 1x panggilan.
@@ -1023,7 +1048,7 @@
       appliedDateTo = todayInputDate();
       updateDateRangeTriggerLabel();
 
-      // Data kurir & data dashboard sudah ikut di respons di atas —
+      // Data kurir & data dashboard sudah ikut di respons di atas â€”
       // langsung dipakai di sini tanpa memanggil server lagi.
       courierList = res.courierList || [];
       rawListDashboard = res.deliveries || [];
@@ -1051,7 +1076,7 @@
       .getCourierList(currentUser.username);
   }
 
-  // Dropdown "Kurir" di tab Dashboard. Hanya admin yang melihatnya —
+  // Dropdown "Kurir" di tab Dashboard. Hanya admin yang melihatnya â€”
   // akun kurir hanya pernah melihat datanya sendiri, jadi filter ini
   // tidak relevan untuk mereka.
   function populateDashboardKurirFilter(){
@@ -1072,7 +1097,7 @@
 
   // Form tambah/ubah pengiriman sekarang HANYA dapat dibuka oleh admin
   // (lihat openAddForm()/openEditForm() di bawah), jadi dropdown kurir
-  // di sini tidak perlu lagi dikunci untuk akun kurir — admin selalu
+  // di sini tidak perlu lagi dikunci untuk akun kurir â€” admin selalu
   // bebas memilih kurir siapa pun untuk pengiriman ini.
   function populateKurirSelect(selectedValue){
     var select = document.getElementById('inputKurir');
@@ -1109,17 +1134,23 @@
       document.getElementById('page-' + t).classList.toggle('active', t === tab);
     });
     // Untuk akun kurir, elemen fabAdd/fabImportPhoto sudah dibuang dari
-    // DOM sejak login (lihat onLoginResult) — cek elemen ada dulu
+    // DOM sejak login (lihat onLoginResult) â€” cek elemen ada dulu
     // supaya tidak error saat switchTab dipanggil di sesi kurir.
-    // Keluar dari mode "Pilih Beberapa" setiap kali pindah dari tab To-Do,
-    // supaya bar Tugaskan ke Kurir tidak tertinggal aktif di tab lain.
+    // Keluar dari mode "Pilih Beberapa" setiap kali pindah dari tab To-Do
+    // atau Terkirim, supaya bar aksi massal tidak tertinggal aktif di
+    // tab lain.
     if(tab !== 'todo') exitSelectModeTodo();
+    if(tab !== 'terkirim') exitSelectModeTerkirim();
     if(tab !== 'kurir') exitSelectModeKurirDash();
     var elSelectToggleRow = document.getElementById('selectToggleRow');
     // Mode "Pilih Beberapa" di tab To-Do sekarang tersedia untuk admin
     // (menugaskan kurir secara massal) MAUPUN akun kurir (menandai/
     // klaim banyak paket sekaligus untuk dirinya sendiri).
     if(elSelectToggleRow) elSelectToggleRow.style.display = (tab === 'todo') ? 'flex' : 'none';
+    // Mode "Pilih Beberapa" di tab Terkirim khusus admin (Kembalikan/
+    // Hapus massal) â€” akun kurir tidak melihat tombol ini.
+    var elSelectToggleRowTerkirim = document.getElementById('selectToggleRowTerkirim');
+    if(elSelectToggleRowTerkirim) elSelectToggleRowTerkirim.style.display = (tab === 'terkirim' && isAdmin()) ? 'flex' : 'none';
 
     var showFabs = isAdmin() && (tab === 'todo' || tab === 'kurir') && !selectModeTodo;
     var elFabAdd = document.getElementById('fabAdd');
@@ -1166,7 +1197,7 @@
       if(cached){
         rawListDashboard = cached;
         renderDashboardStats();
-        // Data sudah tampil dari cache — tetap minta versi terbaru di
+        // Data sudah tampil dari cache â€” tetap minta versi terbaru di
         // latar belakang, siapa tahu ada perubahan sejak terakhir dimuat.
         backgroundRefresh_(cacheKey, function(onSuccess, onFail){
           google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFail)
@@ -1175,7 +1206,7 @@
           rawListDashboard = freshData || [];
           renderDashboardStats();
         });
-        return; // tidak perlu menunggu apa pun — tampilan sudah terisi
+        return; // tidak perlu menunggu apa pun â€” tampilan sudah terisi
       }
     }
 
@@ -1196,7 +1227,7 @@
 
   // Hitung ulang statistik + grafik distribusi dari data yang sudah
   // dimuat (rawListDashboard), disaring berdasarkan tanggal & kurir
-  // yang dipilih — tanpa perlu panggil server lagi tiap ganti filter.
+  // yang dipilih â€” tanpa perlu panggil server lagi tiap ganti filter.
   function renderDashboardStats(){
     var dateRange = getActiveFilterDateRange();
     var kurirVal = isAdmin() ? document.getElementById('filterKurirDashboard').value : currentUser.namaKurir;
@@ -1227,7 +1258,7 @@
     document.getElementById('statCod').textContent = formatRupiah(codTotal);
     // Gaji (akun kurir) / gaji & keuntungan per kurir (akun admin) dihitung
     // dari data yang sama, ikut mengikuti filter tanggal & kurir yang aktif
-    // di atas — dipisah dari kode grafik donat di bawah supaya tetap
+    // di atas â€” dipisah dari kode grafik donat di bawah supaya tetap
     // ter-update walau belum ada data Terkirim sama sekali (breakdown kosong).
     renderGajiInfo(terkirim, byKurirCount, kurirOrder);
 
@@ -1246,7 +1277,7 @@
         return { label: item.kurir, value: item.count, color: DONUT_COLORS[idx % DONUT_COLORS.length] };
       }));
     } else {
-      // Akun kurir: menu Kurir tidak lagi menampilkan grafik distribusi —
+      // Akun kurir: menu Kurir tidak lagi menampilkan grafik distribusi â€”
       // menampilkan daftar paket To-Do yang sudah ditandai kurir ini
       // sendiri untuk dia antar (diambil dari data yang sama, filtered
       // mengikuti tanggal yang aktif di atas).
@@ -1278,7 +1309,7 @@
       return;
     }
 
-    // Kartu di sini sekarang murni tampilan (read-only) — tidak ada lagi
+    // Kartu di sini sekarang murni tampilan (read-only) â€” tidak ada lagi
     // tombol aksi per-kartu (Tandai Terkirim/Tandai Gagal/Batal Tandai).
     // Semua aksi dilakukan lewat mode "Pilih Beberapa" + bar di bawah
     // (lihat toggleSelectModeKurirDash(), applyBulkStatusKurirDash(),
@@ -1296,11 +1327,14 @@
       return '<div class="' + cardClasses + '">' +
           checkboxHtml +
           '<div class="card-top"><span class="card-date">' + escapeHtml(d.tanggal) + '</span><span class="resi">' + escapeHtml(d.noResi) + '</span></div>' +
-          '<div class="card-name">' + escapeHtml(d.nama || '(Tanpa nama)') + '</div>' +
+          '<div class="card-name-row"><span class="card-name">' + escapeHtml(d.nama || '(Tanpa nama)') + '</span></div>' +
           (d.alamat ? '<div class="card-row muted">' + escapeHtml(d.alamat) + '</div>' : '') +
           (d.noTelp ? '<div class="card-row muted">' + escapeHtml(d.noTelp) + '</div>' : '') +
           '<div class="card-bottom">' +
-            '<span class="cod-amount">' + (d.jumlahCod > 0 ? formatRupiah(d.jumlahCod) : 'Non-COD') + '</span>' +
+            '<span class="cod-amount-row">' +
+              '<span class="cod-amount">' + (d.jumlahCod > 0 ? formatRupiah(d.jumlahCod) : 'Non-COD') + '</span>' +
+              waButtonHtml(d) +
+            '</span>' +
           '</div>' +
         '</div>';
     }).join('');
@@ -1369,7 +1403,7 @@
   }
 
   // Tandai status massal (Terkirim / On-Hold) untuk paket yang dicentang
-  // di menu Kurir/Dashboard — memakai fungsi server yang sama dengan
+  // di menu Kurir/Dashboard â€” memakai fungsi server yang sama dengan
   // tandai massal di tab To-Do (bulkUpdateStatus), yang sudah menjamin
   // kurir hanya bisa mengubah status paket miliknya sendiri.
   function applyBulkStatusKurirDash(newStatus){
@@ -1395,7 +1429,7 @@
   }
 
   // Batalkan tanda (unclaim) massal untuk paket yang dicentang di menu
-  // Kurir/Dashboard — paket kembali terbuka supaya bisa ditandai kurir
+  // Kurir/Dashboard â€” paket kembali terbuka supaya bisa ditandai kurir
   // lain lewat tab To-Do.
   function applyBulkUnclaimKurirDash(){
     var ids = Object.keys(selectedKurirDashIds);
@@ -1436,7 +1470,7 @@
       if(elTotalKeuntungan) elTotalKeuntungan.textContent = formatRupiah(terkirim * KEUNTUNGAN_PER_PAKET);
 
       var listEl = document.getElementById('listGajiKurir');
-      if(!listEl) return; // sudah dibuang dari DOM (bukan admin) — aman, tidak perlu lanjut
+      if(!listEl) return; // sudah dibuang dari DOM (bukan admin) â€” aman, tidak perlu lanjut
       var ranked = kurirOrder
         .map(function(name){ return { kurir: name, count: byKurirCount[name] }; })
         .sort(function(a, b){ return b.count - a.count; });
@@ -1452,7 +1486,6 @@
             '</div>' +
             '<div class="gaji-row-amounts">' +
               '<span class="gaji-amount">Gaji: ' + formatRupiah(item.count * GAJI_PER_PAKET) + '</span>' +
-              '<span class="keuntungan-amount">Untung: ' + formatRupiah(item.count * KEUNTUNGAN_PER_PAKET) + '</span>' +
             '</div>' +
           '</div>';
       }).join('');
@@ -1464,7 +1497,7 @@
     }
   }
 
-  // Toggle tampilkan/sembunyikan seksi gaji & keuntungan — HANYA ada di
+  // Toggle tampilkan/sembunyikan seksi gaji & keuntungan â€” HANYA ada di
   // akun admin (tombolnya sendiri sudah dibuang dari DOM untuk akun kurir).
   var gajiAdminVisible = false;
   function toggleGajiVisibility(){
@@ -1479,12 +1512,12 @@
 
   document.getElementById('filterKurirDashboard').addEventListener('change', renderDashboardStats);
 
-  // Filter tanggal & kurir di tab Kurir (dashboard) dipakai bersama —
+  // Filter tanggal & kurir di tab Kurir (dashboard) dipakai bersama â€”
   // tab To-Do, Terkirim, On-Hold, dan COD ikut menampilkan data sesuai
   // tanggal & kurir yang sedang dipilih di sini (dibaca ulang setiap
   // tab tersebut dibuka/direfresh, jadi selalu ikut filter terbaru).
   // Nilai tanggal yang SUDAH DITERAPKAN (bukan yang sedang dipilih di
-  // kalender) disimpan di dua variabel ini — diisi lewat kartu tanggal
+  // kalender) disimpan di dua variabel ini â€” diisi lewat kartu tanggal
   // kustom (lihat blok "KARTU TANGGAL" di bawah), bukan input <date> lagi.
   var appliedDateFrom = '';
   var appliedDateTo = '';
@@ -1495,7 +1528,7 @@
   // di dalam rentang "Dari" - "S.d." yang aktif. Kalau salah satu batas
   // dikosongkan, batas itu dianggap terbuka (tidak dibatasi). Kalau item
   // tidak punya tanggal valid (itemDateIso kosong) dan rentang sedang
-  // aktif, item tidak dianggap cocok — supaya tidak "lolos" filter.
+  // aktif, item tidak dianggap cocok â€” supaya tidak "lolos" filter.
   function matchDateRange(itemDateIso, range){
     if(!range.from && !range.to) return true;
     if(!itemDateIso) return false;
@@ -1516,8 +1549,8 @@
   var MONTH_NAMES_ID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
   var MONTH_SHORT_ID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
   var drCalendarMonth = new Date(); // tanggal 1 di bulan yang sedang ditampilkan di kalender
-  var drSelStart = null; // 'yyyy-mm-dd' — tanggal awal yang SEDANG dipilih di kalender (belum tentu diterapkan)
-  var drSelEnd = null;   // 'yyyy-mm-dd' — tanggal akhir yang SEDANG dipilih di kalender
+  var drSelStart = null; // 'yyyy-mm-dd' â€” tanggal awal yang SEDANG dipilih di kalender (belum tentu diterapkan)
+  var drSelEnd = null;   // 'yyyy-mm-dd' â€” tanggal akhir yang SEDANG dipilih di kalender
 
   function isoToDateParts_(iso){
     var p = iso.split('-');
@@ -1530,7 +1563,7 @@
   }
 
   // Isi ulang label kartu tanggal di halaman Kurir sesuai rentang yang
-  // SUDAH DITERAPKAN (appliedDateFrom/appliedDateTo) — dipanggil setiap
+  // SUDAH DITERAPKAN (appliedDateFrom/appliedDateTo) â€” dipanggil setiap
   // kali rentang berubah (login, atau setelah tombol "Oke" di kalender).
   function updateDateRangeTriggerLabel(){
     var el = document.getElementById('dateRangeTriggerLabel');
@@ -1578,12 +1611,12 @@
 
   function selectDateRangeDay(iso){
     if(!drSelStart || (drSelStart && drSelEnd)){
-      // Belum ada pilihan, atau rentang sebelumnya sudah lengkap —
+      // Belum ada pilihan, atau rentang sebelumnya sudah lengkap â€”
       // mulai pilihan baru dari tanggal yang baru saja ditekan.
       drSelStart = iso;
       drSelEnd = null;
     } else if(iso < drSelStart){
-      // Tanggal yang ditekan lebih awal dari titik awal — jadikan
+      // Tanggal yang ditekan lebih awal dari titik awal â€” jadikan
       // titik awal baru, titik awal lama jadi titik akhir.
       drSelEnd = drSelStart;
       drSelStart = iso;
@@ -1601,7 +1634,7 @@
     renderDashboardStats();
   }
 
-  // Gambar ulang label bulan, ringkasan Dari/S.d., dan grid tanggal —
+  // Gambar ulang label bulan, ringkasan Dari/S.d., dan grid tanggal â€”
   // dipanggil tiap kali bulan berganti atau tanggal dipilih/direset.
   function renderDateRangeCalendar(){
     document.getElementById('drMonthLabel').textContent =
@@ -1661,7 +1694,7 @@
       if(cached){
         setRawList_(status, cached);
         applyFilter(status);
-        // Data sudah tampil dari cache — tetap minta versi terbaru di
+        // Data sudah tampil dari cache â€” tetap minta versi terbaru di
         // latar belakang, siapa tahu ada perubahan sejak terakhir dimuat.
         backgroundRefresh_(cacheKey, function(onSuccess, onFail){
           google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFail)
@@ -1670,7 +1703,7 @@
           setRawList_(status, freshData);
           applyFilter(status);
         });
-        return; // tidak perlu menunggu apa pun — tampilan sudah terisi
+        return; // tidak perlu menunggu apa pun â€” tampilan sudah terisi
       }
     }
 
@@ -1703,8 +1736,10 @@
     });
 
     if(status === 'To-Do') lastFilteredTodoList = filtered;
+    if(status === 'Terkirim') lastFilteredTerkirimList = filtered;
     renderDeliveryList(container, filtered, status, filterActive);
     if(status === 'To-Do') updateSelectAllTodoCheckbox();
+    if(status === 'Terkirim') updateSelectAllTerkirimCheckbox();
   }
 
   function findLoadedItem(id){
@@ -1712,7 +1747,38 @@
     if (found) return found;
     found = rawListTerkirim.find(function(d){ return d.id === id; });
     if (found) return found;
-    return rawListOnHold.find(function(d){ return d.id === id; });
+    found = rawListOnHold.find(function(d){ return d.id === id; });
+    if (found) return found;
+    return kurirDashClaimedList.find(function(d){ return d.id === id; });
+  }
+
+  /* ---------- TOMBOL WHATSAPP DI KARTU ----------
+     Mengubah nomor telepon penerima (format apa pun: 0812xxx, 62812xxx,
+     +62812xxx) menjadi format internasional tanpa simbol yang dipakai
+     wa.me, lalu membuka WhatsApp dengan pesan pemberitahuan pengiriman
+     yang sudah terisi otomatis (nama & no. resi paket). */
+  function normalizePhoneForWa_(raw){
+    var digits = String(raw || '').replace(/\D/g, '');
+    if(!digits) return '';
+    if(digits.charAt(0) === '0') digits = '62' + digits.slice(1);
+    else if(digits.indexOf('62') !== 0) digits = '62' + digits;
+    return digits;
+  }
+  function openWhatsApp(id){
+    var item = findLoadedItem(id);
+    if(!item){ showToast('Data paket tidak ditemukan'); return; }
+    var phone = normalizePhoneForWa_(item.noTelp);
+    if(!phone){ showToast('Nomor telepon tidak tersedia'); return; }
+    var pesan = 'Halo, saya AZI GIRI WULUNG dari SPX Express, Saya sedang dalam perjalanan untuk mengirimkan paket Shopee atas nama ' +
+      (item.nama || '-') + ' dengan nomor resi ' + (item.noResi || '-') + ' ke lokasi Anda.\n' +
+      'Pastikan alamat sudah benar, ada penerima di lokasi pengiriman.\n' +
+      'Terima kasih.';
+    window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(pesan), '_blank');
+  }
+  var WA_ICON_SVG = '<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M16.004 3C9.376 3 4 8.373 4 15.002c0 2.394.63 4.639 1.828 6.62L4 29l7.552-1.984a11.94 11.94 0 0 0 4.452.858h.005c6.627 0 12.003-5.373 12.003-12.002C28 8.373 22.63 3 16.004 3zm0 21.815a9.77 9.77 0 0 1-4.983-1.364l-.357-.212-4.482 1.177 1.196-4.365-.232-.448a9.78 9.78 0 0 1-1.501-5.201c0-5.407 4.4-9.807 9.813-9.807 5.406 0 9.806 4.4 9.806 9.807-.003 5.406-4.403 9.413-9.26 9.413zm5.383-7.343c-.294-.148-1.741-.86-2.012-.958-.271-.098-.469-.148-.667.148-.196.294-.762.958-.936 1.156-.172.196-.344.221-.638.074-.294-.148-1.242-.457-2.366-1.457-.874-.78-1.465-1.744-1.637-2.038-.172-.294-.018-.454.13-.601.134-.133.294-.344.442-.516.148-.172.196-.294.294-.49.098-.196.049-.368-.025-.516-.074-.148-.667-1.607-.914-2.202-.24-.58-.485-.5-.667-.51-.172-.008-.368-.01-.564-.01a1.083 1.083 0 0 0-.786.368c-.271.294-1.033 1.01-1.033 2.462 0 1.452 1.058 2.855 1.205 3.05.148.196 2.083 3.181 5.048 4.46.705.304 1.256.486 1.685.622.708.226 1.352.194 1.86.118.567-.085 1.741-.712 1.987-1.4.245-.688.245-1.279.172-1.4-.074-.123-.27-.196-.564-.344z"/></svg>';
+  function waButtonHtml(d){
+    if(!d.noTelp) return '';
+    return '<button type="button" class="wa-btn" title="Kirim WhatsApp" onclick="event.stopPropagation(); openWhatsApp(\'' + d.id + '\')">' + WA_ICON_SVG + '</button>';
   }
 
   ['Todo', 'Terkirim', 'OnHold'].forEach(function(suffix){
@@ -1732,13 +1798,18 @@
     }
     var cardClass = status === 'To-Do' ? 'todo' : (status === 'On-Hold' ? 'onhold' : 'done');
     var isTodo = status === 'To-Do';
+    var isTerkirim = status === 'Terkirim';
     // Saat mode "Pilih Beberapa" aktif di tab To-Do:
-    // - Admin: checkbox tampil di SEMUA kartu (dipakai untuk menugaskan
-    //   kurir secara massal lewat bar "Tugaskan ke Kurir").
+    // - Admin: checkbox tampil di SEMUA kartu (dipakai untuk mengubah
+    //   status massal / menghapus tanda kurir).
     // - Akun kurir: checkbox HANYA tampil di kartu yang BELUM ada
-    //   pemiliknya (yang tombolnya "Tandai untuk Saya") — dipakai untuk
+    //   pemiliknya (yang tombolnya "Tandai untuk Saya") â€” dipakai untuk
     //   menandai/klaim banyak paket sekaligus lewat bar di bawah.
     var showCheck = isTodo && selectModeTodo;
+    // Mode "Pilih Beberapa" di tab Terkirim khusus admin (dipakai untuk
+    // "Kembalikan"/"Hapus" massal) â€” akun kurir tidak melihat checkbox
+    // ini sama sekali, tetap memakai tombol "Kembalikan" per-kartu.
+    var showCheckTerkirim = isTerkirim && selectModeTerkirim && isAdmin();
     container.innerHTML = data.map(function(d){
       var actions = '';
       var ownedByMeTodo = false;
@@ -1750,14 +1821,14 @@
         // yang perlu dicegah menyebar.
         if(isAdmin()){
           // Admin hanya boleh menandai Terkirim/Gagal kalau kartu ini
-          // SUDAH ditandai (diklaim) oleh kurir — kolom Kurir terisi.
+          // SUDAH ditandai (diklaim) oleh kurir â€” kolom Kurir terisi.
           // Kalau belum ada kurir yang menandai, tombol itu disembunyikan
           // (diganti keterangan) supaya admin tidak "menyelesaikan" paket
           // yang sebenarnya belum dipegang siapa pun. Ditegakkan ulang di
           // server (updateDeliveryStatus/bulkUpdateStatus) supaya tidak
           // bisa dilewati lewat console.
           // Kartu yang belum ditandai kurir tidak lagi menampilkan label
-          // "Belum ditandai kurir" (dulu memakan baris sendiri) — cukup
+          // "Belum ditandai kurir" (dulu memakan baris sendiri) â€” cukup
           // tombol Ubah/Hapus seperti biasa, jadi kartu lebih ringkas.
           // Kartu yang SUDAH ditandai kurir sekarang juga punya tombol
           // "Hapus Tanda Kurir" supaya admin bisa membetulkan paket yang
@@ -1776,7 +1847,7 @@
         } else {
           // Akun kurir sekarang melihat SEMUA data To-Do milik admin.
           // Kurir hanya boleh menandai (klaim) paket yang belum ada
-          // pemiliknya lewat tab ini — mengelola status paket yang SUDAH
+          // pemiliknya lewat tab ini â€” mengelola status paket yang SUDAH
           // dia tandai (Tandai Terkirim/On-Hold/Batal Tandai) sekarang
           // dilakukan lewat menu Kurir/Dashboard, bukan di sini lagi.
           ownedByMeTodo = d.kurir && d.kurir === currentUser.namaKurir;
@@ -1802,44 +1873,57 @@
             '<button class="btn btn-ghost" onclick="event.stopPropagation(); openEditForm(\'' + d.id + '\')">Ubah</button>' +
             '<button class="btn btn-danger" onclick="event.stopPropagation(); confirmDelete(\'' + d.id + '\')">Hapus</button>'
           : '';
+      } else if(showCheckTerkirim){
+        actions = ''; // diganti checkbox, lihat "Kembalikan"/"Hapus" massal di bulkBarTerkirim
       } else {
         // Status Terkirim: "Kembalikan" tetap tersedia untuk kurir (hanya
         // mengubah STATUS paket miliknya sendiri, divalidasi ulang di
-        // updateDeliveryStatus()). Tombol "Ubah" dan "Hapus" HANYA untuk
-        // admin — akun kurir tidak lagi berhak mengedit/menghapus data,
-        // jadi tombolnya dibuang sama sekali (bukan cuma disembunyikan)
-        // supaya tidak ada tombol "mati" yang membingungkan.
+        // updateDeliveryStatus()). Tombol "Ubah" HANYA untuk admin â€” akun
+        // kurir tidak lagi berhak mengedit data. Tombol "Hapus" per-kartu
+        // sudah dibuang sama sekali (bukan cuma disembunyikan) â€” admin
+        // sekarang menghapus lewat mode "Pilih Beberapa" > "Hapus" massal.
         actions = '<button class="btn btn-ghost" onclick="event.stopPropagation(); revertToTodo(\'' + d.id + '\')">Kembalikan</button>' +
-          (isAdmin() ? '<button class="btn btn-ghost" onclick="event.stopPropagation(); openEditForm(\'' + d.id + '\')">Ubah</button>' +
-            '<button class="btn btn-danger" onclick="event.stopPropagation(); confirmDelete(\'' + d.id + '\')">Hapus</button>' : '');
+          (isAdmin() ? '<button class="btn btn-ghost" onclick="event.stopPropagation(); openEditForm(\'' + d.id + '\')">Ubah</button>' : '');
       }
       // Kartu Terkirim & On-Hold masih bisa diklik untuk membuka modal
-      // detail (preview). Kartu To-Do sudah menampilkan semua info penting
-      // (termasuk nama kurir) langsung di kartu, jadi modal preview itu
-      // tidak dipasang lagi di kartu To-Do karena sudah tidak dibutuhkan.
-      var openAttr = isTodo ? '' : ' onclick="openDetailModal(\'' + d.id + '\')"';
-      var checkedAttr = selectedTodoIds[d.id] ? ' checked' : '';
-      // Untuk akun kurir, checkbox hanya boleh muncul di paket yang
-      // belum ada pemiliknya (unclaimedTodo) — paket milik sendiri/kurir
-      // lain tidak bisa ikut dipilih di sini.
-      var canCheckThis = showCheck && (isAdmin() || unclaimedTodo);
-      var selectLabel = isAdmin() ? 'Pilih kartu ini' : 'Pilih untuk ditandai';
+      // detail (preview), KECUALI kartu Terkirim saat mode "Pilih
+      // Beberapa" aktif â€” supaya klik pada kartu tidak membuka modal di
+      // tengah-tengah memilih beberapa kartu sekaligus. Kartu To-Do
+      // sudah menampilkan semua info penting (termasuk nama kurir)
+      // langsung di kartu, jadi modal preview itu tidak dipasang lagi di
+      // kartu To-Do karena sudah tidak dibutuhkan.
+      var openAttr = (isTodo || showCheckTerkirim) ? '' : ' onclick="openDetailModal(\'' + d.id + '\')"';
+      // Untuk akun kurir di tab To-Do, checkbox hanya boleh muncul di
+      // paket yang belum ada pemiliknya (unclaimedTodo) â€” paket milik
+      // sendiri/kurir lain tidak bisa ikut dipilih di sini. Untuk tab
+      // Terkirim, checkbox hanya muncul untuk admin (lihat
+      // showCheckTerkirim di atas).
+      var canCheckThis = (showCheck && (isAdmin() || unclaimedTodo)) || showCheckTerkirim;
+      var checkedAttr = showCheckTerkirim
+        ? (selectedTerkirimIds[d.id] ? ' checked' : '')
+        : (selectedTodoIds[d.id] ? ' checked' : '');
+      var selectLabel = showCheckTerkirim ? 'Pilih kartu ini' : (isAdmin() ? 'Pilih kartu ini' : 'Pilih untuk ditandai');
+      var checkHandler = showCheckTerkirim ? 'toggleCardCheckTerkirim' : 'toggleCardCheck';
       var checkboxHtml = canCheckThis
         ? '<label class="card-select-row">' +
-            '<input type="checkbox"' + checkedAttr + ' onchange="toggleCardCheck(\'' + d.id + '\', this.checked, this)">' +
+            '<input type="checkbox"' + checkedAttr + ' onchange="' + checkHandler + '(\'' + d.id + '\', this.checked, this)">' +
             '<span>' + selectLabel + '</span>' +
           '</label>'
         : '';
-      var cardClasses = 'card status-' + cardClass + (canCheckThis && selectedTodoIds[d.id] ? ' selected' : '');
+      var isSelectedThis = showCheckTerkirim ? !!selectedTerkirimIds[d.id] : !!selectedTodoIds[d.id];
+      var cardClasses = 'card status-' + cardClass + (canCheckThis && isSelectedThis ? ' selected' : '');
       return '<div class="' + cardClasses + '"' + openAttr + '>' +
           checkboxHtml +
           '<div class="card-top"><span class="card-date">' + escapeHtml(d.tanggal) + '</span><span class="resi">' + escapeHtml(d.noResi) + '</span></div>' +
           (d.kurir ? '<span class="card-kurir" style="' + courierColorStyle(d.kurir) + '">' + escapeHtml(d.kurir) + '</span>' : '') +
-          '<div class="card-name">' + escapeHtml(d.nama || '(Tanpa nama)') + '</div>' +
+          '<div class="card-name-row"><span class="card-name">' + escapeHtml(d.nama || '(Tanpa nama)') + '</span></div>' +
           (d.alamat ? '<div class="card-row muted">' + escapeHtml(d.alamat) + '</div>' : '') +
           (d.noTelp ? '<div class="card-row muted">' + escapeHtml(d.noTelp) + '</div>' : '') +
           '<div class="card-bottom">' +
-            '<span class="cod-amount">' + (d.jumlahCod > 0 ? formatRupiah(d.jumlahCod) : 'Non-COD') + '</span>' +
+            '<span class="cod-amount-row">' +
+              '<span class="cod-amount">' + (d.jumlahCod > 0 ? formatRupiah(d.jumlahCod) : 'Non-COD') + '</span>' +
+              waButtonHtml(d) +
+            '</span>' +
             (actions ? '<div class="card-actions">' + actions + '</div>' : '') +
           '</div>' +
         '</div>';
@@ -1863,14 +1947,14 @@
     var showFabs = isAdmin() && activeTab === 'todo' && !selectModeTodo;
     if(elFabAdd) elFabAdd.style.display = showFabs ? 'flex' : 'none';
     if(elFabPhoto) elFabPhoto.style.display = showFabs ? 'flex' : 'none';
-    // Admin melihat kontrol "Tugaskan ke Kurir" + "Ubah Status"
-    // (Terkirim/On-Hold) atas seleksi yang sama, akun kurir melihat
-    // kontrol "Tandai untuk Saya" — hanya salah satu grup yang tampil.
+    // Admin melihat kontrol "Ubah Status" (Terkirim/On-Hold) + "Hapus
+    // Tanda Kurir" atas seleksi yang sama, akun kurir melihat kontrol
+    // "Tandai untuk Saya" â€” hanya salah satu grup yang tampil.
     var elBulkAdmin = document.getElementById('bulkAdminControls');
     var elBulkKurir = document.getElementById('bulkKurirControls');
     if(elBulkAdmin) elBulkAdmin.style.display = isAdmin() ? 'flex' : 'none';
     if(elBulkKurir) elBulkKurir.style.display = isAdmin() ? 'none' : 'flex';
-    if(selectModeTodo && isAdmin()) populateBulkKurirSelect();
+
     var rowAllTodo = document.getElementById('selectAllTodoRow');
     if(rowAllTodo) rowAllTodo.style.display = selectModeTodo ? 'flex' : 'none';
     var checkAllTodoEl = document.getElementById('checkAllTodo');
@@ -1930,47 +2014,132 @@
     document.getElementById('bulkCount').textContent = count + ' dipilih';
   }
 
-  function populateBulkKurirSelect(){
-    var select = document.getElementById('bulkKurirSelect');
-    var names = courierList.length ? courierList : [currentUser.namaKurir];
-    select.innerHTML = names.map(function(name){
-      return '<option value="' + escapeHtml(name) + '">' + escapeHtml(name) + '</option>';
-    }).join('');
+  /* ---------- PILIH BEBERAPA (KEMBALIKAN / HAPUS MASSAL) DI TERKIRIM, KHUSUS ADMIN ---------- */
+  var selectModeTerkirim = false;
+  var selectedTerkirimIds = {};
+
+  function toggleSelectModeTerkirim(){
+    selectModeTerkirim = !selectModeTerkirim;
+    selectedTerkirimIds = {};
+    var btn = document.getElementById('btnToggleSelectTerkirim');
+    if(btn){
+      btn.textContent = selectModeTerkirim ? 'Batal Pilih' : 'Pilih Beberapa';
+      btn.classList.toggle('active', selectModeTerkirim);
+    }
+    var rowAllTerkirim = document.getElementById('selectAllTerkirimRow');
+    if(rowAllTerkirim) rowAllTerkirim.style.display = selectModeTerkirim ? 'flex' : 'none';
+    var checkAllTerkirimEl = document.getElementById('checkAllTerkirim');
+    if(checkAllTerkirimEl) checkAllTerkirimEl.checked = false;
+    updateBulkBarTerkirim();
+    applyFilter('Terkirim'); // render ulang supaya checkbox muncul/hilang di tiap kartu
   }
 
-  function applyBulkAssign(){
-    var ids = Object.keys(selectedTodoIds);
+  // Dipanggil saat pindah tab dari Terkirim, supaya bar Kembalikan/Hapus
+  // tidak tertinggal aktif kalau pengguna belum sempat menekan Batal.
+  function exitSelectModeTerkirim(){
+    if(!selectModeTerkirim) return;
+    selectModeTerkirim = false;
+    selectedTerkirimIds = {};
+    var btn = document.getElementById('btnToggleSelectTerkirim');
+    if(btn){ btn.textContent = 'Pilih Beberapa'; btn.classList.remove('active'); }
+    var rowAllTerkirim = document.getElementById('selectAllTerkirimRow');
+    if(rowAllTerkirim) rowAllTerkirim.style.display = 'none';
+    updateBulkBarTerkirim();
+  }
+
+  function toggleCardCheckTerkirim(id, checked, checkboxEl){
+    if(checked) selectedTerkirimIds[id] = true; else delete selectedTerkirimIds[id];
+    var card = checkboxEl && checkboxEl.closest('.card');
+    if(card) card.classList.toggle('selected', checked);
+    updateBulkBarTerkirim();
+    updateSelectAllTerkirimCheckbox();
+  }
+
+  function toggleSelectAllTerkirim(checked){
+    selectedTerkirimIds = {};
+    if(checked){
+      lastFilteredTerkirimList.forEach(function(d){ selectedTerkirimIds[d.id] = true; });
+    }
+    applyFilter('Terkirim');
+    updateBulkBarTerkirim();
+  }
+
+  function updateSelectAllTerkirimCheckbox(){
+    var checkAllEl = document.getElementById('checkAllTerkirim');
+    if(!checkAllEl) return;
+    checkAllEl.checked = lastFilteredTerkirimList.length > 0 &&
+      lastFilteredTerkirimList.every(function(d){ return !!selectedTerkirimIds[d.id]; });
+  }
+
+  function updateBulkBarTerkirim(){
+    var bar = document.getElementById('bulkBarTerkirim');
+    if(!bar) return;
+    var count = Object.keys(selectedTerkirimIds).length;
+    bar.classList.toggle('open', selectModeTerkirim && count > 0);
+    document.getElementById('bulkCountTerkirim').textContent = count + ' dipilih';
+  }
+
+  // Kembalikan banyak paket Terkirim ke To-Do sekaligus (statusnya saja
+  // yang berubah â€” kolom Kurir tidak disentuh, sama seperti
+  // revertToTodo() per-kartu). Memakai bulkUpdateStatus() yang sama
+  // dengan bar Ubah Status di tab To-Do, hanya newStatus-nya 'To-Do'.
+  function applyBulkKembalikanTerkirim(){
+    var ids = Object.keys(selectedTerkirimIds);
     if(!ids.length){ showToast('Pilih minimal satu kartu dulu'); return; }
-    var kurir = document.getElementById('bulkKurirSelect').value;
-    if(!kurir){ showToast('Pilih kurir tujuan dulu'); return; }
-    var btn = document.getElementById('btnBulkAssign');
-    btn.disabled = true;
+    var buttons = document.querySelectorAll('#bulkBarTerkirim .btn-bulk-assign');
+    buttons.forEach(function(b){ b.disabled = true; });
     google.script.run
       .withSuccessHandler(function(res){
-        btn.disabled = false;
-        if(res && res.success === false){ showToast(res.message || 'Gagal menugaskan kurir'); return; }
-        showToast((res.count || ids.length) + ' paket ditugaskan ke ' + kurir);
-        exitSelectModeTodo();
+        buttons.forEach(function(b){ b.disabled = false; });
+        if(res && res.success === false){ showToast(res.message || 'Gagal mengembalikan paket'); return; }
+        var count = res.count || ids.length;
+        var total = res.total || ids.length;
+        var msg = count + ' paket dikembalikan ke To-Do';
+        if(total > count) msg += ' (' + (total - count) + ' dilewati)';
+        showToast(msg);
+        exitSelectModeTerkirim();
         refreshCurrentTab();
       })
       .withFailureHandler(function(err){
-        btn.disabled = false;
-        showToast('Gagal menugaskan kurir: ' + err.message);
+        buttons.forEach(function(b){ b.disabled = false; });
+        showToast('Gagal mengembalikan paket: ' + err.message);
       })
-      .bulkAssignKurir(currentUser.username, ids, kurir);
+      .bulkUpdateStatus(currentUser.username, ids, 'To-Do');
+  }
+
+  // Hapus banyak data pengiriman Terkirim sekaligus. Menggantikan tombol
+  // "Hapus" per-kartu yang sudah dibuang dari tampilan Terkirim.
+  function applyBulkDeleteTerkirim(){
+    var ids = Object.keys(selectedTerkirimIds);
+    if(!ids.length){ showToast('Pilih minimal satu kartu dulu'); return; }
+    if(!confirm('Hapus ' + ids.length + ' data pengiriman terpilih? Tindakan ini tidak dapat dibatalkan.')) return;
+    var buttons = document.querySelectorAll('#bulkBarTerkirim .btn-bulk-assign');
+    buttons.forEach(function(b){ b.disabled = true; });
+    google.script.run
+      .withSuccessHandler(function(res){
+        buttons.forEach(function(b){ b.disabled = false; });
+        if(res && res.success === false){ showToast(res.message || 'Gagal menghapus data'); return; }
+        showToast((res.count || ids.length) + ' data dihapus');
+        exitSelectModeTerkirim();
+        refreshCurrentTab();
+      })
+      .withFailureHandler(function(err){
+        buttons.forEach(function(b){ b.disabled = false; });
+        showToast('Gagal menghapus data: ' + err.message);
+      })
+      .bulkDeleteDelivery(currentUser.username, ids);
   }
 
   // Ubah status (Terkirim/On-Hold) untuk banyak paket To-Do sekaligus,
-  // KHUSUS admin, lewat mode "Pilih Beberapa" yang sama dengan "Tugaskan
-  // ke Kurir" di atas — jadi admin bisa memilih beberapa kartu yang
-  // SUDAH ditandai (diklaim) oleh kurir (lihat badge nama kurir di
-  // kartu), lalu langsung menandai semuanya Terkirim/On-Hold sekaligus,
-  // tanpa perlu membuka satu per satu. Paket yang TERNYATA belum
-  // ditandai kurir mana pun otomatis dilewati (skip) oleh server
-  // (bulkUpdateStatus() di Code.gs), bukan menggagalkan seluruh proses —
-  // jadi admin boleh memilih campuran kartu yang sudah & belum ditandai
-  // kurir sekaligus, tinggal kartu yang belum ditandai saja yang
-  // dilewati.
+  // KHUSUS admin, lewat mode "Pilih Beberapa" â€” jadi admin bisa memilih
+  // beberapa kartu yang SUDAH ditandai (diklaim) oleh kurir (lihat
+  // badge nama kurir di kartu), lalu langsung menandai semuanya
+  // Terkirim/On-Hold sekaligus, tanpa perlu membuka satu per satu.
+  // Paket yang TERNYATA belum ditandai kurir mana pun otomatis
+  // dilewati (skip) oleh server (bulkUpdateStatus() di Code.gs), bukan
+  // menggagalkan seluruh proses â€” jadi admin boleh memilih campuran
+  // kartu yang sudah & belum ditandai kurir sekaligus, tinggal kartu
+  // yang belum ditandai saja yang dilewati.
   function applyBulkStatusTodo(newStatus){
     var ids = Object.keys(selectedTodoIds);
     if(!ids.length){ showToast('Pilih minimal satu kartu dulu'); return; }
@@ -1997,6 +2166,36 @@
         showToast('Gagal memperbarui status: ' + err.message);
       })
       .bulkUpdateStatus(currentUser.username, ids, newStatus);
+  }
+
+  // Khusus admin: versi massal dari adminUnclaimAndRefresh() di bawah â€”
+  // menghapus tanda kurir dari banyak paket To-Do sekaligus, siapa pun
+  // kurir yang menandainya, lewat mode "Pilih Beberapa". Paket yang
+  // sudah bukan To-Do lagi atau memang belum ditandai kurir mana pun
+  // otomatis dilewati (skip) oleh server (bulkAdminUnclaimDelivery() di
+  // Code.gs), bukan menggagalkan seluruh proses.
+  function applyBulkRemoveKurir(){
+    var ids = Object.keys(selectedTodoIds);
+    if(!ids.length){ showToast('Pilih minimal satu kartu dulu'); return; }
+    var btn = document.getElementById('btnBulkRemoveKurir');
+    btn.disabled = true;
+    google.script.run
+      .withSuccessHandler(function(res){
+        btn.disabled = false;
+        if(res && res.success === false){ showToast(res.message || 'Gagal menghapus tanda kurir'); return; }
+        var count = res.count || ids.length;
+        var total = res.total || ids.length;
+        var msg = 'Tanda kurir dihapus dari ' + count + ' paket';
+        if(total > count) msg += ' (' + (total - count) + ' dilewati, memang belum ditandai kurir)';
+        showToast(msg);
+        exitSelectModeTodo();
+        refreshCurrentTab();
+      })
+      .withFailureHandler(function(err){
+        btn.disabled = false;
+        showToast('Gagal menghapus tanda kurir: ' + err.message);
+      })
+      .bulkAdminUnclaimDelivery(currentUser.username, ids);
   }
 
   // Klaim (tandai) massal paket To-Do yang belum ada pemiliknya, untuk
@@ -2110,7 +2309,7 @@
       var cached = cacheGet_(cacheKey);
       if(cached){
         renderCODSummary(cached);
-        // Data sudah tampil dari cache — tetap minta versi terbaru di
+        // Data sudah tampil dari cache â€” tetap minta versi terbaru di
         // latar belakang, siapa tahu ada perubahan sejak terakhir dimuat.
         backgroundRefresh_(cacheKey, function(onSuccess, onFail){
           google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFail)
@@ -2118,7 +2317,7 @@
         }, function(freshData){
           renderCODSummary(freshData);
         });
-        return; // tidak perlu menunggu apa pun — tampilan sudah terisi
+        return; // tidak perlu menunggu apa pun â€” tampilan sudah terisi
       }
     }
 
@@ -2239,7 +2438,7 @@
     document.getElementById('detailTelp').textContent = item.noTelp || '-';
     document.getElementById('detailCod').textContent = item.jumlahCod > 0 ? formatRupiah(item.jumlahCod) : 'Non-COD';
     document.getElementById('detailKurir').textContent = item.kurir || '-';
-    // Tombol "Ubah Data Ini" hanya untuk admin — akun kurir tidak lagi
+    // Tombol "Ubah Data Ini" hanya untuk admin â€” akun kurir tidak lagi
     // berhak mengedit data pengiriman sama sekali.
     var elDetailEditBtn = document.getElementById('detailEditBtn');
     if(elDetailEditBtn) elDetailEditBtn.style.display = isAdmin() ? 'block' : 'none';
@@ -2370,7 +2569,7 @@
   function formatRupiah(num){ num = Number(num) || 0; return 'Rp' + num.toLocaleString('id-ID'); }
   // Tanggal hari ini dalam format yyyy-mm-dd (sesuai zona waktu lokal
   // perangkat), dipakai sebagai nilai default filter tanggal & saat
-  // tombol refresh ditekan — selalu mengikuti tanggal saat ini.
+  // tombol refresh ditekan â€” selalu mengikuti tanggal saat ini.
   function todayInputDate(){
     var d = new Date();
     var mm = String(d.getMonth() + 1).padStart(2, '0');
@@ -2526,7 +2725,7 @@
      App ini punya deployment/URL terpisah (project Apps Script lain).
      Dibuka sebagai jendela pop-up. Penyimpanan data ke To-Do sekarang
      dilakukan LANGSUNG oleh App Foto itu sendiri (tombol "Salin &
-     Simpan" di sana menulis langsung ke Spreadsheet To-Do yang sama —
+     Simpan" di sana menulis langsung ke Spreadsheet To-Do yang sama â€”
      lihat saveFieldsToTodo() di project App Foto). Di sini kita hanya
      perlu me-refresh daftar & menampilkan notifikasi tiap kali App Foto
      memberi tahu satu data berhasil disimpan.
@@ -2551,7 +2750,7 @@
     if(!data || !data.type) return;
 
     if(data.type === 'OCR_CLOSED'){
-      // Jendela App Foto ditutup user — tidak perlu aksi apa pun di sini.
+      // Jendela App Foto ditutup user â€” tidak perlu aksi apa pun di sini.
       return;
     }
 
@@ -2578,7 +2777,7 @@
   // Kalau tab yang sedang aktif (To-Do/Terkirim/On-Hold) punya kata kunci
   // pencarian yang sedang diisi, tombol kembali cukup menghapus kata kunci
   // itu dan menampilkan lagi daftar lengkapnya (urutan normal, tidak
-  // difilter) — belum langsung memicu konfirmasi keluar aplikasi.
+  // difilter) â€” belum langsung memicu konfirmasi keluar aplikasi.
   var TAB_TO_STATUS = { todo: 'To-Do', terkirim: 'Terkirim', onhold: 'On-Hold' };
   function clearActiveSearchIfAny(){
     var status = TAB_TO_STATUS[activeTab];
@@ -2592,7 +2791,7 @@
 
   // Tombol kembali HANYA menutup modal yang sedang terbuka (kalau ada),
   // atau menghapus kata kunci pencarian yang sedang diisi (kalau ada).
-  // Tidak ada lagi konfirmasi "keluar dari aplikasi" — tombol kembali
+  // Tidak ada lagi konfirmasi "keluar dari aplikasi" â€” tombol kembali
   // akan berperilaku normal (keluar dari aplikasi/halaman) kalau tidak
   // ada modal terbuka maupun kata kunci pencarian yang aktif.
   function handleBackAction(){
@@ -2603,7 +2802,7 @@
 
   // Di dalam app Android (Capacitor), pakai listener RESMI dari plugin
   // @capacitor/app (sudah terpasang di package.json, capacitor.js
-  // otomatis disuntikkan runtime native ke WebView) — jauh lebih andal
+  // otomatis disuntikkan runtime native ke WebView) â€” jauh lebih andal
   // daripada trik history.pushState untuk menangkap tombol kembali
   // fisik/gestur Android. Kalau tidak ada modal/pencarian aktif, baru
   // app benar-benar ditutup lewat App.exitApp().
@@ -2614,7 +2813,7 @@
     });
   } else {
     // Fallback kalau file ini dibuka di browser biasa (bukan lewat app
-    // Android/Capacitor) — mis. saat development di laptop — objek
+    // Android/Capacitor) â€” mis. saat development di laptop â€” objek
     // Capacitor tidak ada, jadi pakai trik history.pushState seperti
     // sebelumnya.
     history.pushState({ app: true }, '', location.href);
@@ -2622,7 +2821,7 @@
       if(handleBackAction()){
         history.pushState({ app: true }, '', location.href);
       }
-      // Tidak ada modal terbuka maupun kata kunci aktif — biarkan
+      // Tidak ada modal terbuka maupun kata kunci aktif â€” biarkan
       // navigasi kembali berjalan seperti biasa (tidak menahan riwayat).
     });
   }
