@@ -157,6 +157,67 @@
   .gaji-row-amounts{display:flex;gap:16px;margin-top:6px;}
   .gaji-amount,.keuntungan-amount{font-size:12.5px;font-weight:700;}
   .gaji-amount{color:var(--green);}
+
+  /* ===== LAPORAN GAJI KURIR (PENGGAJIAN & KASBON) â€” khusus admin ===== */
+  .payroll-period-row{margin-bottom:14px;}
+  /* Trigger "Periode Gajian": tombol bergaya kalender (bukan lagi
+     <select> bawaan) yang membuka modal #payrollPeriodModal. */
+  #payrollPeriodTrigger{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--navy);font-size:15px;font-weight:700;font-family:inherit;color:#fff;background:var(--navy);}
+  #payrollPeriodTrigger span{color:#fff;overflow:visible;}
+  #payrollPeriodTrigger svg{color:#fff;}
+  /* Grid kalender "Pilih Periode Gajian" â€” cuma tgl 10 & 25 yang aktif
+     (dipakai sebagai tanggal gajian), tanggal lain ditampilkan pudar
+     dan tidak bisa ditekan. */
+  #pprGrid .dr-day-btn{color:var(--line);cursor:default;}
+  #pprGrid .dr-day-btn.is-period{cursor:pointer;font-weight:700;}
+  #pprGrid .dr-day-btn.type-25{background:var(--green-soft);color:var(--green);}
+  #pprGrid .dr-day-btn.type-10{background:var(--amber-soft);color:var(--amber);}
+  #pprGrid .dr-day-btn.is-selected{background:var(--navy)!important;color:#fff!important;}
+  #kbPeriodGrid .dr-day-btn{color:var(--line);cursor:default;}
+  #kbPeriodGrid .dr-day-btn.is-period{cursor:pointer;font-weight:700;}
+  #kbPeriodGrid .dr-day-btn.type-25{background:var(--green-soft);color:var(--green);}
+  #kbPeriodGrid .dr-day-btn.type-10{background:var(--amber-soft);color:var(--amber);}
+  #kbPeriodGrid .dr-day-btn.is-selected{background:var(--navy)!important;color:#fff!important;}
+  .seg-row{display:flex;gap:6px;}
+  .seg-btn{flex:1;min-width:0;padding:12px 4px;border-radius:10px;border:1.5px solid var(--line);background:#FAFBFC;font-family:inherit;font-size:13.5px;font-weight:700;color:var(--ink);cursor:pointer;}
+  .seg-btn.active{background:var(--navy);border-color:var(--navy);color:#fff;}
+  .kasbon-preview{background:var(--paper);border-radius:12px;padding:10px 12px;margin-bottom:16px;font-size:12.5px;color:var(--ink);line-height:1.5;}
+  .kasbon-preview b{color:var(--navy);}
+  .kasbon-preview .kp-sub{display:block;color:var(--muted);font-size:11.5px;margin-top:2px;}
+  /* Tombol pemicu kalender di dalam form kasbon (tampilannya mirip kolom input) */
+  .field-date-trigger{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);font-size:15px;font-family:inherit;color:var(--ink);background:#FAFBFC;cursor:pointer;text-align:left;}
+  .field-date-trigger:focus{outline:none;border-color:var(--navy);background:var(--surface);box-shadow:0 0 0 3px rgba(30,42,68,.12);}
+  .field-date-trigger svg{flex-shrink:0;color:var(--muted);}
+  .payroll-period-legend{display:flex;flex-wrap:wrap;gap:14px;font-size:11px;color:var(--muted);margin:8px 2px 0;list-style:none;padding:0;}
+  .payroll-period-legend span{display:inline-flex;align-items:center;gap:5px;}
+  .payroll-period-legend i{width:9px;height:9px;border-radius:50%;display:inline-block;flex-shrink:0;}
+  .kasbon-summary-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-card);padding:12px 14px;margin-bottom:14px;}
+  .kasbon-summary-card .kasbon-list{border-top:none;padding-top:0;margin-top:0;margin-bottom:0;max-height:160px;overflow-y:auto;}
+  .kasbon-edit-btn{background:none;border:none;color:var(--navy);cursor:pointer;padding:2px;flex-shrink:0;display:flex;}
+  /* "Periode Gajian" + "Daftar Kasbon Kurir" dikunci di atas modal
+     (tidak ikut turun saat "Rincian per Kurir" di bawahnya di-scroll).
+     Margin negatif menghapus padding atas/samping bawaan .modal-sheet
+     khusus untuk blok ini, lalu padding sendiri ditambahkan lagi supaya
+     tampilannya tetap sama â€” trik ini diperlukan supaya position:sticky
+     benar-benar menempel di tepi ATAS area scroll (.modal-sheet). */
+  #payrollStickyTop{position:sticky;top:0;z-index:6;background:var(--surface);margin:-22px -20px 14px;padding:22px 20px 14px;border-bottom:1px solid var(--line);}
+  #payrollStickyTop .modal-header{margin-bottom:16px;}
+  #payrollStickyTop .kasbon-summary-card{margin-bottom:0;}
+  .payroll-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-card);padding:13px 14px;margin-bottom:10px;}
+  .payroll-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;}
+  .payroll-card-name{font-size:12.5px;font-weight:700;display:inline-block;padding:2px 9px;border-radius:var(--radius-pill);}
+  .payroll-card-count{font-size:11px;color:var(--muted);}
+  .payroll-card-amounts{display:flex;flex-direction:column;gap:3px;margin-bottom:8px;font-size:12.5px;}
+  .payroll-card-amounts .row{display:flex;justify-content:space-between;}
+  .payroll-card-amounts .lbl{color:var(--muted);}
+  .payroll-net{font-weight:800;font-size:14.5px;color:var(--navy);}
+  .payroll-net.negative{color:var(--rose);}
+  .kasbon-list{border-top:1px dashed var(--line);padding-top:8px;margin-top:2px;margin-bottom:8px;}
+  .kasbon-line{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:var(--ink);padding:3px 0;}
+  .kasbon-line .kasbon-info{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .kasbon-line .kasbon-amount{white-space:nowrap;color:var(--rose);font-weight:700;}
+  .kasbon-del-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:2px;flex-shrink:0;display:flex;}
+  .payroll-card-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;}
   .keuntungan-amount{color:var(--amber);}
 
   /* ===== DELIVERY CARD ===== */
@@ -298,6 +359,9 @@
         <button class="header-icon-btn" id="btnToggleGaji" style="display:none;" onclick="toggleGajiVisibility()" title="Tampilkan/Sembunyikan Gaji &amp; Keuntungan" aria-label="Tampilkan/Sembunyikan Gaji dan Keuntungan">
           <svg id="iconEyeOpen" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
           <svg id="iconEyeClosed" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-7-11-7a21.4 21.4 0 015.06-6.06M9.9 4.24A9.9 9.9 0 0112 4c7 0 11 7 11 7a21.4 21.4 0 01-2.16 3.19"/><path d="M14.12 14.12a3 3 0 11-4.24-4.24"/><path d="M1 1l22 22"/></svg>
+        </button>
+        <button class="header-icon-btn" id="btnPayroll" style="display:none;" onclick="openPayrollModal()" title="Laporan Gaji Kurir" aria-label="Laporan Gaji Kurir">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 6.5v11M15.3 9.3c0-1.3-1.5-2.3-3.3-2.3s-3.3 1-3.3 2.3S10 11 12 11.5c2 .5 3.3 1.2 3.3 2.5S13.8 16.3 12 16.3s-3.3-.9-3.3-2.3"/></svg>
         </button>
         <button class="logout-btn" onclick="logout()" title="Keluar" aria-label="Keluar">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4H6.5A2.5 2.5 0 004 6.5v11A2.5 2.5 0 006.5 20H9"/><path d="M16 16l4-4-4-4"/><path d="M20 12H9"/></svg>
@@ -693,6 +757,197 @@
   </div>
 </div>
 
+<!-- ===== MODAL LAPORAN GAJI KURIR (khusus admin) ===== -->
+<div class="modal-overlay" id="payrollModal">
+  <div class="modal-sheet">
+    <div id="payrollStickyTop">
+      <div class="modal-header">
+        <span class="modal-title">Laporan Gaji Kurir</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button type="button" class="btn-select-toggle" onclick="openKasbonForm()">+ Kasbon</button>
+          <button class="modal-close" onclick="closePayrollModal()" aria-label="Tutup">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="payroll-period-row">
+        <label style="display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px;">Periode Gajian</label>
+        <button type="button" class="date-range-trigger" id="payrollPeriodTrigger" onclick="openPayrollPeriodModal()">
+          <span id="payrollPeriodTriggerLabel">-</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="2.5"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg>
+        </button>
+      </div>
+
+      <div class="kasbon-summary-card">
+        <p class="section-title" style="margin-bottom:8px;">Daftar Kasbon Kurir</p>
+        <div id="payrollInfoBar"><p class="empty">Memuat...</p></div>
+      </div>
+    </div>
+
+    <div id="payrollList" style="margin-top:14px;"><p class="empty">Memuat data...</p></div>
+  </div>
+</div>
+
+<!-- ===== MODAL PILIH PERIODE GAJIAN (kalender, hanya tgl 10 & 25 yang bisa dipilih) ===== -->
+<div class="modal-overlay" id="payrollPeriodModal">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <span class="modal-title">Pilih Periode Gajian</span>
+      <button class="modal-close" onclick="closePayrollPeriodModal()" aria-label="Tutup">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="date-range-nav">
+      <button type="button" class="date-range-nav-btn" onclick="shiftPayrollPeriodMonth(-1)" aria-label="Bulan sebelumnya">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <span class="date-range-month-label" id="pprMonthLabel">-</span>
+      <button type="button" class="date-range-nav-btn" onclick="shiftPayrollPeriodMonth(1)" aria-label="Bulan berikutnya">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+    <div class="date-range-weekdays">
+      <span>M</span><span>S</span><span>S</span><span>R</span><span>K</span><span>J</span><span>S</span>
+    </div>
+    <div class="date-range-grid" id="pprGrid"></div>
+    <p class="payroll-period-legend">
+      <span><i style="background:var(--green);"></i>Tgl 25 &middot; gajian paket 1-15</span>
+      <span><i style="background:var(--amber);"></i>Tgl 10 &middot; gajian paket 16-akhir bln lalu</span>
+    </p>
+    <div class="date-range-actions">
+      <span></span>
+      <div class="date-range-actions-right">
+        <button type="button" class="btn-text" onclick="closePayrollPeriodModal()">Batal</button>
+        <button type="button" class="btn-text btn-text-primary" onclick="applyPayrollPeriodSelection()">Oke</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL TAMBAH KASBON ===== -->
+<div class="modal-overlay" id="kasbonFormModal">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <span class="modal-title" id="kasbonFormTitle">Tambah Kasbon</span>
+      <button class="modal-close" onclick="closeKasbonForm()" aria-label="Tutup">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <form id="kasbonForm">
+      <input type="hidden" id="inputKasbonId" value="">
+      <div class="field">
+        <label for="inputKasbonKurir">Kurir</label>
+        <select id="inputKasbonKurir" required></select>
+      </div>
+      <div class="field">
+        <label for="inputKasbonJumlah">Total Kasbon / Hutang (Rp)</label>
+        <input type="number" id="inputKasbonJumlah" min="1" step="1" inputmode="numeric" required oninput="updateKasbonPreview()">
+      </div>
+      <div class="field">
+        <label>Dicicil Selama</label>
+        <input type="hidden" id="inputKasbonTenor" value="3">
+        <div class="seg-row">
+          <button type="button" class="seg-btn" data-tenor="1" onclick="setKasbonTenor(1)">1 Bulan</button>
+          <button type="button" class="seg-btn" data-tenor="2" onclick="setKasbonTenor(2)">2 Bulan</button>
+          <button type="button" class="seg-btn" data-tenor="3" onclick="setKasbonTenor(3)">3 Bulan</button>
+          <button type="button" class="seg-btn" data-tenor="6" onclick="setKasbonTenor(6)">6 Bulan</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Tanggal Kasbon</label>
+        <input type="hidden" id="inputKasbonTanggal">
+        <button type="button" class="field-date-trigger" onclick="openKasbonDateModal()">
+          <span id="kasbonTanggalLabel">-</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="2.5"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg>
+        </button>
+      </div>
+      <div class="field">
+        <label for="inputKasbonKeterangan">Keterangan <span class="muted small">(opsional)</span></label>
+        <input type="text" id="inputKasbonKeterangan" placeholder="Contoh: Kasbon keperluan pribadi">
+      </div>
+      <div class="field">
+        <label>Mulai Dipotong pada Gajian</label>
+        <input type="hidden" id="inputKasbonPeriode">
+        <button type="button" class="field-date-trigger" onclick="openKasbonPeriodModal()">
+          <span id="kasbonPeriodeLabel">-</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="2.5"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg>
+        </button>
+      </div>
+      <div class="kasbon-preview" id="kasbonPreview">Isi total kasbon untuk melihat rincian cicilan.</div>
+      <button type="submit" class="btn-primary-full" id="kasbonFormSaveBtn">Simpan Kasbon</button>
+    </form>
+  </div>
+</div>
+
+<!-- ===== MODAL KALENDER TANGGAL KASBON (pilih 1 tanggal) ===== -->
+<div class="modal-overlay" id="kasbonDateModal">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <span class="modal-title">Pilih Tanggal</span>
+      <button class="modal-close" onclick="closeKasbonDateModal()" aria-label="Tutup">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="date-range-nav">
+      <button type="button" class="date-range-nav-btn" onclick="shiftKasbonDateMonth(-1)" aria-label="Bulan sebelumnya">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <span class="date-range-month-label" id="kbDateMonthLabel">-</span>
+      <button type="button" class="date-range-nav-btn" onclick="shiftKasbonDateMonth(1)" aria-label="Bulan berikutnya">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+    <div class="date-range-weekdays">
+      <span>M</span><span>S</span><span>S</span><span>R</span><span>K</span><span>J</span><span>S</span>
+    </div>
+    <div class="date-range-grid" id="kbDateGrid"></div>
+    <div class="date-range-actions">
+      <button type="button" class="btn-text" onclick="resetKasbonDate()">Reset</button>
+      <div class="date-range-actions-right">
+        <button type="button" class="btn-text" onclick="closeKasbonDateModal()">Batal</button>
+        <button type="button" class="btn-text btn-text-primary" onclick="applyKasbonDate()">Oke</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL KALENDER "DIPOTONG PADA GAJIAN" (hanya tgl 10 & 25) ===== -->
+<div class="modal-overlay" id="kasbonPeriodModal">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <span class="modal-title">Dipotong pada Gajian</span>
+      <button class="modal-close" onclick="closeKasbonPeriodModal()" aria-label="Tutup">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="date-range-nav">
+      <button type="button" class="date-range-nav-btn" onclick="shiftKasbonPeriodMonth(-1)" aria-label="Bulan sebelumnya">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <span class="date-range-month-label" id="kbPeriodMonthLabel">-</span>
+      <button type="button" class="date-range-nav-btn" onclick="shiftKasbonPeriodMonth(1)" aria-label="Bulan berikutnya">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+    <div class="date-range-weekdays">
+      <span>M</span><span>S</span><span>S</span><span>R</span><span>K</span><span>J</span><span>S</span>
+    </div>
+    <div class="date-range-grid" id="kbPeriodGrid"></div>
+    <p class="payroll-period-legend">
+      <span><i style="background:var(--green);"></i>Tgl 25 &middot; gajian paket 1-15</span>
+      <span><i style="background:var(--amber);"></i>Tgl 10 &middot; gajian paket 16-akhir bln lalu</span>
+    </p>
+    <div class="date-range-actions">
+      <span></span>
+      <div class="date-range-actions-right">
+        <button type="button" class="btn-text" onclick="closeKasbonPeriodModal()">Batal</button>
+        <button type="button" class="btn-text btn-text-primary" onclick="applyKasbonPeriod()">Oke</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1024,8 +1279,10 @@
       document.getElementById('btnKelolaAkun').style.display = isAdmin() ? 'flex' : 'none';
       if(isAdmin()){
         // Admin: tampilkan tombol mata di header (gaji & keuntungan
-        // tetap disembunyikan sampai admin sendiri menekannya).
+        // tetap disembunyikan sampai admin sendiri menekannya), dan
+        // tombol ikon $ untuk membuka laporan gaji per kurir.
         document.getElementById('btnToggleGaji').style.display = 'flex';
+        document.getElementById('btnPayroll').style.display = 'flex';
       } else {
         // Akun kurir: tampilkan kartu gaji miliknya sendiri, dan seksi
         // "Paket yang Anda Tandai" (menggantikan grafik distribusi).
@@ -1038,7 +1295,7 @@
         // supaya tidak bisa dimunculkan lagi lewat inspect element dsb.
         // Seksi gaji/keuntungan semua kurir (khusus admin) juga ikut
         // dibuang total, bukan hanya disembunyikan lewat CSS.
-        ['ctaAddPengiriman','fabAdd','fabImportPhoto','btnToggleGaji','gajiAdminSection','chartKurirCard'].forEach(function(id){
+        ['ctaAddPengiriman','fabAdd','fabImportPhoto','btnToggleGaji','btnPayroll','gajiAdminSection','chartKurirCard'].forEach(function(id){
           var el = document.getElementById(id);
           if(el) el.remove();
         });
@@ -2720,6 +2977,508 @@
       .deleteUser(currentUser.username, username);
   }
 
+  /* =====================================================================
+   *  LAPORAN GAJI KURIR (PENGGAJIAN 2 PERIODE/BULAN) + KASBON
+   *  Khusus admin. Skema:
+   *    - Tgl 1 s.d. 15  -> dibayar tgl 25 bulan yang sama ("P25").
+   *    - Tgl 16 s.d. akhir bulan -> dibayar tgl 10 bulan berikutnya ("P10").
+   *  periodKey berformat "YYYY-MM-P10" / "YYYY-MM-P25", di mana YYYY-MM
+   *  adalah BULAN PEMBAYARAN (bukan bulan pengiriman) â€” harus sama
+   *  persis dengan format yang dipakai parsePeriodKey_() di Code.gs.
+   * ===================================================================== */
+  var payrollPeriodList = [];
+  var currentPayrollReport = null;
+  // Periode yang sedang aktif ditampilkan di modal Laporan Gaji Kurir
+  // (dulu ini nilai <select>, sekarang dipilih lewat kalender
+  // #payrollPeriodModal â€” lihat openPayrollPeriodModal dkk di bawah).
+  var activePayrollPeriodKey = null;
+  var payrollPeriodCalMonth = new Date();
+  var payrollPeriodDraftKey = null;
+  // Lookup id kasbon -> data kasbonnya (diisi ulang tiap kali laporan
+  // dirender), dipakai supaya tombol "Ubah" bisa membuka form kasbon
+  // dengan data lengkap tanpa perlu menaruh JSON di atribut onclick.
+  var currentKasbonById = {};
+
+  // Buat daftar periode gajian di sekitar hari ini (6 periode ke
+  // belakang s.d. 2 periode ke depan) supaya admin bisa lihat riwayat
+  // maupun menyiapkan periode yang akan datang.
+  function buildPayrollPeriodList(){
+    var list = [];
+    var now = new Date();
+    // Titik awal: representasikan tiap bulan sebagai 2 "slot" periode
+    // (P25 duluan, baru P10), lalu mundur/maju dari bulan berjalan.
+    var baseYear = now.getFullYear();
+    var baseMonth0 = now.getMonth(); // 0-based
+    for(var offset = -5; offset <= 2; offset++){
+      var d = new Date(baseYear, baseMonth0 + offset, 1);
+      var y = d.getFullYear(), m0 = d.getMonth();
+      var mm = String(m0 + 1).length < 2 ? '0' + (m0 + 1) : String(m0 + 1);
+      list.push(y + '-' + mm + '-P25');
+      list.push(y + '-' + mm + '-P10');
+    }
+    // Urutkan dari yang paling baru (tanggal bayar terbaru) ke lama.
+    list.sort(function(a, b){ return payrollPeriodSortValue(b) - payrollPeriodSortValue(a); });
+    return list;
+  }
+  function payrollPeriodSortValue(key){
+    var m = /^(\d{4})-(\d{2})-P(10|25)$/.exec(key);
+    if(!m) return 0;
+    // Nilai urut = tahun*10000 + bulan*100 + tanggal bayar, supaya P10
+    // (dibayar tgl 10) dan P25 (dibayar tgl 25) dalam bulan yang sama
+    // terurut benar berdasar tanggal bayar sesungguhnya.
+    return Number(m[1]) * 10000 + Number(m[2]) * 100 + Number(m[3]);
+  }
+  var BULAN_NAMA_ID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  function payrollPeriodLabel(key){
+    var m = /^(\d{4})-(\d{2})-P(10|25)$/.exec(key);
+    if(!m) return key;
+    var y = Number(m[1]), m0 = Number(m[2]) - 1, tipe = m[3];
+    return tipe + ' ' + BULAN_NAMA_ID[m0] + ' ' + y;
+  }
+
+  function openPayrollModal(){
+    document.getElementById('payrollModal').classList.add('open');
+    payrollPeriodList = buildPayrollPeriodList();
+    if(!activePayrollPeriodKey || payrollPeriodList.indexOf(activePayrollPeriodKey) === -1){
+      activePayrollPeriodKey = payrollPeriodList[0];
+    }
+    updatePayrollPeriodTriggerLabel();
+    loadPayrollReport();
+  }
+  function closePayrollModal(){ document.getElementById('payrollModal').classList.remove('open'); }
+  document.getElementById('payrollModal').addEventListener('click', function(e){ if(e.target === this) closePayrollModal(); });
+
+  function updatePayrollPeriodTriggerLabel(){
+    document.getElementById('payrollPeriodTriggerLabel').textContent = activePayrollPeriodKey ? payrollPeriodLabel(activePayrollPeriodKey) : '-';
+  }
+
+  // Bikin periodKey ("YYYY-MM-P10"/"YYYY-MM-P25") dari tanggal yang
+  // ditekan di kalender â€” hanya dipanggil untuk tgl 10 & 25.
+  function periodKeyForDay_(year, month0, day){
+    var mm = String(month0 + 1).padStart(2, '0');
+    return year + '-' + mm + '-P' + (day === 25 ? '25' : '10');
+  }
+  // Kebalikannya: dari periodKey jadi objek Date (tgl 1 bulan itu),
+  // dipakai supaya kalender terbuka menampilkan bulan periode aktif.
+  function parsePayrollPeriodDate_(key){
+    var m = /^(\d{4})-(\d{2})-P(10|25)$/.exec(key || '');
+    if(!m) return new Date();
+    return new Date(Number(m[1]), Number(m[2]) - 1, 1);
+  }
+
+  function openPayrollPeriodModal(){
+    payrollPeriodCalMonth = parsePayrollPeriodDate_(activePayrollPeriodKey);
+    payrollPeriodDraftKey = activePayrollPeriodKey;
+    renderPayrollPeriodCalendar();
+    document.getElementById('payrollPeriodModal').classList.add('open');
+  }
+  function closePayrollPeriodModal(){
+    document.getElementById('payrollPeriodModal').classList.remove('open');
+  }
+  document.getElementById('payrollPeriodModal').addEventListener('click', function(e){ if(e.target === this) closePayrollPeriodModal(); });
+
+  function shiftPayrollPeriodMonth(delta){
+    payrollPeriodCalMonth.setMonth(payrollPeriodCalMonth.getMonth() + delta);
+    renderPayrollPeriodCalendar();
+  }
+
+  function selectPayrollPeriodDay(key){
+    payrollPeriodDraftKey = key;
+    renderPayrollPeriodCalendar();
+  }
+
+  function applyPayrollPeriodSelection(){
+    if(!payrollPeriodDraftKey){ closePayrollPeriodModal(); return; }
+    activePayrollPeriodKey = payrollPeriodDraftKey;
+    updatePayrollPeriodTriggerLabel();
+    closePayrollPeriodModal();
+    loadPayrollReport();
+  }
+
+  // Gambar ulang label bulan & grid kalender periode gajian. Cuma
+  // tanggal 10 & 25 yang aktif (bisa ditekan) â€” tanggal lain
+  // ditampilkan pudar & tidak bisa dipilih, karena gajian cuma ada
+  // di 2 tanggal itu tiap bulan.
+  function renderPayrollPeriodCalendar(){
+    document.getElementById('pprMonthLabel').textContent =
+      MONTH_NAMES_ID[payrollPeriodCalMonth.getMonth()] + ' ' + payrollPeriodCalMonth.getFullYear();
+
+    var year = payrollPeriodCalMonth.getFullYear();
+    var month = payrollPeriodCalMonth.getMonth(); // 0-based
+    var firstDow = new Date(year, month, 1).getDay(); // 0 = Minggu
+    var daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    var cells = [];
+    for(var i = 0; i < firstDow; i++){ cells.push('<div class="dr-day"></div>'); }
+    for(var d = 1; d <= daysInMonth; d++){
+      var isPeriodDay = (d === 10 || d === 25);
+      var key = isPeriodDay ? periodKeyForDay_(year, month, d) : null;
+      var btnClasses = ['dr-day-btn'];
+      if(isPeriodDay){
+        btnClasses.push('is-period');
+        btnClasses.push(d === 25 ? 'type-25' : 'type-10');
+        if(key === payrollPeriodDraftKey) btnClasses.push('is-selected');
+      }
+      var attrs = isPeriodDay ? ' onclick="selectPayrollPeriodDay(\'' + key + '\')"' : ' disabled';
+      cells.push('<div class="dr-day"><button type="button" class="' + btnClasses.join(' ') + '"' + attrs + '>' + d + '</button></div>');
+    }
+    document.getElementById('pprGrid').innerHTML = cells.join('');
+  }
+
+  function loadPayrollReport(){
+    var periodKey = activePayrollPeriodKey;
+    if(!periodKey) return;
+    document.getElementById('payrollInfoBar').textContent = 'Memuat...';
+    document.getElementById('payrollList').innerHTML = '<p class="empty">Memuat data...</p>';
+    google.script.run
+      .withSuccessHandler(function(res){
+        if(!res || res.success === false){
+          document.getElementById('payrollInfoBar').textContent = (res && res.message) || 'Gagal memuat laporan gaji.';
+          document.getElementById('payrollList').innerHTML = '';
+          return;
+        }
+        currentPayrollReport = res;
+        renderPayrollReport();
+      })
+      .withFailureHandler(function(err){
+        document.getElementById('payrollInfoBar').textContent = 'Gagal memuat laporan gaji: ' + err.message;
+        document.getElementById('payrollList').innerHTML = '';
+      })
+      .getPayrollReport(currentUser.username, periodKey);
+  }
+
+  function renderPayrollReport(){
+    var res = currentPayrollReport;
+    if(!res) return;
+
+    // Gabungkan kasbon dari semua kurir pada periode ini jadi satu
+    // daftar tunggal (bukan lagi info rentang tanggal/tanggal dibayar),
+    // lengkap dengan tombol Ubah & Hapus per baris.
+    currentKasbonById = {};
+    var allKasbon = [];
+    res.byKurir.forEach(function(item){
+      item.kasbonList.forEach(function(k){
+        var row = { id: k.id, tanggal: k.tanggal, jumlah: k.jumlah, keterangan: k.keterangan, status: k.status, kurir: item.kurir, periodeBayar: res.periodKey, grupId: k.grupId, cicilanKe: k.cicilanKe, tenor: k.tenor, totalGrup: k.totalGrup, periodeAwal: k.periodeAwal };
+        currentKasbonById[k.id] = row;
+        allKasbon.push(row);
+      });
+    });
+    document.getElementById('payrollInfoBar').innerHTML = allKasbon.length ? (
+      '<div class="kasbon-list">' +
+        allKasbon.map(function(k){
+          return '<div class="kasbon-line">' +
+              '<span class="kasbon-info"><b style="' + courierColorStyle(k.kurir) + 'border-radius:6px;padding:1px 6px;">' + escapeHtml(k.kurir) + '</b> &middot; ' + escapeHtml(k.tanggal) + (k.keterangan ? ' &middot; ' + escapeHtml(k.keterangan) : '') + (k.tenor > 1 ? ' &middot; Cicilan ' + k.cicilanKe + '/' + k.tenor : '') + '</span>' +
+              '<span class="kasbon-amount">-' + formatRupiah(k.jumlah) + '</span>' +
+              (k.status === 'Belum Dibayar' ?
+                '<button type="button" class="kasbon-edit-btn" title="Ubah kasbon ini" onclick="openKasbonForm(null,currentKasbonById[\'' + escapeHtml(k.id) + '\'])"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>' +
+                '<button type="button" class="kasbon-del-btn" title="Hapus kasbon ini" onclick="confirmDeleteKasbon(\'' + escapeHtml(k.id) + '\')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>'
+                : '<span class="badge badge-done" style="font-size:10px;">Lunas</span>') +
+            '</div>';
+        }).join('') +
+      '</div>'
+    ) : '<p class="empty">Belum ada kasbon pada periode ini.</p>';
+
+    var listEl = document.getElementById('payrollList');
+    if(!res.byKurir.length){
+      listEl.innerHTML = '<p class="empty">Belum ada paket terkirim atau kasbon pada periode ini.</p>';
+      return;
+    }
+    listEl.innerHTML = res.byKurir.map(function(item){
+      var kasbonHtml = item.kasbonList.length ? (
+        '<div class="kasbon-list">' +
+          item.kasbonList.map(function(k){
+            return '<div class="kasbon-line">' +
+                '<span class="kasbon-info">' + escapeHtml(k.tanggal) + (k.keterangan ? ' &middot; ' + escapeHtml(k.keterangan) : '') + (k.tenor > 1 ? ' &middot; Cicilan ' + k.cicilanKe + '/' + k.tenor : '') + '</span>' +
+                '<span class="kasbon-amount">-' + formatRupiah(k.jumlah) + '</span>' +
+                (k.status === 'Belum Dibayar' ?
+                  '<button type="button" class="kasbon-edit-btn" title="Ubah kasbon ini" onclick="openKasbonForm(null,currentKasbonById[\'' + escapeHtml(k.id) + '\'])"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>' +
+                  '<button type="button" class="kasbon-del-btn" title="Hapus kasbon ini" onclick="confirmDeleteKasbon(\'' + escapeHtml(k.id) + '\')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>'
+                  : '') +
+              '</div>';
+          }).join('') +
+        '</div>'
+      ) : '';
+      return '<div class="payroll-card">' +
+          '<div class="payroll-card-top">' +
+            '<span class="payroll-card-name" style="' + courierColorStyle(item.kurir) + '">' + escapeHtml(item.kurir) + '</span>' +
+            '<span class="badge ' + (item.sudahDibayar ? 'badge-done' : 'badge-todo') + '">' + (item.sudahDibayar ? 'Sudah Dibayar' : 'Belum Dibayar') + '</span>' +
+          '</div>' +
+          '<div class="payroll-card-count">' + item.jumlahPaket + ' paket terkirim &times; Rp3.000</div>' +
+          '<div class="payroll-card-amounts" style="margin-top:6px;">' +
+            '<div class="row"><span class="lbl">Gaji Kotor</span><span>' + formatRupiah(item.gajiKotor) + '</span></div>' +
+            (item.kasbonDipotong > 0 ? '<div class="row"><span class="lbl">Kasbon Dipotong</span><span style="color:var(--rose);">-' + formatRupiah(item.kasbonDipotong) + '</span></div>' : '') +
+            (item.sisaHutangSebelumnya > 0 ? '<div class="row"><span class="lbl">Sisa Hutang Bulan Lalu</span><span style="color:var(--rose);">-' + formatRupiah(item.sisaHutangSebelumnya) + '</span></div>' : '') +
+          '</div>' +
+          kasbonHtml +
+          '<div class="payroll-card-top" style="margin-bottom:0;">' +
+            '<span class="lbl" style="font-size:12.5px;color:var(--muted);">Gaji Bersih</span>' +
+            '<span class="payroll-net' + (item.gajiBersih < 0 ? ' negative' : '') + '">' + formatRupiah(item.gajiBersih) + '</span>' +
+          '</div>' +
+          '<div class="payroll-card-actions" style="margin-top:10px;">' +
+            (item.sudahDibayar
+              ? '<button type="button" class="btn btn-ghost" onclick="togglePayrollPaid(\'' + escapeHtml(item.kurir) + '\', false)">Batalkan</button>'
+              : '<button type="button" class="btn btn-success" onclick="togglePayrollPaid(\'' + escapeHtml(item.kurir) + '\', true)">Tandai Dibayar</button>') +
+          '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  function togglePayrollPaid(kurir, paid){
+    var periodKey = activePayrollPeriodKey;
+    if(paid && !confirm('Tandai gaji "' + kurir + '" pada periode ini sebagai SUDAH DIBAYAR? Kasbon yang dijadwalkan pada periode ini akan ikut ditandai lunas.')) return;
+    if(!paid && !confirm('Batalkan status "Sudah Dibayar" untuk "' + kurir + '" pada periode ini?')) return;
+    google.script.run
+      .withSuccessHandler(function(res){
+        if(res && res.success === false){ showToast(res.message || 'Gagal menyimpan status pembayaran'); return; }
+        showToast(paid ? 'Gaji ditandai sudah dibayar' : 'Status pembayaran dibatalkan');
+        loadPayrollReport();
+      })
+      .withFailureHandler(function(err){ showToast('Gagal: ' + err.message); })
+      .setPayrollPaidStatus(currentUser.username, periodKey, kurir, paid);
+  }
+
+  function confirmDeleteKasbon(id){
+    var k = currentKasbonById[id];
+    var msg = (k && k.tenor > 1) ? 'Hapus kasbon ini beserta seluruh ' + k.tenor + ' cicilannya?' : 'Hapus kasbon ini?';
+    if(!confirm(msg)) return;
+    google.script.run
+      .withSuccessHandler(function(res){
+        if(res && res.success === false){ showToast(res.message || 'Gagal menghapus kasbon'); return; }
+        showToast((res && res.message) || 'Kasbon dihapus');
+        loadPayrollReport();
+      })
+      .withFailureHandler(function(err){ showToast('Gagal menghapus: ' + err.message); })
+      .deleteKasbon(currentUser.username, id);
+  }
+
+  // prefillKurir: nama kurir yang mau dipilih otomatis (mode tambah).
+  // kasbonToEdit: kalau diisi (objek dari currentKasbonById), form
+  // dibuka dalam mode UBAH â€” seluruh field diisi dari data itu dan
+  // submit akan memanggil editKasbon, bukan addKasbon.
+  function openKasbonForm(prefillKurir, kasbonToEdit){
+    document.getElementById('kasbonForm').reset();
+    document.getElementById('inputKasbonId').value = kasbonToEdit ? kasbonToEdit.id : '';
+    document.getElementById('kasbonFormTitle').textContent = kasbonToEdit ? 'Ubah Kasbon' : 'Tambah Kasbon';
+    document.getElementById('kasbonFormSaveBtn').textContent = kasbonToEdit ? 'Simpan Perubahan' : 'Simpan Kasbon';
+
+    var kurirSelect = document.getElementById('inputKasbonKurir');
+    kurirSelect.innerHTML = (courierList || []).filter(function(name){
+      // Admin sendiri (role admin) juga muncul di courierList karena
+      // punya "nama kurir" tampilan sendiri â€” kasbon hanya untuk akun
+      // kurir sungguhan, jadi kecualikan nama akun admin yang sedang login.
+      return name !== currentUser.namaKurir || !isAdmin();
+    }).map(function(name){
+      return '<option value="' + escapeHtml(name) + '">' + escapeHtml(name) + '</option>';
+    }).join('');
+    var kurirToSelect = kasbonToEdit ? kasbonToEdit.kurir : prefillKurir;
+    if(kurirToSelect) kurirSelect.value = kurirToSelect;
+
+    var periods = payrollPeriodList.length ? payrollPeriodList : buildPayrollPeriodList();
+    var activePeriod = kasbonToEdit ? (kasbonToEdit.periodeAwal || kasbonToEdit.periodeBayar) : (activePayrollPeriodKey || periods[0]);
+    setKasbonPeriode_(activePeriod);
+
+    // Mode ubah: tampilkan TOTAL kasbon (seluruh cicilan), bukan cicilan bulan ini.
+    document.getElementById('inputKasbonJumlah').value = kasbonToEdit ? (kasbonToEdit.totalGrup || kasbonToEdit.jumlah) : '';
+    setKasbonTenor(kasbonToEdit && [1, 2, 3, 6].indexOf(kasbonToEdit.tenor) !== -1 ? kasbonToEdit.tenor : 3);
+    document.getElementById('inputKasbonKeterangan').value = kasbonToEdit ? (kasbonToEdit.keterangan || '') : '';
+    setKasbonTanggal_(kasbonToEdit ? toInputDate(kasbonToEdit.tanggal) : todayInputDate());
+    updateKasbonPreview();
+    document.getElementById('kasbonFormModal').classList.add('open');
+  }
+  function closeKasbonForm(){ document.getElementById('kasbonFormModal').classList.remove('open'); }
+
+  /* ---------- CICILAN KASBON ----------
+     Total kasbon dibagi 3 atau 6 bulan, dipotong tiap tanggal gajian
+     yang sama (10 / 25) mulai dari gajian pertama yang dipilih. Rumus
+     pembagiannya HARUS sama dengan buildKasbonInstallments_() di Code.gs. */
+  function shiftPeriodKeyClient_(key, delta){
+    var m = /^(\d{4})-(\d{2})-P(10|25)$/.exec(String(key));
+    if(!m) return key;
+    var d = new Date(Number(m[1]), Number(m[2]) - 1 + delta, 1);
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-P' + m[3];
+  }
+  function buildKasbonInstallmentsClient_(total, tenor, firstKey){
+    var per = Math.ceil(total / tenor), sisa = total, list = [];
+    for(var i = 0; i < tenor; i++){
+      var jml = (i === tenor - 1) ? sisa : Math.min(per, sisa);
+      sisa -= jml;
+      list.push({ ke: i + 1, jumlah: jml, periodeBayar: shiftPeriodKeyClient_(firstKey, i) });
+    }
+    return list;
+  }
+  function setKasbonTenor(n){
+    document.getElementById('inputKasbonTenor').value = n;
+    document.querySelectorAll('#kasbonForm .seg-btn').forEach(function(b){
+      b.classList.toggle('active', Number(b.getAttribute('data-tenor')) === n);
+    });
+    updateKasbonPreview();
+  }
+  function updateKasbonPreview(){
+    var el = document.getElementById('kasbonPreview');
+    if(!el) return;
+    var total = Math.round(Number(document.getElementById('inputKasbonJumlah').value) || 0);
+    var tenor = Number(document.getElementById('inputKasbonTenor').value) || 3;
+    var first = document.getElementById('inputKasbonPeriode').value;
+    if(total <= 0 || !first){ el.textContent = 'Isi total kasbon untuk melihat rincian cicilan.'; return; }
+    var inst = buildKasbonInstallmentsClient_(total, tenor, first);
+    var tgl = first.slice(-2);
+    var uniform = inst.every(function(x){ return x.jumlah === inst[0].jumlah; });
+    el.innerHTML = '<b>' + tenor + ' &times; ' + formatRupiah(inst[0].jumlah) + '</b>' +
+      (uniform ? '' : ' (cicilan terakhir ' + formatRupiah(inst[inst.length - 1].jumlah) + ')') +
+      ' &middot; dipotong tiap tanggal ' + tgl +
+      '<span class="kp-sub">' + payrollPeriodLabel(inst[0].periodeBayar) + ' &rarr; ' + payrollPeriodLabel(inst[inst.length - 1].periodeBayar) + '</span>';
+  }
+
+  /* ---------- KALENDER DI FORM KASBON ----------
+     Menggantikan <input type="date"> dan <select> "Dipotong pada Gajian"
+     dengan tombol yang membuka modal kalender (gaya sama seperti
+     "Pilih Tanggal" di halaman Kurir). Nilainya tetap disimpan di input
+     hidden #inputKasbonTanggal (yyyy-mm-dd) & #inputKasbonPeriode
+     (YYYY-MM-P10/P25) sehingga proses simpan tidak berubah. */
+  var kbDateMonth = new Date();
+  var kbDateDraft = null;
+  var kbPeriodMonth = new Date();
+  var kbPeriodDraft = null;
+
+  function setKasbonTanggal_(iso){
+    document.getElementById('inputKasbonTanggal').value = iso || '';
+    document.getElementById('kasbonTanggalLabel').textContent = iso ? formatIsoShortId_(iso) : 'Pilih tanggal';
+  }
+  function setKasbonPeriode_(key){
+    document.getElementById('inputKasbonPeriode').value = key || '';
+    document.getElementById('kasbonPeriodeLabel').textContent = key ? payrollPeriodLabel(key) : 'Pilih periode gajian';
+  }
+
+  // --- Tanggal Kasbon (1 tanggal bebas) ---
+  function openKasbonDateModal(){
+    var cur = document.getElementById('inputKasbonTanggal').value || todayInputDate();
+    kbDateDraft = cur;
+    kbDateMonth = new Date(cur + 'T00:00:00');
+    kbDateMonth.setDate(1);
+    renderKasbonDateCalendar();
+    document.getElementById('kasbonDateModal').classList.add('open');
+  }
+  function closeKasbonDateModal(){ document.getElementById('kasbonDateModal').classList.remove('open'); }
+  document.getElementById('kasbonDateModal').addEventListener('click', function(e){ if(e.target === this) closeKasbonDateModal(); });
+  function shiftKasbonDateMonth(delta){
+    kbDateMonth.setMonth(kbDateMonth.getMonth() + delta);
+    renderKasbonDateCalendar();
+  }
+  function selectKasbonDay(iso){ kbDateDraft = iso; renderKasbonDateCalendar(); }
+  function resetKasbonDate(){
+    kbDateDraft = todayInputDate();
+    kbDateMonth = new Date(kbDateDraft + 'T00:00:00');
+    kbDateMonth.setDate(1);
+    renderKasbonDateCalendar();
+  }
+  function applyKasbonDate(){
+    if(kbDateDraft) setKasbonTanggal_(kbDateDraft);
+    closeKasbonDateModal();
+  }
+  function renderKasbonDateCalendar(){
+    document.getElementById('kbDateMonthLabel').textContent =
+      MONTH_NAMES_ID[kbDateMonth.getMonth()] + ' ' + kbDateMonth.getFullYear();
+    var year = kbDateMonth.getFullYear(), month = kbDateMonth.getMonth();
+    var firstDow = new Date(year, month, 1).getDay();
+    var daysInMonth = new Date(year, month + 1, 0).getDate();
+    var todayIso = todayInputDate();
+    var cells = [];
+    for(var i = 0; i < firstDow; i++){ cells.push('<div class="dr-day"></div>'); }
+    for(var d = 1; d <= daysInMonth; d++){
+      var iso = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+      var classes = ['dr-day'];
+      if(iso === todayIso) classes.push('today');
+      if(iso === kbDateDraft) classes.push('range-start');
+      cells.push('<div class="' + classes.join(' ') + '"><button type="button" class="dr-day-btn" onclick="selectKasbonDay(\'' + iso + '\')">' + d + '</button></div>');
+    }
+    document.getElementById('kbDateGrid').innerHTML = cells.join('');
+  }
+
+  // --- Dipotong pada Gajian (hanya tgl 10 & 25 yang bisa dipilih) ---
+  function openKasbonPeriodModal(){
+    var cur = document.getElementById('inputKasbonPeriode').value || activePayrollPeriodKey;
+    kbPeriodDraft = cur;
+    kbPeriodMonth = parsePayrollPeriodDate_(cur);
+    renderKasbonPeriodCalendar();
+    document.getElementById('kasbonPeriodModal').classList.add('open');
+  }
+  function closeKasbonPeriodModal(){ document.getElementById('kasbonPeriodModal').classList.remove('open'); }
+  document.getElementById('kasbonPeriodModal').addEventListener('click', function(e){ if(e.target === this) closeKasbonPeriodModal(); });
+  function shiftKasbonPeriodMonth(delta){
+    kbPeriodMonth.setMonth(kbPeriodMonth.getMonth() + delta);
+    renderKasbonPeriodCalendar();
+  }
+  function selectKasbonPeriodDay(key){ kbPeriodDraft = key; renderKasbonPeriodCalendar(); }
+  function applyKasbonPeriod(){
+    if(kbPeriodDraft) setKasbonPeriode_(kbPeriodDraft);
+    updateKasbonPreview();
+    closeKasbonPeriodModal();
+  }
+  function renderKasbonPeriodCalendar(){
+    document.getElementById('kbPeriodMonthLabel').textContent =
+      MONTH_NAMES_ID[kbPeriodMonth.getMonth()] + ' ' + kbPeriodMonth.getFullYear();
+    var year = kbPeriodMonth.getFullYear(), month = kbPeriodMonth.getMonth();
+    var firstDow = new Date(year, month, 1).getDay();
+    var daysInMonth = new Date(year, month + 1, 0).getDate();
+    var cells = [];
+    for(var i = 0; i < firstDow; i++){ cells.push('<div class="dr-day"></div>'); }
+    for(var d = 1; d <= daysInMonth; d++){
+      var isPeriodDay = (d === 10 || d === 25);
+      var key = isPeriodDay ? periodKeyForDay_(year, month, d) : null;
+      var btnClasses = ['dr-day-btn'];
+      if(isPeriodDay){
+        btnClasses.push('is-period');
+        btnClasses.push(d === 25 ? 'type-25' : 'type-10');
+        if(key === kbPeriodDraft) btnClasses.push('is-selected');
+      }
+      var attrs = isPeriodDay ? ' onclick="selectKasbonPeriodDay(\'' + key + '\')"' : ' disabled';
+      cells.push('<div class="dr-day"><button type="button" class="' + btnClasses.join(' ') + '"' + attrs + '>' + d + '</button></div>');
+    }
+    document.getElementById('kbPeriodGrid').innerHTML = cells.join('');
+  }
+
+  document.getElementById('kasbonFormModal').addEventListener('click', function(e){ if(e.target === this) closeKasbonForm(); });
+
+  document.getElementById('kasbonForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var editId = document.getElementById('inputKasbonId').value;
+    var isEdit = !!editId;
+    var payload = {
+      kurir: document.getElementById('inputKasbonKurir').value,
+      jumlah: Number(document.getElementById('inputKasbonJumlah').value) || 0,
+      tanggal: document.getElementById('inputKasbonTanggal').value,
+      keterangan: document.getElementById('inputKasbonKeterangan').value.trim(),
+      periodeBayar: document.getElementById('inputKasbonPeriode').value,
+      tenor: Number(document.getElementById('inputKasbonTenor').value) || 3
+    };
+    if(isEdit){
+      payload.id = editId;
+      payload.grupId = (currentKasbonById[editId] && currentKasbonById[editId].grupId) || '';
+    }
+    if(!payload.kurir){ showToast('Pilih kurir terlebih dahulu'); return; }
+    if(!payload.tanggal){ showToast('Pilih tanggal kasbon terlebih dahulu'); return; }
+    if(!payload.periodeBayar){ showToast('Pilih periode gajian terlebih dahulu'); return; }
+    if(payload.jumlah <= 0){ showToast('Jumlah kasbon harus lebih dari 0'); return; }
+    var btn = document.getElementById('kasbonFormSaveBtn');
+    var savingLabel = isEdit ? 'Menyimpan...' : 'Menyimpan...';
+    var idleLabel = isEdit ? 'Simpan Perubahan' : 'Simpan Kasbon';
+    btn.disabled = true; btn.textContent = savingLabel;
+    google.script.run
+      .withSuccessHandler(function(res){
+        btn.disabled = false; btn.textContent = idleLabel;
+        if(res && res.success === false){ showToast(res.message || 'Gagal menyimpan kasbon'); return; }
+        closeKasbonForm();
+        showToast(isEdit ? 'Kasbon diperbarui' : (payload.tenor > 1 ? 'Kasbon ditambahkan (' + payload.tenor + ' cicilan)' : 'Kasbon ditambahkan'));
+        // Cicilan bisa jatuh di banyak periode (termasuk periode yang
+        // sedang dilihat, atau sebelumnya) â€” selalu muat ulang laporan.
+        loadPayrollReport();
+      })
+      .withFailureHandler(function(err){
+        btn.disabled = false; btn.textContent = idleLabel;
+        showToast('Gagal menyimpan: ' + err.message);
+      })
+      [isEdit ? 'editKasbon' : 'addKasbon'](currentUser.username, payload);
+  });
 
   /* ---------- IMPOR DARI APP "SALIN TEKS DARI FOTO" ----------
      App ini punya deployment/URL terpisah (project Apps Script lain).
@@ -2768,8 +3527,9 @@
      kembali cukup menutup modal itu dulu. Kalau tidak ada modal terbuka,
      baru tampilkan konfirmasi keluar aplikasi. */
   function closeOpenModalIfAny(){
-    var openModal = document.querySelector('.modal-overlay.open');
-    if(!openModal) return false;
+    var openModals = document.querySelectorAll('.modal-overlay.open');
+    if(!openModals.length) return false;
+    var openModal = openModals[openModals.length - 1]; // modal paling atas
     openModal.classList.remove('open');
     return true;
   }
